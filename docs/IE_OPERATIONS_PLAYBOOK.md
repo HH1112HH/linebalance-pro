@@ -65,7 +65,7 @@
 | 4 | DMAIC & Six Sigma | 5 bước, T07 case study, fishbone/5 Why, Control Plan, DPMO/Z minh họa | §6.1–6.7, §6.5.1; `docs/CASE_STUDY_QUALITY_RCA.md` | `[x]` |
 | 5 | Kaizen A3 & Control Plan | A3, T08 case study, estimated/verified saving, Control Plan | §7.1–7.7; `docs/CASE_STUDY_KAIZEN.md` | `[x]` |
 | 6 | OEE & Downtime | A/P/Q, 6 big losses, điều kiện áp dụng và bẫy station thủ công, ví dụ PRESS-01 synthetic, Pareto downtime | §8.1–8.12; `docs/data/oee_machine_log.csv`; `KPI_SPEC.md` §12 | `[x]` knowledge + synthetic; `[~]` software: chưa có OEE API (`N/A`) |
-| 7 | Layout & Ergonomics | Spaghetti, material flow, U-shape, ergonomics checklist (outline) | §9.1–9.2 | `[~]` outline; chưa có case study |
+| 7 | Layout & Ergonomics | Spaghetti, flow, POU/FIFO, lựa chọn U-cell, ergonomic screen, case study ST01 | §9.1–9.12; `docs/CASE_STUDY_LAYOUT_ERGONOMICS.md`; `docs/layout_study_before_after.svg` | `[x]` knowledge + synthetic; `[~]` EHS/pilot thật chưa xác nhận |
 | 8 | SMED & Changeover | Internal/external, 4 giai đoạn SMED, changeover study synthetic 5+5 lần, waterfall, tác động OEE | §10.1–10.14; `docs/data/smed_changeover_study.csv` | `[x]` knowledge + synthetic; `[~]` software: không có changeover API |
 | 9 | Cross-functional Management | Vai trò Production/Quality/Maintenance/Planning/Warehouse/HR/EHS (outline) | §11.1–11.3 | `[~]` outline; chưa có case study |
 | 10 | Interview Preparation | 5 case, STAR, English terms, 2-minute answers (outline) | §12.1–12.2; `CHECKLIST.md` §7 | `[~]` outline; `docs/INTERVIEW_PREP.md` chưa có |
@@ -73,8 +73,8 @@
 **Đọc nhanh:**
 
 - **P0 đã đủ nội dung:** Module 1–5.
-- **P1 có ví dụ synthetic:** Module 6 (OEE) và Module 8 (SMED); time study xác nhận pacer và video changeover vẫn cần đo thật.
-- **P1 còn outline:** Module 7, 9–10.
+- **P1 có ví dụ synthetic:** Module 6 (OEE), Module 7 (Layout & Ergonomics) và Module 8 (SMED); pacer, EHS và video changeover vẫn cần xác nhận thật.
+- **P1 còn outline:** Module 9–10.
 - **Phần mềm:** optimizer + dashboard + 3 form đã có; Time Study là aggregate; Hourly và 8 Wastes là docs/CSV; OEE để `N/A`.
 - **Case study:** T07/T08 đã xong; không mở rộng software chỉ để biến chúng thành feature.
 
@@ -1584,16 +1584,161 @@ Mapping từ `loss_category` của Module 2 (`docs/data/hourly_actuals.csv`):
 
 ## 9. Module 7 — Layout & Ergonomics <a id="module-7"></a>
 
-### 9.1. Nội dung
+### 9.1. Mục tiêu
 
-- Spaghetti diagram: vẽ đường đi của người/vật tư.
-- Material flow: dòng nguyên liệu từ kho → chuyền → kho thành phẩm.
-- U-shaped layout: giảm walking, tăng phối hợp.
-- Ergonomics: chiều cao bàn, ánh sáng, tư thế, tải trọng, an toàn trạm.
+Thiết kế dòng vật tư và vị trí làm việc để giảm transport/motion mà không tạo thêm WIP, starvation, rủi ro ergonomics hay chặn lối đi. Sau module này phải:
 
-### 9.2. Trạng thái
+- vẽ spaghetti diagram theo tuyến đi thật, không đo đường chim bay;
+- phân biệt material flow với operator motion;
+- chọn POU/FIFO hoặc dạng layout phù hợp với routing và sản lượng;
+- đánh giá ergonomic/safety risk bằng quan sát và EHS, không tự bịa điểm số;
+- đo before/after cùng phạm vi, và không claim tiết kiệm lao động nếu chỉ chuyển việc sang Material Handler.
 
-`[~]` Mới có outline. Cần thêm spaghetti diagram, material-flow example và ergonomics checklist; chưa có case study số.
+### 9.2. Khái niệm và layout types
+
+| Thuật ngữ | Ý nghĩa | Lưu ý |
+|---|---|---|
+| Spaghetti diagram | Bản đồ tuyến đi của người/vật liệu theo đường thực tế | Có thể dùng màu khác nhau cho operator, material handler, bundle |
+| Material flow | Hướng dịch chuyển nguyên liệu → WIP → thành phẩm | Giữ FIFO, hạn chế backtracking/crossing |
+| POU (point of use) | Vật tư cần dùng được đặt gần nơi dùng | Có min/max, owner replenishment; không biến thành kho/WIP lớn |
+| FIFO lane | Lane cấp trước lấy trước | Capacity và reorder trigger phải có căn cứ |
+| U-shaped cell | Đầu vào/đầu ra gần nhau, các operation bố trí quanh cell | Có thể hỗ trợ giao tiếp/flexible staffing; không mặc định tốt hơn line thẳng |
+| Reach zone | Vùng operator có thể lấy/đặt khi giữ tư thế thoải mái | Cần thử với người dùng/đánh giá EHS; không đặt kích thước chung khi thiếu tiêu chuẩn site |
+
+| Dạng layout | Phù hợp khi | Rủi ro/trade-off |
+|---|---|---|
+| Straight line | Volume cao, routing ổn định, flow một chiều | Tuyến dài, crossings và điểm cấp liệu xa |
+| U-shaped | Operation gần nhau, cần trao đổi hoặc linh hoạt người | Congestion, crossing ở miệng U, guarding/egress |
+| L-shaped | Nhà xưởng có giới hạn hình học | Góc có thể thành bottleneck hoặc tăng quay đầu |
+| Process/functional | Nhiều style/routing khác nhau | Transport, WIP và khó kiểm soát FIFO nếu không có pull |
+
+**Nguyên tắc:** chọn layout sau khi map flow, constraints máy/guarding, material supply, quality gate, aisle/egress và ergonomics. Không đổi cả line chỉ vì U-shape nghe có vẻ Lean.
+
+### 9.3. Spaghetti diagram — cách đo
+
+1. Chốt scope: line/station, ca, product/style, người hoặc vật liệu, start/end.
+2. Vẽ footprint có máy, rack, aisle, exit, guard và điểm WIP; ghi scale nếu drawing có scale.
+3. Theo dõi ít nhất nhiều chu kỳ/tuyến đại diện, ghi path, frequency, distance, time, load/carry, waiting và aisle crossing riêng.
+4. Đo theo **aisle/path được phép**, không vẽ xuyên tường/máy để lấy khoảng cách ngắn.
+5. Tách từng loại resource. `operator-minutes`, `handler-minutes`, `machine-minutes`, meters và pcs không cộng chéo.
+6. Xác minh với operator, material handler, supervisor, Quality, Maintenance và EHS trước khi đề xuất.
+
+```text
+Distance / shift = mean measured route distance × trips per shift
+Travel time / shift = mean measured trip time × trips per shift
+Change (%) = (before − after) / before × 100
+```
+
+Không đổi distance sang time nếu chưa đo walking speed/route time; không lấy trip time làm pure walking time nếu có chờ, scan hoặc tìm vật tư.
+
+### 9.4. Material flow và POU
+
+- Đặt vật tư thường dùng tại POU, nhưng ngoài aisle, exit, fire equipment, machine guard và vùng thao tác.
+- Dùng FIFO/two-bin/min-max hoặc milk run với `owner`, trigger, frequency, container và escalation rõ.
+- Bin size dựa trên usage rate × replenishment lead time + buffer đã được duyệt; không chọn tùy tiện để giảm trip.
+- Theo dõi material availability, WIP cap và starvation. Không đẩy batch lớn để operator khỏi đi lấy vật tư.
+- Nếu có Material Handler, đo riêng thời gian và route của handler. Giảm motion cho operator có thể chỉ chuyển motion sang handler.
+- Hạn chế cross-flow giữa raw material, finished goods, rework và pedestrian/forklift traffic.
+
+### 9.5. Case study synthetic — POU tại ST01
+
+> Chi tiết và sơ đồ: `docs/CASE_STUDY_LAYOUT_ERGONOMICS.md`, `docs/layout_study_before_after.svg`. Log: `docs/data/layout_route_observations.csv`.
+
+Case dùng baseline Module 3: 3 trips/shift × 6 min = 18 operator-min tại ST01. Năm trial synthetic mỗi giai đoạn cho các giá trị sau:
+
+| Chỉ số | Before | After synthetic | Công thức |
+|---|---:|---:|---|
+| Round trip | 43.6 m, 6.0 min | 12.8 m, 2.0 min | Mean của 5 trials |
+| Distance / shift | 130.8 m | 38.4 m | mean distance × 3 trips |
+| Operator time / shift | 18.0 min | 6.0 min | mean time × 3 trips |
+| Distance reduction | — | 70.64% | (130.8 − 38.4) / 130.8 |
+| Operator time reduction | — | 66.67% | (18 − 6) / 18 |
+| Aisle crossings / shift | 6 | 0 | 2 vs 0 crossings/trip × 3 |
+
+**Thiết kế:** two-bin line-side POU tại ST01; Material Handler bổ sung theo milk run. Giữ nguyên số lần replenishment, routing, machine, WIP cap và station sequence.
+
+**Giới hạn:** handler time không có trong số sau; vì vậy 12 operator-min là movement time avoided ở ST01, **không phải net labor/cash saving**. Cả data và after pilot là synthetic, chưa phải production evidence. Không có dữ liệu throughput để claim output tăng.
+
+### 9.6. U-shaped cell — quyết định có điều kiện
+
+U-shape có thể rút ngắn khoảng cách đầu-cuối và giúp một nhóm nhỏ trao đổi/điều phối, nhưng chỉ phù hợp khi operation sequence, skill, machine guarding, material supply và egress cho phép. Kiểm tra:
+
+- operator có phải quay lưng, vặn người hoặc đi xuyên vùng máy không;
+- miệng U có gây giao cắt vào/ra hoặc chặn material handler không;
+- có đủ khoảng trống cho bundle, cart, WIP/FIFO và emergency exit không;
+- skill matrix cho phép flexible staffing hay chỉ tạo thêm walking;
+- WIP có được kiểm soát theo buffer cap/pull, không đẩy hàng dư vào trong cell.
+
+Với case ST01, data chỉ chứng minh một tuyến fetch dài; POU là countermeasure nhỏ, reversible và dễ pilot. Chưa có cơ sở để đổi toàn line sang U-shape.
+
+### 9.7. Ergonomics và safety screen
+
+Kiểm tra tại workstation sau khi bố trí rack/bin:
+
+| Nhóm | Câu hỏi |
+|---|---|
+| Reach/posture | Có phải với xa/cao/thấp, xoay thân, cúi hoặc giữ tư thế tĩnh không? |
+| Lift/carry | Tải, tần suất, grip, quãng mang; có nâng từ sàn/qua vai không? |
+| Push/pull | Cart có tải nặng, bánh hỏng, dốc, gờ hoặc cua hẹp không? |
+| Repetition | Tần suất lấy/đặt, thao tác pinch/force, recovery time? |
+| Vision | Nhãn/lot nhìn rõ; đủ ánh sáng; không glare/bóng đổ? |
+| Safety | Không lấn aisle/egress, fire equipment, guard, điện; không tạo điểm va chạm/trượt? |
+| Human factors | Operator có thử layout và phản hồi trước khi chốt? Có hướng dẫn và training? |
+
+**Không tự đặt ngưỡng kích thước, tải trọng hoặc ergonomic score.** Site EHS/standard phải xác định giới hạn. Dùng RULA/REBA/NIOSH chỉ khi phù hợp, có dữ liệu quan sát/tải trọng thật và người đánh giá được đào tạo; không suy điểm từ hình minh họa.
+
+### 9.8. Improve và verify
+
+1. Pilot thay đổi nhỏ (POU, rack, bin trigger), tránh move machine/routing nếu chưa có study.
+2. Giữ cùng product, trip frequency, ca và phương pháp đo trước/sau.
+3. Đồng thời đo: route distance/time, trips, material handler time, aisle crossing, WIP, starvation, station cycle, quality và ergonomic observations.
+4. Chấp nhận chỉ khi movement giảm **mà** material availability/quality/WIP/aisle/ergonomics không xấu đi.
+5. Sau pilot, cập nhật visual standard, min/max, refill owner, milk-run frequency và reaction plan.
+
+### 9.9. Control Plan — case ST01
+
+| KPI/condition | Pilot target | Tần suất | Owner | Reaction |
+|---|---:|---|---|---|
+| Operator trip distance | ≤21.8 m/trip | 5 trials đầu, sau đó weekly sample | IE | Vượt → map lại route/POU |
+| Operator trip time | ≤3 min/trip | 5 trials đầu, sau đó weekly sample | Line leader | Vượt → kiểm tra waiting, shortage, route |
+| Operator shared-aisle crossing | 0 | Pilot/audit | EHS + Supervisor | Có crossing → sửa layout, không dùng shortcut |
+| Material availability tại ST01 | Không starvation do POU | Mỗi ca | Material Handler | Thiếu → replenish, ghi downtime riêng nếu có |
+| FIFO/lot/style correctness | 100% visual check | Mỗi replenishment | Quality + Warehouse | Nhầm → hold material, containment |
+| Handler time/net labor | Đo riêng trước khi kết luận | Pilot | IE + Warehouse | Thiếu log → không claim net saving |
+| EHS/egress approval | Phải được duyệt trước pilot | Trước pilot và mỗi lần đổi layout | EHS + Facilities | Không duyệt/hazard → dừng, sửa |
+
+Nếu operator trip giảm nhưng handler overtime, WIP tăng, starvation hoặc aisle/ergonomics fail, pilot **không đạt**. Không tối ưu cục bộ bằng cách chuyển waste sang bộ phận khác.
+
+### 9.10. Câu hỏi phỏng vấn
+
+1. Spaghetti diagram dùng để làm gì và đo ra sao?
+2. Vì sao không đo khoảng cách đường chim bay?
+3. U-shaped layout có luôn tốt hơn straight line không?
+4. Làm sao biết POU rack không chỉ chuyển waste sang Material Handler?
+5. Layout cải tiến nhưng WIP tăng thì xử lý thế nào?
+6. Em kiểm tra ergonomics trước khi chuyển rack ra sao?
+
+**Model answer — POU và xác minh:**
+
+> Em map route thật từ ST01 đến supermarket, đo theo lối đi hợp lệ và bấm giờ cả lượt đi-về. Baseline synthetic là 43.6 m và 6 phút mỗi trip; ba trips/shift. Sau khi đặt two-bin POU, route operator còn 12.8 m và 2 phút. Nhưng em chưa gọi 12 operator-min là net saving vì chưa đo thời gian Material Handler refill bin. Em giữ FIFO/WIP, kiểm tra material availability và xin EHS duyệt aisle, reach, tải trọng trước khi accept.
+
+### 9.11. Checklist hoàn thành
+
+- [x] Có spaghetti/layout diagram trước-sau, ghi rõ schematic và không theo tỷ lệ.
+- [x] Có material flow supermarket → POU → ST01 → downstream và owner replenishment.
+- [x] Có 5 synthetic trials mỗi giai đoạn; tính distance/time/crossings.
+- [x] Phân biệt operator time với Material Handler time; không claim net/cash saving.
+- [x] Có so sánh straight/U/L/process layout và trade-off.
+- [x] Có ergonomic screen cho reach, lift, push/pull, posture, vision, aisle và machine safety.
+- [x] Không tự chấm RULA/REBA/NIOSH hoặc claim safety improvement.
+- [x] Có Control Plan và reaction rule chống chuyển waste.
+- [ ] EHS/Facilities duyệt layout/clearance thật.
+- [ ] Đo handler time, tote mass và ergonomic exposure thật.
+- [ ] Pilot production có theo dõi output, WIP, quality và starvation.
+
+### 9.12. Trạng thái
+
+`[x]` Knowledge và case study synthetic đầy đủ. `[~]` Production verification: EHS approval, handler time và pilot thật còn thiếu. Không có phần mềm layout/CAD/API; không thay đổi MVP.
 
 ---
 

@@ -1,0 +1,107 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1280 650" role="img" aria-labelledby="title desc">
+  <title id="title">Synthetic layout study: point-of-use material at ST01</title>
+  <desc id="desc">Before: the operator walks from ST01 across a shared aisle to a bulk supermarket. After: a two-bin point-of-use rack sits near ST01, while a material handler replenishes it on a scheduled route. The diagram is schematic and not to scale.</desc>
+  <defs>
+    <marker id="arrow-red" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto">
+      <path d="M0,0 L10,5 L0,10 z" fill="#c2410c" />
+    </marker>
+    <marker id="arrow-green" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto">
+      <path d="M0,0 L10,5 L0,10 z" fill="#047857" />
+    </marker>
+    <marker id="arrow-blue" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto">
+      <path d="M0,0 L10,5 L0,10 z" fill="#2563eb" />
+    </marker>
+    <marker id="arrow-dark" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto">
+      <path d="M0,0 L10,5 L0,10 z" fill="#475569" />
+    </marker>
+    <style>
+      text { font-family: Arial, Helvetica, sans-serif; fill: #17212b; }
+      .title { font-size: 27px; font-weight: 700; }
+      .subtitle { font-size: 15px; fill: #526171; }
+      .panel-title { font-size: 20px; font-weight: 700; }
+      .label { font-size: 14px; font-weight: 600; }
+      .small { font-size: 12px; fill: #526171; }
+      .metric { font-size: 16px; font-weight: 700; }
+      .station { fill: #e2e8f0; stroke: #475569; stroke-width: 2; rx: 8; }
+      .rack { fill: #dbeafe; stroke: #2563eb; stroke-width: 2; rx: 8; }
+      .pou { fill: #d1fae5; stroke: #047857; stroke-width: 2; rx: 8; }
+      .panel { fill: #ffffff; stroke: #cbd5e1; stroke-width: 2; rx: 14; }
+      .aisle { fill: #fef3c7; }
+    </style>
+  </defs>
+
+  <rect width="1280" height="650" fill="#f8fafc" />
+  <text x="36" y="44" class="title">Layout study — point-of-use supply at ST01</text>
+  <text x="36" y="68" class="subtitle">Synthetic route observations; schematic, not to scale. Operator route is measured; handler replenishment is excluded.</text>
+
+  <!-- BEFORE -->
+  <rect x="28" y="92" width="600" height="500" class="panel" />
+  <text x="54" y="128" class="panel-title">BEFORE · fetch from bulk supermarket</text>
+  <text x="54" y="153" class="small">Operator leaves the station and crosses the shared aisle.</text>
+  <rect x="54" y="252" width="548" height="58" class="aisle" />
+  <text x="271" y="286" class="label" fill="#92400e">SHARED AISLE — 2 crossings / trip</text>
+
+  <rect x="422" y="174" width="145" height="68" class="rack" />
+  <text x="438" y="202" class="label">Bulk</text>
+  <text x="438" y="222" class="label">supermarket</text>
+
+  <rect x="78" y="424" width="126" height="66" class="station" />
+  <text x="112" y="453" class="label">ST01</text>
+  <text x="91" y="474" class="small">material prep</text>
+  <rect x="250" y="424" width="112" height="66" class="station" />
+  <text x="279" y="453" class="label">ST02</text>
+  <text x="267" y="474" class="small">downstream</text>
+  <path d="M207 457 L242 457" fill="none" stroke="#475569" stroke-width="3" marker-end="url(#arrow-dark)" />
+  <text x="209" y="445" class="small">material flow</text>
+
+  <path d="M140 420 L140 352 L390 352 L390 207 L414 207" fill="none" stroke="#c2410c" stroke-width="5" marker-end="url(#arrow-red)" />
+  <path d="M414 229 L414 373 L170 373 L170 418" fill="none" stroke="#c2410c" stroke-width="5" marker-end="url(#arrow-red)" />
+  <text x="211" y="339" class="small" fill="#9a3412">operator fetch + return loop</text>
+
+  <rect x="54" y="516" width="548" height="54" fill="#fff7ed" stroke="#fed7aa" rx="8" />
+  <text x="72" y="540" class="metric" fill="#9a3412">43.6 m · 6.0 min / trip · 3 trips / shift</text>
+  <text x="72" y="560" class="small">130.8 m and 18 operator-min / shift · 6 shared-aisle crossings</text>
+
+  <!-- AFTER -->
+  <rect x="652" y="92" width="600" height="500" class="panel" />
+  <text x="678" y="128" class="panel-title">AFTER · two-bin point-of-use</text>
+  <text x="678" y="153" class="small">Operator takes material from a line-side bin; handler replenishes on milk run.</text>
+  <rect x="678" y="252" width="548" height="58" class="aisle" />
+  <text x="886" y="286" class="label" fill="#92400e">SHARED AISLE — keep clear</text>
+
+  <rect x="1040" y="174" width="145" height="68" class="rack" />
+  <text x="1057" y="202" class="label">Bulk</text>
+  <text x="1057" y="222" class="label">supermarket</text>
+
+  <rect x="700" y="424" width="126" height="66" class="station" />
+  <text x="734" y="453" class="label">ST01</text>
+  <text x="713" y="474" class="small">material prep</text>
+  <rect x="868" y="424" width="132" height="66" class="pou" />
+  <text x="887" y="453" class="label">2-bin POU</text>
+  <text x="887" y="474" class="small">line-side rack</text>
+  <rect x="1050" y="424" width="112" height="66" class="station" />
+  <text x="1079" y="453" class="label">ST02</text>
+  <text x="1067" y="474" class="small">downstream</text>
+  <path d="M829 457 L858 457" fill="none" stroke="#047857" stroke-width="5" marker-end="url(#arrow-green)" />
+  <path d="M1003 457 L1040 457" fill="none" stroke="#475569" stroke-width="3" marker-end="url(#arrow-dark)" />
+  <text x="1006" y="445" class="small">flow</text>
+
+  <path d="M760 420 L760 390 L918 390 L918 420" fill="none" stroke="#047857" stroke-width="5" marker-end="url(#arrow-green)" />
+  <text x="756" y="379" class="small" fill="#047857">operator short loop · no aisle crossing</text>
+
+  <path d="M1112 245 L1112 330 L1068 330 L1068 405 L1008 405 L1008 420" fill="none" stroke="#2563eb" stroke-width="4" stroke-dasharray="9 7" marker-end="url(#arrow-blue)" />
+  <text x="1022" y="352" class="small" fill="#1d4ed8">scheduled handler</text>
+  <text x="1022" y="369" class="small" fill="#1d4ed8">milk run</text>
+
+  <rect x="678" y="516" width="548" height="54" fill="#ecfdf5" stroke="#a7f3d0" rx="8" />
+  <text x="696" y="540" class="metric" fill="#065f46">12.8 m · 2.0 min / trip · 3 trips / shift</text>
+  <text x="696" y="560" class="small">38.4 m and 6 operator-min / shift · 0 operator crossings; handler time excluded</text>
+
+  <line x1="36" y1="615" x2="74" y2="615" stroke="#c2410c" stroke-width="5" />
+  <text x="84" y="620" class="small">operator fetch route before</text>
+  <line x1="290" y1="615" x2="328" y2="615" stroke="#047857" stroke-width="5" />
+  <text x="338" y="620" class="small">operator route after</text>
+  <line x1="510" y1="615" x2="548" y2="615" stroke="#2563eb" stroke-width="4" stroke-dasharray="9 7" />
+  <text x="558" y="620" class="small">handler replenishment (not measured)</text>
+  <text x="36" y="642" class="small">Data source: docs/data/layout_route_observations.csv · all values synthetic · maintain egress, guards, and material/WIP limits.</text>
+</svg>

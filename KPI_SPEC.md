@@ -625,7 +625,7 @@ Ví dụ `ST05-IN`: 38 − 25 = **13 pcs**. Không gọi là 13 phút.
 
 ## 11. Waste measurement — docs-only
 
-Bốn cơ sở đo không được cộng chéo:
+Các cơ sở đo dưới đây không được cộng chéo:
 
 | Nhóm | Đơn vị | Công thức | Ví dụ |
 |---|---|---|---|
@@ -633,6 +633,7 @@ Bốn cơ sở đo không được cộng chéo:
 | Machine loss | machine-minutes | loss machine-min / planned machine-min × 100 | 25 / 450 = 5.56% tại ST05 |
 | Line stoppage | line-minutes | line stop min / planned production min × 100 | Chưa đo |
 | Inventory / early output | pcs | WIP actual − WIP cap; early output | 13 pcs; 15 pcs |
+| Transport route | m/trip, m/shift; operator-min/trip, operator-min/shift | mean measured route × trips/shift; distance và time giữ riêng | 43.6 m × 3 = 130.8 m; 6 min × 3 = 18 operator-min |
 
 **Quy tắc:**
 
@@ -640,6 +641,7 @@ Bốn cơ sở đo không được cộng chéo:
 - Máy dừng 25 phút không tự động là 25 line-minutes.
 - Overproduction là **15 pcs early output**, không phải 15 phút.
 - Pareto phải cùng một cơ sở đo. Pareto labor hiện tại: Defects 34.0%, Skills 22.8%, Transport 20.4% → top 3 = 77.2%.
+- Transport distance không tự chuyển thành time; không cộng meters với minutes. Handler operator-minutes phải tách khỏi operator time tại station.
 - Không quy đổi waste ra tiền nếu chưa có cost data.
 - Không gọi machine allocation là machine utilization; waste analysis không thay thế OEE.
 

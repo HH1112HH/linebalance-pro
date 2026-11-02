@@ -1,0 +1,11 @@
+phase,trial,date,line_id,from_point,to_point,round_trip_distance_m,operator_trip_time_min,shared_aisle_crossings,note,data_policy
+BEFORE,1,2026-10-27,LINE_01,ST01,bulk_supermarket,42,5.8,2,"Operator leaves ST01 to fetch materials; returns empty tote",SYNTHETIC
+BEFORE,2,2026-10-27,LINE_01,ST01,bulk_supermarket,44,6.2,2,"Operator leaves ST01 to fetch materials; returns empty tote",SYNTHETIC
+BEFORE,3,2026-10-27,LINE_01,ST01,bulk_supermarket,43,6.1,2,"Operator leaves ST01 to fetch materials; returns empty tote",SYNTHETIC
+BEFORE,4,2026-10-27,LINE_01,ST01,bulk_supermarket,46,5.9,2,"Operator leaves ST01 to fetch materials; returns empty tote",SYNTHETIC
+BEFORE,5,2026-10-27,LINE_01,ST01,bulk_supermarket,43,6.0,2,"Operator leaves ST01 to fetch materials; returns empty tote",SYNTHETIC
+AFTER,1,2026-11-02,LINE_01,ST01,point_of_use_bin,12,2.1,0,"Line-side two-bin point of use; handler replenishment excluded",SYNTHETIC
+AFTER,2,2026-11-02,LINE_01,ST01,point_of_use_bin,13,1.9,0,"Line-side two-bin point of use; handler replenishment excluded",SYNTHETIC
+AFTER,3,2026-11-02,LINE_01,ST01,point_of_use_bin,14,2.0,0,"Line-side two-bin point of use; handler replenishment excluded",SYNTHETIC
+AFTER,4,2026-11-02,LINE_01,ST01,point_of_use_bin,12,2.1,0,"Line-side two-bin point of use; handler replenishment excluded",SYNTHETIC
+AFTER,5,2026-11-02,LINE_01,ST01,point_of_use_bin,13,1.9,0,"Line-side two-bin point of use; handler replenishment excluded",SYNTHETIC

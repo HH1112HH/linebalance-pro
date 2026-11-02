@@ -701,3 +701,13 @@ Mỗi lần chạy phải có `RunMetadata`:
 - Quyết định: changeover chỉ đưa vào OEE khi đo theo mốc last good → first good. Changeover 08:00 (15 phút) là ứng viên SMED tiếp theo.
 - Giới hạn: 5 lần mỗi giai đoạn, chưa có video thật; giảm E02/E07 phụ thuộc bệ làm nóng phụ chưa được EHS/Maintenance xác nhận.
 - Phạm vi: chỉ docs/CSV; không thêm changeover API, backend hay `types.ts`. `KPI_SPEC.md` §12.2 ghi định nghĩa docs-only.
+
+### 2026-11-02 — Chạy Module 7 / Layout & Ergonomics (docs-only, synthetic)
+
+- Bổ sung `docs/CASE_STUDY_LAYOUT_ERGONOMICS.md`, `docs/layout_study_before_after.svg` và `docs/data/layout_route_observations.csv`; cập nhật playbook §9.1–9.12 và link trong README.
+- Dùng baseline Module 3 tại ST01 (3 trips/shift × 6 operator-min = 18 operator-min) và 5 route trials synthetic mỗi giai đoạn.
+- Kết quả case: round trip **43.6 → 12.8 m**; time/trip **6.0 → 2.0 phút**; với 3 trips/shift, distance **130.8 → 38.4 m** (−70.64%), operator travel **18 → 6 operator-min** (−66.67%), shared-aisle crossings **6 → 0**.
+- Quyết định: đề xuất line-side two-bin POU + scheduled milk run, giữ nguyên station/routing/WIP cap; không kết luận cần U-shape hoặc re-layout toàn line.
+- Giới hạn: handler replenishment time, tote mass/force, EHS clearance, ergonomics thật và production pilot chưa đo; **không claim net labor/cash saving hoặc safety/output improvement**.
+- Ghi định nghĩa transport route (m và operator-minutes, không cộng chéo) trong `KPI_SPEC.md` §11; docs-only, không phải KPI API.
+- Phạm vi docs-only; không đổi KPI API, backend, `types.ts`, CAD hay feature software. Checklist lịch sử ở CHECKLIST §1 item 10 được giữ nguyên; trạng thái cập nhật ghi tại entry này.

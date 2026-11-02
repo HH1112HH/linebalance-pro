@@ -216,6 +216,7 @@ DEPLOYMENT.md         Render / Netlify deployment and env vars
 | [`docs/IE_OPERATIONS_PLAYBOOK.md`](docs/IE_OPERATIONS_PLAYBOOK.md) | IE / Lean operating playbook |
 | [`docs/CASE_STUDY_QUALITY_RCA.md`](docs/CASE_STUDY_QUALITY_RCA.md) | Quality RCA case study |
 | [`docs/CASE_STUDY_KAIZEN.md`](docs/CASE_STUDY_KAIZEN.md) | Kaizen / cost-saving case study |
+| [`docs/CASE_STUDY_LAYOUT_ERGONOMICS.md`](docs/CASE_STUDY_LAYOUT_ERGONOMICS.md) | Layout, point-of-use flow, and ergonomics case study |
 
 ---
 
