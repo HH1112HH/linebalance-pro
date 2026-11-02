@@ -658,6 +658,27 @@ OEE          = Availability × Performance × Quality
 
 Không suy ra OEE từ machine allocation, số máy available hoặc tổng downtime. Nếu thiếu một trong ba thành phần, ghi `N/A`, không ước lượng.
 
+### 12.1. Ví dụ synthetic PRESS-01 — docs-only
+
+> Không thêm vào API; phần mềm vẫn hiển thị `N/A`. Dữ liệu: `docs/data/oee_machine_log.csv` (SYNTHETIC). Chi tiết: playbook §8.5.
+
+| Thành phần | Công thức | Kết quả ca 2026-10-27 |
+|---|---|---:|
+| Availability | (450 − 25 breakdown − 40 changeover) / 450 | 85.56% |
+| Performance | 40 × 507 / (385 × 60) | 87.79% |
+| Quality | 493 / 507 | 97.24% |
+| OEE | A × P × Q | 73.04% |
+
+**Quy tắc bổ sung:**
+
+- `ideal_cycle_sec` lấy từ spec máy hoặc element máy tự chạy trong time study; **không dùng SAM**, không nhân PR, không có allowance.
+- Minor stop nằm trong Performance, không trừ khỏi run time.
+- Thiếu nguyên liệu (`MATERIAL`) và thiếu người (`MANPOWER`) không nằm trong OEE máy; báo cáo riêng.
+- OEE theo ca tính từ tổng phút và tổng count, không lấy trung bình các OEE theo giờ.
+- P > 100% là lỗi ideal cycle hoặc đơn vị, không phải máy chạy vượt chuẩn.
+- Chỉ áp dụng cho máy là pacer; station do người quyết định nhịp → `N/A`.
+- Không thêm field OEE vào API nếu chưa có quyết định trong `CHECKLIST.md`, test và cập nhật `frontend/src/types.ts`.
+
 ---
 
 ## 12A. Quality case-study metrics — docs-only

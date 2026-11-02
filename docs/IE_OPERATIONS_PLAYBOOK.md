@@ -64,7 +64,7 @@
 | 3 | Lean 8 Wastes | TIMWOODS, Muda/Mura/Muri, 4 cơ sở đo, Pareto, root cause, CSV | §5.1–5.11; `docs/data/waste_observation.csv` | `[x]` knowledge; `[~]` software: không phải feature |
 | 4 | DMAIC & Six Sigma | 5 bước, T07 case study, fishbone/5 Why, Control Plan, DPMO/Z minh họa | §6.1–6.7, §6.5.1; `docs/CASE_STUDY_QUALITY_RCA.md` | `[x]` |
 | 5 | Kaizen A3 & Control Plan | A3, T08 case study, estimated/verified saving, Control Plan | §7.1–7.7; `docs/CASE_STUDY_KAIZEN.md` | `[x]` |
-| 6 | OEE & Downtime | Công thức A × P × Q, downtime events, lưu ý không suy OEE từ allocation | §8.1–8.3; `KPI_SPEC.md` §12 | `[~]` formula only; thiếu A/P/Q data |
+| 6 | OEE & Downtime | A/P/Q, 6 big losses, điều kiện áp dụng và bẫy station thủ công, ví dụ PRESS-01 synthetic, Pareto downtime | §8.1–8.12; `docs/data/oee_machine_log.csv`; `KPI_SPEC.md` §12 | `[x]` knowledge + synthetic; `[~]` software: chưa có OEE API (`N/A`) |
 | 7 | Layout & Ergonomics | Spaghetti, material flow, U-shape, ergonomics checklist (outline) | §9.1–9.2 | `[~]` outline; chưa có case study |
 | 8 | SMED & Changeover | Internal/external setup, changeover study, target (outline) | §10.1–10.2 | `[~]` outline; chưa có case study |
 | 9 | Cross-functional Management | Vai trò Production/Quality/Maintenance/Planning/Warehouse/HR/EHS (outline) | §11.1–11.3 | `[~]` outline; chưa có case study |
@@ -73,7 +73,7 @@
 **Đọc nhanh:**
 
 - **P0 đã đủ nội dung:** Module 1–5.
-- **P1 mới có công thức:** Module 6 (OEE).
+- **P1 có ví dụ synthetic:** Module 6 (OEE); time study xác nhận máy là pacer vẫn cần đo thật.
 - **P1 còn outline:** Module 7–10.
 - **Phần mềm:** optimizer + dashboard + 3 form đã có; Time Study là aggregate; Hourly và 8 Wastes là docs/CSV; OEE để `N/A`.
 - **Case study:** T07/T08 đã xong; không mở rộng software chỉ để biến chúng thành feature.
@@ -1353,24 +1353,232 @@ Payback = 12,000,000 / 11,700,000 = 1.03 months
 
 ## 8. Module 6 — OEE & Downtime <a id="module-6"></a>
 
-### 8.1. Công thức
+### 8.1. Mục tiêu
+
+OEE đo **hiệu quả của một máy khi máy đã được lên lịch chạy**. Nó không đo mức bận rộn và không đo năng lực của cả line. Sau module này phải:
+
+- tính Availability, Performance, Quality và OEE từ log máy theo giờ và theo ca;
+- quy mọi tổn thất về **phút** để đọc và so sánh được;
+- biết khi nào OEE **không áp dụng** (station do người quyết định nhịp);
+- chọn countermeasure cho loss lớn nhất, có owner và KPI.
+
+### 8.2. Khái niệm chính
+
+| Khái niệm | Ý nghĩa | Ghi chú |
+|---|---|---|
+| Planned production time | Thời gian máy được lên lịch sản xuất | Trừ giờ nghỉ theo kế hoạch; ca 480 − 30 break = 450 phút |
+| Downtime (A loss) | Máy không chạy trong thời gian đã lên lịch | Breakdown + changeover |
+| Run time | Planned − downtime | Thời gian máy thực sự ở trạng thái chạy |
+| Minor stop | Dừng ngắn (kẹt, cần gạt, gỡ chỉ) nằm trong run time | Thuộc P, không trừ khỏi run time |
+| Ideal cycle time | Thời gian tối thiểu của máy cho 1 pcs | Lấy từ spec máy hoặc element máy tự chạy; **không allowance, không nhân PR, không phải SAM** |
+| Total count | Số pcs máy xử lý trong run time | Gồm cả pcs lỗi |
+| Good count | Pcs đạt ngay lần đầu tại máy | Rework tính là lỗi (first-pass), đồng nhất với FPY Module 4 |
+
+**6 big losses** và nhóm A/P/Q:
+
+| Loss | Thuộc | Đo bằng | Ví dụ may |
+|---|---|---|---|
+| Breakdown | Availability | phút | Heater ép form trip |
+| Setup / changeover | Availability | phút | Đổi size form |
+| Idling & minor stop | Performance | phút (trong run) | Form kẹt, cần gạt |
+| Reduced speed | Performance | pcs thiếu so với ideal | Máy chạy 45 s/pc thay vì 40 s |
+| Startup / process reject | Quality | pcs | Sản phẩm đầu ca bị cháy |
+| Production defect / rework | Quality | pcs | Ố, bóng, nhăn |
+
+### 8.3. Công thức
 
 ```text
-Availability = Run Time / Planned Production Time
-Performance = (Ideal Cycle Time × Total Count) / Run Time
-Quality = Good Count / Total Count
-OEE = Availability × Performance × Quality
+Availability = Run time / Planned production time
+             = (Planned − Breakdown − Changeover) / Planned
+
+Performance  = (Ideal cycle time × Total count) / Run time
+             = (ideal_sec × total) / (run_min × 60)
+
+Quality      = Good count / Total count
+
+OEE          = Availability × Performance × Quality
 ```
 
-### 8.2. Lưu ý
+**Đồng nhất thức theo thời gian** (dùng để kiểm tra số liệu):
 
-- Chỉ tính OEE khi có đủ runtime, performance, quality.
-- Không gọi machine allocation là machine utilization.
-- Downtime event hiện có trong sample chỉ là nền tảng; chưa đủ OEE.
+```text
+Planned time = Valuable operating time + Quality loss time
+             + Performance loss time + Downtime
 
-### 8.3. Trạng thái
+Valuable operating time = Good count × Ideal cycle time
+Quality loss time       = Defect count × Ideal cycle time
+Performance loss time   = Run time − Total count × Ideal cycle time
+OEE                     = Valuable operating time / Planned time
+```
 
-`[~]` Có công thức nhưng **chưa có đủ synthetic runtime/performance/quality data**. Không tính OEE; hiển thị `N/A`. Không suy OEE từ machine allocation hay tổng downtime.
+**Quy tắc kiểm tra:**
+
+- Nếu **P > 100%**, ideal cycle đang sai (quá cao hoặc sai đơn vị), không phải máy chạy vượt chuẩn. Sửa ideal trước khi đọc kết quả.
+- Nếu đồng nhất thức không khớp, log đang phân loại thời gian sai; không báo OEE.
+
+### 8.4. Khi nào áp dụng OEE — và khi nào không
+
+**Điều kiện để tính OEE cho một máy:**
+
+1. Máy là **pacer** của chu kỳ: thời gian máy chạy ≥ thời gian thao tác tay của người trong cùng chu kỳ. Kiểm tra bằng time study (Module 1).
+2. Có ideal cycle time từ spec máy hoặc element máy tự chạy trong time study.
+3. Có log downtime theo phút và count/good count trong cùng khoảng thời gian.
+
+**Bẫy: tính OEE cho station do người quyết định nhịp.**
+
+Lấy ví dụ OP060 ở Module 1: máy may tự chạy **20.0 s**, nhưng station cycle là **45.0 s** vì người và máy làm tuần tự. Nếu lấy:
+
+```text
+"Performance" = 20.0 / 45.0 = 44.44%
+```
+
+con số này là **pacing loss của người**, không phải performance loss của máy. Cải tiến đúng là standard work và cân bằng thao tác tay (Module 1, 7), không phải bảo trì máy. **Kết luận: OEE = N/A cho station đó**; dùng Station efficiency, LBE và Actual labor efficiency.
+
+**Các bẫy khác:**
+
+- OEE 73% **không** có nghĩa máy bận 73%. Ví dụ §8.5: máy có năng lực 675 pcs/ca, chỉ ra 507 pcs thì loading là 75.1%. Đây là loading, không phải OEE và không phải utilization.
+- OEE cao không chứng minh line đủ hàng. Máy có thể chạy tốt nhưng đứng chờ vật tư (starvation), hoặc ra quá nhiều (overproduction, Module 3). Starvation phải đo riêng, không đổ vào máy.
+- Không suy OEE từ tổng downtime hay từ số máy allocation (`KPI_SPEC.md` §12).
+
+### 8.5. Ví dụ synthetic — PRESS-01 (máy ép form thân áo)
+
+> **Synthetic.** Máy `PRESS-01` (nhóm IRON), `LINE_01`, `BASIC-TEE-001`, ca 1 ngày 2026-10-27. Ideal cycle **40.0 s/pc** (spec giả định, không allowance). Giả định người đặt/lấy form < 40 s để máy là pacer — **chưa xác nhận bằng time study trong bộ dữ liệu này**. Không liên kết với dữ liệu HBI. File: `docs/data/oee_machine_log.csv`.
+
+Planned production time = 450 phút (08:00–12:00 và 12:30–16:00), cùng cấu trúc bucket với Module 2.
+
+**Theo giờ:**
+
+| Giờ | Plan | Breakdown | Changeover | Run | Total | Good | A | P | Q | OEE |
+|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|
+| 08:00–09:00 | 60 | 0 | 15 | 45 | 58 | 57 | 75.00% | 85.93% | 98.28% | 63.33% |
+| 09:00–10:00 | 60 | 0 | 0 | 60 | 80 | 78 | 100.00% | 88.89% | 97.50% | 86.67% |
+| 10:00–11:00 | 60 | 20 | 0 | 40 | 53 | 51 | 66.67% | 88.33% | 96.23% | 56.67% |
+| 11:00–12:00 | 60 | 0 | 0 | 60 | 76 | 73 | 100.00% | 84.44% | 96.05% | 81.11% |
+| 12:30–13:30 | 60 | 0 | 0 | 60 | 80 | 79 | 100.00% | 88.89% | 98.75% | 87.78% |
+| 13:30–14:30 | 60 | 5 | 0 | 55 | 74 | 72 | 91.67% | 89.70% | 97.30% | 80.00% |
+| 14:30–15:30 | 60 | 0 | 25 | 35 | 47 | 46 | 58.33% | 89.52% | 97.87% | 51.11% |
+| 15:30–16:00 | 30 | 0 | 0 | 30 | 39 | 37 | 100.00% | 86.67% | 94.87% | 82.22% |
+
+Lưu ý: OEE theo ca **không** lấy trung bình các OEE theo giờ. Tính lại từ tổng phút và tổng count.
+
+**Theo ca:**
+
+```text
+Planned     = 450 min
+Breakdown   =  25 min   (10:00–11:00: 20; 13:30–14:30: 5)
+Changeover  =  40 min   (08:00–09:00: 15; 14:30–15:30: 25)
+Run         = 385 min
+Total       = 507 pcs;  Good = 493;  Defect = 14
+
+A = 385 / 450                   = 85.56%
+P = 40 × 507 / (385 × 60)       = 87.79%
+Q = 493 / 507                   = 97.24%
+OEE = 85.56% × 87.79% × 97.24%  = 73.04%
+```
+
+**Đồng nhất thức theo thời gian:**
+
+| Thành phần | Phút | % của 450 |
+|---|---:|---:|
+| Valuable operating time (493 × 40 s) | 328.67 | 73.04% |
+| Quality loss (14 × 40 s) | 9.33 | 2.07% |
+| Performance loss (385 − 507 × 40 s) | 47.00 | 10.44% |
+| Downtime (25 breakdown + 40 changeover) | 65.00 | 14.44% |
+| **Tổng** | **450.00** | **100% (làm tròn)** |
+
+Performance loss 47.00 phút gồm **minor stop đo được 23 phút** (2+4+3+6+5+2+0+1) và **24 phút speed/hesitation chưa tách được**. Đây là khoảng trống dữ liệu; không gán nguyên nhân khi chưa đo cycle thực tế.
+
+**Đọc kết quả:**
+
+- Loss lớn nhất là **changeover 40 phút** (61.5% downtime), không phải hỏng máy.
+- Breakdown 25 phút (38.5% downtime) tập trung lúc 10:00–11:00: giờ này A chỉ 66.67%, OEE 56.67%.
+- Performance loss 47 phút là phần lớn thứ hai, nhưng 24 phút chưa có nguyên nhân.
+- Quality chỉ mất 9.33 phút. 14 pcs lỗi không phải ưu tiên đầu tiên.
+
+### 8.6. Countermeasure theo loss
+
+| Loss | Phút | Hành động | Owner | KPI |
+|---|---:|---|---|---|
+| Changeover | 40 | Chuẩn bị form size kế tiếp trước khi dừng (external setup); cố định vị trí và nhiệt độ; checklist đổi size | Line Engineer + Maintenance | Changeover min; mục tiêu do SMED (Module 8) quyết định |
+| Breakdown (heater, van hơi) | 25 | PM heater và van hơi; kiểm tra đầu ca; ghi log theo nguyên nhân | Maintenance | Breakdown min/ca; số lần trip |
+| Minor stop | 23 | Quay video form jam; xác định nguyên nhân; cải tiến guide | IE | Số lần minor stop/ca |
+| Speed / hesitation | 24 (chưa tách) | Đo cycle thực tế bằng video hoặc time study trên nhiều cycle | IE | Cycle thực tế so với 40 s |
+| Quality | 9.33 (14 pcs) | Kiểm nhiệt độ sau startup và sau changeover; ghi defect theo loại | Quality + Operator | Defect rate, first-pass |
+
+**Nguyên tắc:** sửa loss lớn nhất trước, đo lại, rồi mới chuyển sang loss kế tiếp. Không tối ưu P khi 65 phút downtime chưa được xử lý.
+
+### 8.7. Dữ liệu cần có và mapping loss_category
+
+Log OEE cần tối thiểu các trường: `date`, `machine_id`, `hour_start`, `hour_end`, `planned_minutes`, `breakdown_minutes`, `changeover_minutes`, `minor_stop_minutes`, `ideal_cycle_sec`, `total_count`, `good_count`, `data_policy`.
+
+Mapping từ `loss_category` của Module 2 (`docs/data/hourly_actuals.csv`):
+
+| loss_category | Xử lý trong OEE máy |
+|---|---|
+| MACHINE | Breakdown → Availability |
+| CHANGEOVER | Changeover → Availability |
+| QUALITY | Chỉ tính một lần: nếu pcs lỗi đã trừ khỏi good count thì không trừ thêm thời gian |
+| MATERIAL, MANPOWER | Starvation hoặc thiếu người → **không** tính vào OEE máy; báo cáo riêng |
+| OTHER | Phải phân loại trước khi dùng; không đưa vào OEE |
+
+**Quy tắc:** không đếm hai lần cùng một tổn thất ở cả thời gian và số lượng. Cùng nguyên tắc với Module 3: không cộng operator-minutes, machine-minutes và pcs.
+
+### 8.8. Câu hỏi phỏng vấn
+
+1. OEE là gì và gồm những thành phần nào?
+2. Vì sao em không tính OEE cho station thủ công?
+3. Ideal cycle time lấy từ đâu? Vì sao không dùng SAM?
+4. Performance lớn hơn 100% nghĩa là gì?
+5. Minor stop nằm ở Availability hay Performance? Vì sao?
+6. OEE 73% có nghĩa là máy bận 73% không?
+7. Làm sao tách changeover khỏi breakdown trong log?
+8. OEE cao nhưng line thiếu hàng, em kết luận gì?
+
+### 8.9. Model answers
+
+**Câu 2 — Vì sao không tính OEE cho station thủ công?**
+
+> OEE đo hiệu quả của máy khi máy là pacer. Với OP060 trong ví dụ, máy tự chạy 20 giây nhưng station cycle là 45 giây, vì người và máy làm tuần tự. Nếu em chia 20 cho 45 thì ra 44%, nhưng con số đó phản ánh thao tác tay, không phải máy hỏng hay chạy chậm. Em sẽ dùng station efficiency và cân bằng thao tác, không đổ cho bảo trì.
+
+**Câu 3 — Ideal cycle lấy ở đâu, vì sao không dùng SAM?**
+
+> Ideal cycle là thời gian tối thiểu của máy cho một pcs. Em lấy từ spec máy hoặc element máy tự chạy trong time study, không có allowance và không nhân PR. SAM có allowance cho người và nhu cầu cá nhân, nên SAM lớn hơn thời gian máy tối thiểu. Nếu dùng SAM làm ideal, P sẽ bị thổi phồng.
+
+**Câu 5 — Minor stop nằm ở A hay P?**
+
+> Ở P. Minor stop nằm trong run time: máy vẫn ở trạng thái sẵn sàng nhưng ra ít pcs hơn chuẩn. Nếu trừ nó khỏi run time, em sẽ đánh giá A quá thấp và khó phân biệt với breakdown. Breakdown và changeover mới là tổn thất Availability.
+
+**Câu 8 — OEE cao nhưng line thiếu hàng**
+
+> OEE chỉ nói máy làm tốt khi được lên lịch chạy. Nếu line thiếu hàng, nguyên nhân có thể là starvation, thiếu người hoặc planning. Em tách MATERIAL và MANPOWER khỏi OEE, báo cáo riêng, và không kết luận máy ổn chỉ vì OEE cao.
+
+### 8.10. Giới hạn
+
+- Một máy, một ca, dữ liệu synthetic; không đại diện PRESS-01 thật hay HBI.
+- Giả định máy là pacer chưa được xác nhận bằng time study.
+- 24 phút speed/hesitation chưa tách được; cần video hoặc log cycle.
+- Chưa có planned external stop (starvation) để áp dụng đầy đủ định nghĩa planned production time.
+- Không quy đổi OEE hay downtime thành tiền (quy tắc Module 5).
+
+### 8.11. Checklist hoàn thành
+
+- [x] Có định nghĩa planned production time, A/P/Q và ideal cycle time.
+- [x] Có bảng 6 big losses map sang A/P/Q.
+- [x] Có công thức và đồng nhất thức theo thời gian.
+- [x] Có điều kiện áp dụng OEE và ví dụ station thủ công bị sai (44.44%).
+- [x] Có log synthetic theo giờ `docs/data/oee_machine_log.csv`, ghi rõ SYNTHETIC.
+- [x] Tính A/P/Q/OEE theo giờ và theo ca; đồng nhất thức khớp 450.00 phút.
+- [x] Có Pareto downtime và countermeasure với owner/KPI.
+- [x] Có mapping loss_category và quy tắc không đếm hai lần.
+- [x] Có ít nhất 3 câu trả lời phỏng vấn mẫu.
+- [x] Không đưa OEE vào API; phần mềm vẫn hiển thị `N/A`.
+- [x] Không gọi OEE là machine utilization hay loading.
+- [ ] Time study xác nhận PRESS-01 là pacer — cần đo thật.
+- [ ] Tách 24 phút speed/hesitation — cần video hoặc cycle log.
+
+### 8.12. Trạng thái
+
+`[x]` knowledge và ví dụ synthetic đầy đủ. `[~]` software: chưa có OEE trong backend/API; phần mềm hiển thị `N/A`. Hai mục chưa tick ở §8.11 cần dữ liệu thật; đây không phải lỗi nội dung.
 
 ---
 

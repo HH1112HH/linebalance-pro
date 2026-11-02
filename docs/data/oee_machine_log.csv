@@ -1,0 +1,9 @@
+date,shift_id,line_id,machine_id,machine_type,hour_start,hour_end,planned_minutes,breakdown_minutes,changeover_minutes,minor_stop_minutes,ideal_cycle_sec,total_count,good_count,defect_count,note,data_policy
+2026-10-27,SHIFT_01,LINE_01,PRESS-01,IRON,08:00,09:00,60,0,15,2,40.0,58,57,1,"Warm-up and form set-up after shift start",SYNTHETIC
+2026-10-27,SHIFT_01,LINE_01,PRESS-01,IRON,09:00,10:00,60,0,0,4,40.0,80,78,2,"Steady run",SYNTHETIC
+2026-10-27,SHIFT_01,LINE_01,PRESS-01,IRON,10:00,11:00,60,20,0,3,40.0,53,51,2,"Heater trip - breakdown",SYNTHETIC
+2026-10-27,SHIFT_01,LINE_01,PRESS-01,IRON,11:00,12:00,60,0,0,6,40.0,76,73,3,"Form jam - minor stops",SYNTHETIC
+2026-10-27,SHIFT_01,LINE_01,PRESS-01,IRON,12:30,13:30,60,0,0,5,40.0,80,79,1,"Restart after meal break",SYNTHETIC
+2026-10-27,SHIFT_01,LINE_01,PRESS-01,IRON,13:30,14:30,60,5,0,2,40.0,74,72,2,"Steam valve fault - short stop",SYNTHETIC
+2026-10-27,SHIFT_01,LINE_01,PRESS-01,IRON,14:30,15:30,60,0,25,0,40.0,47,46,1,"Size change to next form",SYNTHETIC
+2026-10-27,SHIFT_01,LINE_01,PRESS-01,IRON,15:30,16:00,30,0,0,1,40.0,39,37,2,"Last 30 minutes",SYNTHETIC

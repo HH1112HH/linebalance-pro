@@ -680,3 +680,13 @@ Mỗi lần chạy phải có `RunMetadata`:
 - Thêm **§7.6 Sensitivity** vào case study: payback **0.88–1.23 tháng** khi rate 50–70k VND/h và 22–26 ngày; break-even rate **61,538 VND/h**; break-even **26.67 ngày**; không redeploy → cash saving = 0.
 - Cập nhật A3 Results ghi cả **estimated** và **synthetic verified 22 ngày** (9.9M, net −2.1M), không chỉ con số estimated.
 - Phạm vi docs-only; không đổi API/MILP/KPI contract.
+
+### 2026-11-02 — Chạy Module 6 / OEE & Downtime (docs-only, synthetic)
+
+- Thêm `docs/data/oee_machine_log.csv`: log synthetic 8 bucket cho máy `PRESS-01` (IRON), ca 2026-10-27, ideal cycle 40.0 s/pc, planned 450 phút, ghi rõ `SYNTHETIC`.
+- Kết quả tính lại từ CSV: Availability **85.56%**, Performance **87.79%**, Quality **97.24%**, OEE **73.04%**; đồng nhất thức theo thời gian khớp 450.00 phút (valuable 328.67 + quality 9.33 + performance 47.00 + downtime 65.00).
+- Loss lớn nhất: changeover 40 phút (61.5% downtime), breakdown 25 phút (38.5%); performance loss 47 phút trong đó minor stop 23 phút đo được và 24 phút speed/hesitation chưa tách.
+- Quyết định: ideal cycle lấy từ spec/element máy, **không dùng SAM**; minor stop thuộc P; `MATERIAL`/`MANPOWER` không tính vào OEE máy.
+- Quyết định: OEE chỉ áp dụng cho máy là pacer. Station thủ công (ví dụ OP060 trong Module 1: máy 20 s, station 45 s, tỉ lệ 44.44%) bị đánh dấu `N/A`, không tính OEE.
+- Ghi rõ giới hạn: giả định máy là pacer chưa được time study xác nhận; chưa có API OEE (vẫn `N/A` trong phần mềm).
+- Phạm vi: chỉ docs/CSV; không thay đổi backend, API, `types.ts` hay KPI đã triển khai. `KPI_SPEC.md` §12.1 ghi công thức docs-only.
