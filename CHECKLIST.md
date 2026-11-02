@@ -671,3 +671,12 @@ Mỗi lần chạy phải có `RunMetadata`:
 - Giả định: 1 cơ hội/áo, inspection độc lập, dữ liệu synthetic, không cộng 1.5σ shift; không claim production significance hoặc “Six Sigma certified”.
 - Phạm vi: chỉ docs/case study; không thêm API, model hoặc test code. `KPI_SPEC.md` §12A ghi công thức docs-only, không thay đổi KPI contract.
 - Lý do: Module 4 cần phần Six Sigma định lượng; case study trước đây chỉ có defect rate/FPY, chưa có DPMO/sigma/test.
+
+### 2026-11-02 — Chạy Module 5 / T08 Kaizen A3
+
+- Verify T08 từ `sample_result_A_stretch_420.json` và `docs/data/kaizen_cost_model.csv`: baseline **24/24/61.0s**; after **23/23/58.0s**; LBE **72.34 → 79.39%**; capacity **376.2 → 395.7 pcs/shift**; target 420 achievement **94.21%**; estimated saving **11.7M VND/month**; payback **1.03 tháng**.
+- Sửa README benchmark scenario A thành **“23 used (24 available)”** để khớp `workers_used = 23` trong sample result.
+- Sửa unit labor cost reduction từ **8.89% → 8.88%** (2.55 / 28.71) để khớp số làm tròn.
+- Thêm **§7.6 Sensitivity** vào case study: payback **0.88–1.23 tháng** khi rate 50–70k VND/h và 22–26 ngày; break-even rate **61,538 VND/h**; break-even **26.67 ngày**; không redeploy → cash saving = 0.
+- Cập nhật A3 Results ghi cả **estimated** và **synthetic verified 22 ngày** (9.9M, net −2.1M), không chỉ con số estimated.
+- Phạm vi docs-only; không đổi API/MILP/KPI contract.

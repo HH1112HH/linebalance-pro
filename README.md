@@ -64,10 +64,10 @@ Synthetic 40-operation line, 60 s solver limit, 2 solver threads:
 
 | Scenario | Workers | Status | Bottleneck | Stations | Capacity @ 85% | Target |
 |---|---:|---|---:|---:|---:|---|
-| A — stretch | 24 | `OPTIMAL` | 58.0 s | 23 | 395.7 | 420 not met |
+| A — stretch | 23 used (24 available) | `OPTIMAL` | 58.0 s | 23 | 395.7 | 420 not met |
 | B — feasible | 25 used (26 available) | `OPTIMAL` | 56.0 s | 25 | 409.8 | 400 met |
 
-Target 420 requires a bottleneck of at most 54.64 s. With 24 workers, 58.0 s is the **proven optimum**, not a timeout. Results depend on hardware, solver version, and the configured time limit.
+Target 420 requires a bottleneck of at most 54.64 s. With 24 available workers (23 used), 58.0 s is the **proven optimum**, not a timeout. Results depend on hardware, solver version, and the configured time limit.
 
 ---
 

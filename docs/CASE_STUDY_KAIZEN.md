@@ -19,7 +19,7 @@
 | Capacity / shift | 376.2 pcs | 395.7 pcs | +19.5 pcs | Tăng 5.18% |
 | Target 420 achievement | 89.58% | 94.21% | +4.63 pp | **Vẫn chưa đạt 420** |
 | Output / operator | 15.68 pcs | 17.20 pcs | +1.52 pcs | Tăng 9.75% |
-| Labor minutes / pc | 28.71 | 26.16 | −2.55 | Giảm 8.89% |
+| Labor minutes / pc | 28.71 | 26.16 | −2.55 | Giảm 8.88% |
 | Estimated labor saving | — | 11.7 triệu VND/tháng | — | Nếu worker được redeploy |
 | Implementation cost | — | 12.0 triệu VND | — | Chi phí synthetic |
 | Payback | — | 1.03 tháng | — | Theo saving estimate |
@@ -136,7 +136,7 @@ labor minutes per piece  = 24 × 450 / 376.2 = 28.71 min/pc
 | Workers on line | 24 | ≤24 | Có thể redeploy 1 |
 | Target 420 | 89.58% | Ghi rõ nếu chưa đạt | Không claim feasible nếu chưa chứng minh |
 
-**Không đặt mục tiêu “đạt 420”** vì với 24 worker, bottleneck tối thiểu được chứng minh là 58.0s, cao hơn Effective Takt 54.64s. Target 420 cần bottleneck ≤54.64s.
+**Không đặt mục tiêu “đạt 420”** vì với 24 worker available, bottleneck tối thiểu được chứng minh là 58.0s, cao hơn Effective Takt 54.64s. Target 420 cần bottleneck ≤54.64s.
 
 ---
 
@@ -311,7 +311,7 @@ Unit labor cost after
     = 26,160 VND/pc
 
 Unit cost reduction
-    = 2,550 VND/pc (8.89%)
+    = 2,550 VND/pc (8.88%)
 ```
 
 **Cảnh báo:** 2,550 VND/pc × 10,288 pcs/month = 26.2 triệu VND/month **không phải cash saving**, vì phần lớn đến từ việc sản xuất thêm pcs. Chỉ monetize khi số pcs tăng thêm được bán/được chấp nhận. Cash saving thực tế từ giảm 1 worker là **11.7 triệu VND/month**.
@@ -347,6 +347,26 @@ Unit cost reduction
 - Không claim “giảm 1 worker” nếu worker vẫn ở line.
 - Không claim saving nếu không có redeploy confirmation.
 
+### 7.6. Sensitivity — saving và payback theo giả định
+
+```text
+Saving/month = workers_reduced × paid_hours × labor_rate × working_days
+Payback      = implementation_cost / saving_month
+```
+
+| Labor rate (VND/h) | Days/month | Saving/month | Net month 1 | Payback |
+|---:|---:|---:|---:|---:|
+| 50,000 | 26 | 9,750,000 | −2,250,000 | 1.23 |
+| 60,000 | 26 | 11,700,000 | −300,000 | 1.03 |
+| 70,000 | 26 | 13,650,000 | +1,650,000 | 0.88 |
+| 60,000 | 22 | 9,900,000 | −2,100,000 | 1.21 |
+
+- **Break-even labor rate** tại 26 ngày: `12,000,000 / (7.5 × 26) = 61,538 VND/h`.
+- **Break-even working days** tại 60,000 VND/h: `12,000,000 / (7.5 × 60,000) = 26.67 ngày`.
+- **Nếu không redeploy:** cash saving = 0, không có payback; chỉ có capacity gain +19.5 pcs/shift.
+
+**Cách đọc:** Payback 0.88–1.23 tháng là sensitivity của **estimated** saving, không phải cam kết. Mọi con số phải gắn với labor rate, số ngày và redeploy thực tế; verified saving vẫn cần payroll/timekeeping và Finance xác nhận.
+
 ---
 
 ## 8. A3 one-page
@@ -359,7 +379,7 @@ Unit cost reduction
 | **Root cause** | First-fit chỉ feasible, không global balance; operation cuối dồn ST24; thiếu rebalance định kỳ sau style change. |
 | **Countermeasures** | MILP/HiGHS rebalance; tách operation cuối; redeploy 1 worker; standard work/training; daily control. |
 | **Implementation plan** | Day 1 data validation; Day 2 solve + layout; Day 3 pilot + redeploy; Day 4 standardize; Day 5 review. |
-| **Results** | 23/23/58.0s; LBE 79.39%; capacity 395.7; target 420 achievement 94.21%; labor saving estimated 11.7M VND/month; payback 1.03 months. |
+| **Results** | 23/23/58.0s; LBE 79.39%; capacity 395.7; target 420 achievement 94.21%; estimated saving 11.7M VND/month; synthetic verified 22 ngày 9.9M, net −2.1M; payback estimated 1.03 tháng. |
 | **Follow-up** | Control Plan; target 420 vẫn mở; xem xét 26-worker scenario hoặc giảm SAM; audit weekly. |
 
 ---
@@ -402,7 +422,7 @@ Target 420 <90% trong 2 ngày
 
 ### Câu 2 — Vì sao target 420 vẫn không đạt?
 
-> Vì bottleneck 58.0s vẫn cao hơn Effective Takt 54.64s. Với 24 worker, 58.0s là optimum đã chứng minh; muốn đạt 420 phải giảm bottleneck xuống ≤54.64s, tăng thêm worker, hoặc giảm SAM bằng cải tiến method. Tôi không claim 420 feasible khi chưa có bằng chứng.
+> Vì bottleneck 58.0s vẫn cao hơn Effective Takt 54.64s. Với 24 worker available (optimizer dùng 23), 58.0s là optimum đã chứng minh; muốn đạt 420 phải giảm bottleneck xuống ≤54.64s, tăng thêm worker, hoặc giảm SAM bằng cải tiến method. Tôi không claim 420 feasible khi chưa có bằng chứng.
 
 ### Câu 3 — Saving 11.7 triệu VND/tháng có thật không?
 
@@ -456,6 +476,8 @@ Target 420 <90% trong 2 ngày
 - [x] Có A3 một trang.
 - [x] Có Control Plan với owner/frequency/reaction.
 - [x] Có estimated saving và synthetic verified saving.
+- [x] Có sensitivity payback theo labor rate/số ngày, break-even rate/days.
+- [x] A3 ghi cả estimated và synthetic verified, không chỉ con số đẹp.
 - [x] Có điều kiện redeploy rõ ràng.
 - [x] Không claim target 420 đạt.
 - [x] Không claim OEE/machine utilization.

@@ -1292,6 +1292,8 @@ Net month 1 = −300,000 VND
 Payback = 12,000,000 / 11,700,000 = 1.03 months
 ```
 
+**Sensitivity:** payback **0.88–1.23 tháng** khi labor rate 50–70k VND/h và 22–26 ngày; break-even rate **61,538 VND/h** tại 26 ngày; break-even **26.67 ngày** tại 60k/h. Chi tiết: `docs/CASE_STUDY_KAIZEN.md` §7.6.
+
 **Ba quy tắc bắt buộc:**
 
 1. **Estimated saving** dựa trên giả định; **verified saving** phải dựa trên payroll/timekeeping, redeploy confirmation và Finance xác nhận.
@@ -1339,6 +1341,7 @@ Payback = 12,000,000 / 11,700,000 = 1.03 months
 - [x] Có A3 một trang cho T08.
 - [x] Có before/after cùng đơn vị, cùng kỳ.
 - [x] Có estimated và synthetic verified saving.
+- [x] Có sensitivity payback theo labor rate/số ngày và break-even.
 - [x] Có điều kiện redeploy rõ ràng.
 - [x] Có Control Plan với owner/frequency/reaction.
 - [x] Không claim target 420 đạt.
