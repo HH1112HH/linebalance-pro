@@ -1,11 +1,59 @@
 from __future__ import annotations
 
+from io import BytesIO
+
 from fastapi.testclient import TestClient
+from openpyxl import load_workbook
 
 from backend.app import main as main_module
 from backend.app.main import app
 
 client = TestClient(app)
+
+
+def _small_optimize_payload() -> dict:
+    return {
+        "line_name": "API test line",
+        "style_code": "TEST-001",
+        "config": {
+            "shift_minutes": 480,
+            "break_minutes": 30,
+            "target_qty": 60,
+            "planned_efficiency": 0.85,
+            "max_workers": 2,
+            "solver_time_limit_sec": 10,
+        },
+        "operations": [
+            {
+                "id": "OP1",
+                "name": "Manual operation",
+                "sam_sec": 20.0,
+                "skill_code": "SEWING",
+                "skill_required": 1,
+                "sequence": 1,
+            },
+            {
+                "id": "OP2",
+                "name": "Machine operation",
+                "sam_sec": 30.0,
+                "predecessors": ["OP1"],
+                "machine_type": "SINGLE",
+                "skill_code": "SEWING",
+                "skill_required": 1,
+                "sequence": 2,
+            },
+        ],
+        "workers": [
+            {
+                "id": "W1",
+                "name": "Worker 1",
+                "skills": {"OP1": 2, "OP2": 2},
+                "machine_types": ["SINGLE"],
+            },
+            {"id": "W2", "name": "Worker 2", "skills": {"OP1": 2}},
+        ],
+        "machines": [{"id": "M1", "machine_type": "SINGLE", "capacity": 1}],
+    }
 
 
 def test_health_reports_solver_and_public_limits():
@@ -90,51 +138,7 @@ def test_time_study_endpoint_calculates_and_marks_draft():
 
 
 def test_optimize_endpoint_returns_solution_and_kpis():
-    response = client.post(
-        "/api/optimize",
-        json={
-            "line_name": "API test line",
-            "style_code": "TEST-001",
-            "config": {
-                "shift_minutes": 480,
-                "break_minutes": 30,
-                "target_qty": 60,
-                "planned_efficiency": 0.85,
-                "max_workers": 2,
-                "solver_time_limit_sec": 10,
-            },
-            "operations": [
-                {
-                    "id": "OP1",
-                    "name": "Manual operation",
-                    "sam_sec": 20.0,
-                    "skill_code": "SEWING",
-                    "skill_required": 1,
-                    "sequence": 1,
-                },
-                {
-                    "id": "OP2",
-                    "name": "Machine operation",
-                    "sam_sec": 30.0,
-                    "predecessors": ["OP1"],
-                    "machine_type": "SINGLE",
-                    "skill_code": "SEWING",
-                    "skill_required": 1,
-                    "sequence": 2,
-                },
-            ],
-            "workers": [
-                {
-                    "id": "W1",
-                    "name": "Worker 1",
-                    "skills": {"OP1": 2, "OP2": 2},
-                    "machine_types": ["SINGLE"],
-                },
-                {"id": "W2", "name": "Worker 2", "skills": {"OP1": 2}},
-            ],
-            "machines": [{"id": "M1", "machine_type": "SINGLE", "capacity": 1}],
-        },
-    )
+    response = client.post("/api/optimize", json=_small_optimize_payload())
 
     assert response.status_code == 200
     payload = response.json()
@@ -143,6 +147,36 @@ def test_optimize_endpoint_returns_solution_and_kpis():
     assert payload["kpis"] is not None
     assert payload["takt_time_sec"] == 450.0
     assert payload["effective_takt_time_sec"] == 382.5
+
+
+def test_export_endpoint_returns_readable_workbook():
+    payload = _small_optimize_payload()
+    optimized = client.post("/api/optimize", json=payload)
+    assert optimized.status_code == 200
+
+    response = client.post(
+        "/api/export",
+        json={"request": payload, "result": optimized.json()},
+    )
+
+    assert response.status_code == 200
+    assert response.headers["content-type"] == (
+        "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+    )
+    assert response.content[:2] == b"PK"
+    assert "linebalance_TEST-001.xlsx" in response.headers["content-disposition"]
+
+    workbook = load_workbook(BytesIO(response.content))
+    assert set(workbook.sheetnames) == {
+        "Summary",
+        "Assignment",
+        "Station_KPI",
+        "Worker_Skill",
+        "Warnings",
+    }
+    summary = workbook["Summary"]
+    assert summary["A1"].value == "LineBalance Pro — Optimization Report"
+    assert summary["B4"].value == "API test line"
 
 
 def test_body_limit_returns_413(monkeypatch):

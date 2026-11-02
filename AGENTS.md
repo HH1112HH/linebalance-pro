@@ -165,6 +165,7 @@ powershell -ExecutionPolicy Bypass -File scripts/verify.ps1
 - Test KPI mirror theo checklist trong `KPI_SPEC.md` §14.
 - Test API: health, sample, optimize, actuals, time study, 413, 429; concurrency nếu có thể.
 - Backend phải pass `ruff check`, `ruff format --check` và `mypy`.
+- Coverage backend tối thiểu **80%** (`pytest-cov`, cấu hình trong `pytest.ini`).
 - Frontend phải pass `npm run lint`, `npm run format:check` và `npm run build` (đã gồm `tsc --noEmit`).
 - Thay đổi UI lớn: chạy `frontend/scripts/ui-check.mjs` và `responsive-check.mjs`.
 - Trước khi báo done: chạy `scripts/verify.ps1` và ghi lại command + kết quả.

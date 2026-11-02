@@ -127,6 +127,7 @@ CI (`.github/workflows/ci.yml`) runs two parallel jobs on every push to `main` a
 | TypeScript / React | ESLint 10 + typescript-eslint | [`frontend/eslint.config.js`](frontend/eslint.config.js) |
 | Frontend formatting | Prettier | [`frontend/.prettierrc.json`](frontend/.prettierrc.json) |
 | Tests | pytest + FastAPI TestClient | [`pytest.ini`](pytest.ini) |
+| Coverage | pytest-cov, minimum 80% | [`pytest.ini`](pytest.ini) |
 
 ---
 
