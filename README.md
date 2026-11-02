@@ -73,7 +73,7 @@ python -m venv .venv
 # macOS / Linux
 source .venv/bin/activate
 
-pip install -r backend/requirements.txt
+pip install -r backend/requirements-dev.txt   # includes test dependencies
 uvicorn backend.app.main:app --reload --port 8000
 ```
 
