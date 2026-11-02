@@ -15,7 +15,7 @@ concurrency:
 
 jobs:
   backend:
-    name: Backend · pytest (Python 3.12)
+    name: Backend - pytest (Python 3.12)
     runs-on: ubuntu-latest
     timeout-minutes: 15
 
@@ -49,7 +49,7 @@ jobs:
         run: python -m pytest
 
   frontend:
-    name: Frontend · typecheck + build (Node 22)
+    name: Frontend - typecheck + build (Node 22)
     runs-on: ubuntu-latest
     timeout-minutes: 10
 
