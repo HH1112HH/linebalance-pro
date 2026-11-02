@@ -36,7 +36,9 @@ class Operation(BaseModel):
     @field_validator("predecessors")
     @classmethod
     def unique_predecessors(cls, value: list[str]) -> list[str]:
-        return list(dict.fromkeys(item.strip() for item in value if item and item.strip()))
+        return list(
+            dict.fromkeys(item.strip() for item in value if item and item.strip())
+        )
 
     @field_validator("machine_type", mode="before")
     @classmethod
@@ -82,7 +84,9 @@ class Worker(BaseModel):
         if value is None:
             return {}
         if not isinstance(value, dict):
-            raise TypeError("skills must be a mapping of operation_id/skill_code to grade 0..3")
+            raise TypeError(
+                "skills must be a mapping of operation_id/skill_code to grade 0..3"
+            )
         grades = {"A": 3, "B": 2, "C": 1, "NONE": 0, "": 0}
         result: dict[str, int] = {}
         for raw_key, raw_grade in value.items():
@@ -91,10 +95,7 @@ class Worker(BaseModel):
                 continue
             if isinstance(raw_grade, str):
                 text = raw_grade.strip().upper()
-                if text in grades:
-                    grade = grades[text]
-                else:
-                    grade = int(float(text))
+                grade = grades[text] if text in grades else int(float(text))
             else:
                 grade = int(raw_grade)
             result[key] = max(0, min(3, grade))
@@ -254,7 +255,9 @@ class OptimizeRequest(BaseModel):
     actuals: ProductionActuals | None = None
     headcount_standard: HeadcountStandard | None = None
     baseline_assignment: BaselineAssignment | None = None
-    daily_actuals: list[DailyProductionActual] = Field(default_factory=list, max_length=31)
+    daily_actuals: list[DailyProductionActual] = Field(
+        default_factory=list, max_length=31
+    )
     downtime_events: list[DowntimeEvent] = Field(default_factory=list, max_length=500)
 
 
@@ -486,7 +489,9 @@ class ReadinessItem(BaseModel):
     key: str = Field(min_length=1, max_length=80)
     label: str = Field(min_length=1, max_length=200)
     required: bool = True
-    status: Literal["NOT_STARTED", "IN_PROGRESS", "COMPLETED", "BLOCKED"] = "NOT_STARTED"
+    status: Literal["NOT_STARTED", "IN_PROGRESS", "COMPLETED", "BLOCKED"] = (
+        "NOT_STARTED"
+    )
     note: str = Field(default="", max_length=500)
 
 

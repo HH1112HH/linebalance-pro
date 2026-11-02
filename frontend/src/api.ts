@@ -54,15 +54,14 @@ export function analyzeActuals(payload: SampleRequest): Promise<ActualsAnalysis>
   return requestJson<ActualsAnalysis>("/api/actuals/analyze", jsonInit(payload));
 }
 
-export function calculateTimeStudy(
-  payload: TimeStudyRecord,
-): Promise<TimeStudyResult> {
+export function calculateTimeStudy(payload: TimeStudyRecord): Promise<TimeStudyResult> {
   return requestJson<TimeStudyResult>("/api/time-study/calculate", jsonInit(payload));
 }
 
-export async function exportWorkbook(
-  payload: { request: SampleRequest; result: OptimizeResult },
-): Promise<Blob> {
+export async function exportWorkbook(payload: {
+  request: SampleRequest;
+  result: OptimizeResult;
+}): Promise<Blob> {
   const response = await fetch(`${API_BASE}/api/export`, jsonInit(payload));
   if (!response.ok) {
     throw new Error(await parseError(response));

@@ -63,12 +63,8 @@ export default function MetadataPanel({ result }: Props) {
         <span>
           <strong>{warnings.length}</strong> warnings
         </span>
-        <span className={critical > 0 ? "delta-bad" : ""}>
-          {critical} critical
-        </span>
-        <span className={warning > 0 ? "delta-warn" : ""}>
-          {warning} warning
-        </span>
+        <span className={critical > 0 ? "delta-bad" : ""}>{critical} critical</span>
+        <span className={warning > 0 ? "delta-warn" : ""}>{warning} warning</span>
         <span>{result.diagnostics.feasible ? "Feasible" : "Not feasible"}</span>
       </div>
 
@@ -89,9 +85,9 @@ export default function MetadataPanel({ result }: Props) {
       ) : null}
 
       <p className="panel-footnote">
-        This public demo uses synthetic data only. The sample baseline is an
-        input, not an optimizer output. Scenario write/delete is disabled on the
-        API; saved snapshots stay in this browser.
+        This public demo uses synthetic data only. The sample baseline is an input, not
+        an optimizer output. Scenario write/delete is disabled on the API; saved
+        snapshots stay in this browser.
       </p>
     </section>
   );

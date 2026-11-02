@@ -28,7 +28,9 @@ export default function BaselinePanel({ result }: Props) {
             <h2 id="baseline-title">Baseline comparison</h2>
           </div>
         </div>
-        <div className="empty-state">No baseline provided. Only optimized results are shown.</div>
+        <div className="empty-state">
+          No baseline provided. Only optimized results are shown.
+        </div>
       </section>
     );
   }
@@ -43,7 +45,9 @@ export default function BaselinePanel({ result }: Props) {
             <h2 id="baseline-title">Baseline comparison</h2>
           </div>
         </div>
-        <div className="empty-state">No baseline provided. Only optimized results are shown.</div>
+        <div className="empty-state">
+          No baseline provided. Only optimized results are shown.
+        </div>
       </section>
     );
   }
@@ -151,8 +155,7 @@ export default function BaselinePanel({ result }: Props) {
           <tbody>
             {rows.map((row) => {
               const delta = row.after - (row.before ?? 0);
-              const good =
-                row.direction === "lower" ? delta < 0 : delta > 0;
+              const good = row.direction === "lower" ? delta < 0 : delta > 0;
               const flat = Math.abs(delta) < 0.005;
               return (
                 <tr key={row.label}>
@@ -178,9 +181,9 @@ export default function BaselinePanel({ result }: Props) {
       </div>
 
       <p className="panel-footnote">
-        Baseline is a synthetic first-fit current-state layout, not an optimizer
-        output. Deltas are optimized minus baseline; for bottleneck, idle and
-        overload, a negative delta is an improvement.
+        Baseline is a synthetic first-fit current-state layout, not an optimizer output.
+        Deltas are optimized minus baseline; for bottleneck, idle and overload, a
+        negative delta is an improvement.
       </p>
     </section>
   );

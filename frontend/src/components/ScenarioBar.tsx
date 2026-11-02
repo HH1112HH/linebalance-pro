@@ -29,8 +29,8 @@ export default function ScenarioBar({
       <div className="scenario-intro">
         <span className="eyebrow">Planning scenario</span>
         <p>
-          Same 40-operation routing, SAM, machines and synthetic baseline.
-          Only HC availability and target change.
+          Same 40-operation routing, SAM, machines and synthetic baseline. Only HC
+          availability and target change.
         </p>
       </div>
 

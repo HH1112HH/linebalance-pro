@@ -152,7 +152,9 @@ WORKERS: list[Worker] = [
 
 MACHINES: list[Machine] = [
     *[
-        Machine(id=f"OL-{index:02d}", machine_type="OVERLOCK", available=True, capacity=1)
+        Machine(
+            id=f"OL-{index:02d}", machine_type="OVERLOCK", available=True, capacity=1
+        )
         for index in range(1, 9)
     ],
     *[

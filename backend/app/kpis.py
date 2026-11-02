@@ -42,9 +42,7 @@ def build_station(
         standard_utilization_pct=round(utilization, 2),
         idle_sec=round(max(0.0, effective_takt_time_sec - standard_load), 3),
         overload_sec=round(max(0.0, standard_load - effective_takt_time_sec), 3),
-        capacity_pcs_h=round(
-            safe_div(3600.0 * planned_efficiency, standard_load), 2
-        ),
+        capacity_pcs_h=round(safe_div(3600.0 * planned_efficiency, standard_load), 2),
         status=station_status(utilization, is_bottleneck),
     )
 
@@ -89,18 +87,11 @@ def compute_kpis(
 
     # Planned labor utilization at demand takt:
     # standard minutes produced at target / paid minutes at target pace.
-    planned_labor_utilization = pct(
-        total_planning_sam, workers_used * takt_time_sec
-    )
-    balance_efficiency = pct(
-        total_planning_sam, workers_used * bottleneck_load
-    )
+    planned_labor_utilization = pct(total_planning_sam, workers_used * takt_time_sec)
+    balance_efficiency = pct(total_planning_sam, workers_used * bottleneck_load)
     balance_delay = max(0.0, 100.0 - balance_efficiency)
     smoothness = math.sqrt(
-        sum(
-            (bottleneck_load - station.standard_load_sec) ** 2
-            for station in stations
-        )
+        sum((bottleneck_load - station.standard_load_sec) ** 2 for station in stations)
     )
 
     # Capacity uses planned efficiency exactly once.

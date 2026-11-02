@@ -23,9 +23,7 @@ export default function PlanningPanel({ result }: Props) {
 
   const capacity = planning.capacity;
   const headcount = planning.headcount;
-  const tightSkills = headcount.skill_coverage.filter(
-    (item) => item.status !== "ok",
-  );
+  const tightSkills = headcount.skill_coverage.filter((item) => item.status !== "ok");
 
   return (
     <section className="panel planning-panel" aria-labelledby="planning-title">
@@ -76,9 +74,9 @@ export default function PlanningPanel({ result }: Props) {
         </strong>
         <span>
           Theoretical capacity is{" "}
-          {formatPct(capacity.theoretical_capacity_achievement_pct, 1)} of target,
-          but it ignores precedence, machine and balance constraints. The
-          bottleneck number is the honest planning number.
+          {formatPct(capacity.theoretical_capacity_achievement_pct, 1)} of target, but
+          it ignores precedence, machine and balance constraints. The bottleneck number
+          is the honest planning number.
         </span>
       </div>
 
@@ -118,9 +116,9 @@ export default function PlanningPanel({ result }: Props) {
         </table>
       </div>
       <p className="panel-footnote">
-        Coverage compares required stations with available machine capacity.
-        It does not measure runtime, speed loss or quality, so it must never be
-        labelled machine utilization or OEE.
+        Coverage compares required stations with available machine capacity. It does not
+        measure runtime, speed loss or quality, so it must never be labelled machine
+        utilization or OEE.
       </p>
 
       <div className="subhead">

@@ -39,9 +39,8 @@ export default function FormsPanel({
           <h2 id="forms-title">Three small inputs, one control loop</h2>
         </div>
         <p>
-          These forms update the dashboard through the API. They do not write
-          back to the optimizer automatically; re-run the solver after changing
-          method or SAM.
+          These forms update the dashboard through the API. They do not write back to
+          the optimizer automatically; re-run the solver after changing method or SAM.
         </p>
       </div>
 
@@ -68,18 +67,12 @@ function ActualProductionForm({
   onApply,
 }: Omit<Props, "operations">) {
   const [target, setTarget] = useState(request.config.target_qty);
-  const [actualOutput, setActualOutput] = useState(
-    request.actuals?.actual_output ?? 0,
-  );
+  const [actualOutput, setActualOutput] = useState(request.actuals?.actual_output ?? 0);
   const [laborMinutes, setLaborMinutes] = useState(
     request.actuals?.actual_direct_labor_minutes ?? 0,
   );
-  const [downtime, setDowntime] = useState(
-    request.actuals?.downtime_minutes ?? 0,
-  );
-  const [attendance, setAttendance] = useState(
-    request.actuals?.attendance_hc ?? 0,
-  );
+  const [downtime, setDowntime] = useState(request.actuals?.downtime_minutes ?? 0);
+  const [attendance, setAttendance] = useState(request.actuals?.attendance_hc ?? 0);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -163,12 +156,7 @@ function ActualProductionForm({
         </Field>
       </div>
 
-      <button
-        type="button"
-        className="primary-button"
-        onClick={submit}
-        disabled={busy}
-      >
+      <button type="button" className="primary-button" onClick={submit} disabled={busy}>
         {busy ? "Calculating…" : "Apply actuals"}
       </button>
 
@@ -204,8 +192,7 @@ function DowntimeForm({
     next.daily_actuals = [];
     next.actuals = {
       actual_output: request.actuals?.actual_output ?? 0,
-      actual_direct_labor_minutes:
-        request.actuals?.actual_direct_labor_minutes ?? null,
+      actual_direct_labor_minutes: request.actuals?.actual_direct_labor_minutes ?? null,
       downtime_minutes: (request.actuals?.downtime_minutes ?? 0) + duration,
       attendance_hc: request.actuals?.attendance_hc ?? null,
     };
@@ -259,17 +246,12 @@ function DowntimeForm({
           />
         </Field>
         <Field label="Station">
-          <select
-            value={station}
-            onChange={(event) => setStation(event.target.value)}
-          >
+          <select value={station} onChange={(event) => setStation(event.target.value)}>
             <option value="">Line level</option>
             {request.baseline_assignment
               ? Array.from(
                   new Set(
-                    request.baseline_assignment.items.map(
-                      (item) => item.station_id,
-                    ),
+                    request.baseline_assignment.items.map((item) => item.station_id),
                   ),
                 )
                   .sort()
@@ -284,9 +266,7 @@ function DowntimeForm({
         <Field label="Loss category">
           <select
             value={category}
-            onChange={(event) =>
-              setCategory(event.target.value as LossCategory)
-            }
+            onChange={(event) => setCategory(event.target.value as LossCategory)}
           >
             {LOSS_CATEGORIES.map((item) => (
               <option key={item} value={item}>
@@ -307,12 +287,7 @@ function DowntimeForm({
         </Field>
       </div>
 
-      <button
-        type="button"
-        className="primary-button"
-        onClick={submit}
-        disabled={busy}
-      >
+      <button type="button" className="primary-button" onClick={submit} disabled={busy}>
         {busy ? "Calculating…" : "Add downtime"}
       </button>
 
@@ -341,9 +316,7 @@ function TimeStudyForm({ operations }: { operations: OperationInput[] }) {
   const [observed, setObserved] = useState(first?.sam_sec ?? 30);
   const [rating, setRating] = useState(1.0);
   const [allowance, setAllowance] = useState(0.12);
-  const [approved, setApproved] = useState<number | null>(
-    first?.sam_sec ?? null,
-  );
+  const [approved, setApproved] = useState<number | null>(first?.sam_sec ?? null);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [result, setResult] = useState<TimeStudyResult | null>(null);
@@ -394,9 +367,9 @@ function TimeStudyForm({ operations }: { operations: OperationInput[] }) {
       </div>
 
       <p className="form-note">
-        Aggregate calculation: enter human/walking observed time only. Do not
-        apply the performance rating to machine automatic time; split mixed
-        elements first (playbook §3.6).
+        Aggregate calculation: enter human/walking observed time only. Do not apply the
+        performance rating to machine automatic time; split mixed elements first
+        (playbook §3.6).
       </p>
 
       <div className="field-grid two-col">
@@ -438,9 +411,7 @@ function TimeStudyForm({ operations }: { operations: OperationInput[] }) {
             max={50}
             step={1}
             value={Math.round(allowance * 100)}
-            onChange={(event) =>
-              setAllowance(Number(event.target.value) / 100)
-            }
+            onChange={(event) => setAllowance(Number(event.target.value) / 100)}
           />
         </Field>
         <Field label="Approved SAM (s)">
@@ -450,20 +421,13 @@ function TimeStudyForm({ operations }: { operations: OperationInput[] }) {
             step={0.1}
             value={approved ?? ""}
             onChange={(event) =>
-              setApproved(
-                event.target.value === "" ? null : Number(event.target.value),
-              )
+              setApproved(event.target.value === "" ? null : Number(event.target.value))
             }
           />
         </Field>
       </div>
 
-      <button
-        type="button"
-        className="primary-button"
-        onClick={submit}
-        disabled={busy}
-      >
+      <button type="button" className="primary-button" onClick={submit} disabled={busy}>
         {busy ? "Calculating…" : "Calculate time study"}
       </button>
 
@@ -497,8 +461,8 @@ function TimeStudyForm({ operations }: { operations: OperationInput[] }) {
           </div>
           <p className="form-note">
             {selected ? `${selected.id} · ${selected.name}. ` : ""}
-            Draft record only. Re-time-study and approve before changing SAM in
-            the optimizer.
+            Draft record only. Re-time-study and approve before changing SAM in the
+            optimizer.
           </p>
         </div>
       ) : null}

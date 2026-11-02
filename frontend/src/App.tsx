@@ -64,12 +64,8 @@ const SCENARIO_DATA: Record<
 
 export default function App() {
   const [view, setView] = useState<ViewKey>("A");
-  const [request, setRequest] = useState<SampleRequest>(() =>
-    clone(SAMPLE_REQUEST_A),
-  );
-  const [result, setResult] = useState<OptimizeResult>(() =>
-    clone(SAMPLE_RESULT_A),
-  );
+  const [request, setRequest] = useState<SampleRequest>(() => clone(SAMPLE_REQUEST_A));
+  const [result, setResult] = useState<OptimizeResult>(() => clone(SAMPLE_RESULT_A));
   const [health, setHealth] = useState<HealthResponse | null>(null);
   const [healthError, setHealthError] = useState(false);
   const [solving, setSolving] = useState(false);
@@ -139,10 +135,7 @@ export default function App() {
     setSolveError(null);
     try {
       const blob = await exportWorkbook({ request, result });
-      downloadBlob(
-        blob,
-        `linebalance_${result.style_code || "plan"}.xlsx`,
-      );
+      downloadBlob(blob, `linebalance_${result.style_code || "plan"}.xlsx`);
       setNotice("XLSX export generated from the current request and result.");
     } catch (caught) {
       setSolveError(caught instanceof Error ? caught.message : String(caught));
@@ -222,13 +215,12 @@ export default function App() {
           <div className="summary-copy">
             <span className="eyebrow">Line overview</span>
             <h1>
-              {result.line_name} <span className="h1-dot">·</span>{" "}
-              {result.style_code}
+              {result.line_name} <span className="h1-dot">·</span> {result.style_code}
             </h1>
             <p>
-              {result.shift_id} · {formatNumber(request.config.shift_minutes, 0)}{" "}
-              min shift − {formatNumber(request.config.break_minutes, 0)} min
-              break · {request.config.working_days} working days · {samBasisLabel}
+              {result.shift_id} · {formatNumber(request.config.shift_minutes, 0)} min
+              shift − {formatNumber(request.config.break_minutes, 0)} min break ·{" "}
+              {request.config.working_days} working days · {samBasisLabel}
             </p>
           </div>
           <div className="summary-actions">
@@ -317,11 +309,10 @@ export default function App() {
             <h2>Balance the line. Then prove the constraint.</h2>
           </div>
           <p>
-            The optimizer uses a two-stage lexicographic MILP: minimize workers,
-            then minimize the bottleneck. A result is labelled{" "}
-            <strong>OPTIMAL</strong> only when both stages are proven. Capacity
-            uses the bottleneck, not theoretical HC × SAM. Target 420 is not
-            claimed when the bottleneck cannot support it.
+            The optimizer uses a two-stage lexicographic MILP: minimize workers, then
+            minimize the bottleneck. A result is labelled <strong>OPTIMAL</strong> only
+            when both stages are proven. Capacity uses the bottleneck, not theoretical
+            HC × SAM. Target 420 is not claimed when the bottleneck cannot support it.
           </p>
           <p className="closing-meta">
             {kpis
@@ -336,8 +327,7 @@ export default function App() {
           LineBalance Pro · synthetic garment IE demo · not HBI production data
         </span>
         <span>
-          Architecture A · React + FastAPI + PuLP/HiGHS · 40 operations · 24–26
-          workers
+          Architecture A · React + FastAPI + PuLP/HiGHS · 40 operations · 24–26 workers
         </span>
       </footer>
     </div>

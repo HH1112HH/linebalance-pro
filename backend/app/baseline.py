@@ -31,9 +31,7 @@ def _metrics_from_loads(
     workers_used = len({worker for worker in station_worker.values() if worker})
     bottleneck_station = max(loads, key=loads.get) if loads else ""
     bottleneck_load = loads.get(bottleneck_station, 0.0)
-    balance_efficiency = pct(
-        total_planning_sam, workers_used * bottleneck_load
-    )
+    balance_efficiency = pct(total_planning_sam, workers_used * bottleneck_load)
     capacity = safe_div(
         validation.net_available_seconds * planned_efficiency,
         bottleneck_load,
@@ -97,9 +95,7 @@ def build_baseline_comparison(
         worker_stations.setdefault(item.worker_id, set()).add(item.station_id)
 
         if item.worker_id not in validation.worker_by_id:
-            violations.append(
-                f"Baseline references unknown worker {item.worker_id}."
-            )
+            violations.append(f"Baseline references unknown worker {item.worker_id}.")
             continue
         worker = validation.worker_by_id[item.worker_id]
         operation = validation.operation_by_id[item.operation_id]
@@ -152,17 +148,21 @@ def build_baseline_comparison(
     }
     for predecessor, successor in validation.precedence_pairs:
         pred_station = next(
-            (station for station, ops in station_ops.items() if predecessor in ops), None
+            (station for station, ops in station_ops.items() if predecessor in ops),
+            None,
         )
         succ_station = next(
             (station for station, ops in station_ops.items() if successor in ops), None
         )
-        if pred_station and succ_station:
-            if station_order[pred_station] > station_order[succ_station]:
-                violations.append(
-                    f"Baseline violates precedence {predecessor} -> {successor}: "
-                    f"{pred_station} is after {succ_station}."
-                )
+        if (
+            pred_station
+            and succ_station
+            and station_order[pred_station] > station_order[succ_station]
+        ):
+            violations.append(
+                f"Baseline violates precedence {predecessor} -> {successor}: "
+                f"{pred_station} is after {succ_station}."
+            )
 
     loads = {
         station_id: sum(validation.planning_sam[op_id] for op_id in op_ids)
@@ -198,8 +198,10 @@ def build_baseline_comparison(
     notes = [
         baseline.source_note,
         "Bottleneck delta is reported as before - after, so a positive value is an improvement.",
-        "Baseline violations are listed but do not block the comparison; a real current-state "
-        "layout may violate the assumptions of the optimized model.",
+        (
+            "Baseline violations are listed but do not block the comparison; a real current-state "
+            "layout may violate the assumptions of the optimized model."
+        ),
     ]
 
     if before is None:
@@ -207,8 +209,10 @@ def build_baseline_comparison(
             before=None,
             after=after,
             violations=violations,
-            notes=notes
-            + ["No complete baseline metrics were computed because the baseline is incomplete."],
+            notes=[
+                *notes,
+                "No complete baseline metrics were computed because the baseline is incomplete.",
+            ],
         )
 
     return BaselineComparison(

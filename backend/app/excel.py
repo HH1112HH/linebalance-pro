@@ -8,7 +8,6 @@ from openpyxl.utils import get_column_letter
 
 from .models import ExportPayload
 
-
 HEADER_FILL = PatternFill("solid", fgColor="1E40AF")
 HEADER_FONT = Font(color="FFFFFF", bold=True)
 SECTION_FONT = Font(color="1E3A8A", bold=True, size=12)
@@ -235,9 +234,18 @@ def build_workbook(payload: ExportPayload) -> bytes:
                     ("Before stations", comparison.before.stations_used),
                     ("Before workers", comparison.before.workers_used),
                     ("Before bottleneck station", comparison.before.bottleneck_station),
-                    ("Before bottleneck load (s)", comparison.before.bottleneck_load_sec),
-                    ("Before balance efficiency (%)", comparison.before.balance_efficiency_pct),
-                    ("Before capacity (pcs/shift)", comparison.before.capacity_per_shift),
+                    (
+                        "Before bottleneck load (s)",
+                        comparison.before.bottleneck_load_sec,
+                    ),
+                    (
+                        "Before balance efficiency (%)",
+                        comparison.before.balance_efficiency_pct,
+                    ),
+                    (
+                        "Before capacity (pcs/shift)",
+                        comparison.before.capacity_per_shift,
+                    ),
                     (
                         "Before target achievement (%)",
                         comparison.before.target_achievement_pct,
@@ -250,9 +258,15 @@ def build_workbook(payload: ExportPayload) -> bytes:
                 ("After workers", comparison.after.workers_used),
                 ("After bottleneck station", comparison.after.bottleneck_station),
                 ("After bottleneck load (s)", comparison.after.bottleneck_load_sec),
-                ("After balance efficiency (%)", comparison.after.balance_efficiency_pct),
+                (
+                    "After balance efficiency (%)",
+                    comparison.after.balance_efficiency_pct,
+                ),
                 ("After capacity (pcs/shift)", comparison.after.capacity_per_shift),
-                ("After target achievement (%)", comparison.after.target_achievement_pct),
+                (
+                    "After target achievement (%)",
+                    comparison.after.target_achievement_pct,
+                ),
                 ("Station delta", comparison.station_delta),
                 ("Worker delta", comparison.worker_delta),
                 ("Bottleneck improvement (s)", comparison.bottleneck_delta_sec),
@@ -268,12 +282,14 @@ def build_workbook(payload: ExportPayload) -> bytes:
             ]
         )
         for row_index, (label, value) in enumerate(rows, start=3):
-            baseline_sheet.cell(row=row_index, column=1, value=label).font = Font(bold=True)
+            baseline_sheet.cell(row=row_index, column=1, value=label).font = Font(
+                bold=True
+            )
             baseline_sheet.cell(row=row_index, column=2, value=value)
         row_index = len(rows) + 5
-        baseline_sheet.cell(row=row_index, column=1, value="Baseline violations").font = Font(
-            bold=True
-        )
+        baseline_sheet.cell(
+            row=row_index, column=1, value="Baseline violations"
+        ).font = Font(bold=True)
         for violation in comparison.violations:
             row_index += 1
             baseline_sheet.cell(row=row_index, column=1, value=violation)
@@ -299,12 +315,14 @@ def build_workbook(payload: ExportPayload) -> bytes:
             ("Downtime (% of planned time)", analysis.downtime_pct_of_planned_time),
         ]
         for row_index, (label, value) in enumerate(rows, start=3):
-            actuals_sheet.cell(row=row_index, column=1, value=label).font = Font(bold=True)
+            actuals_sheet.cell(row=row_index, column=1, value=label).font = Font(
+                bold=True
+            )
             actuals_sheet.cell(row=row_index, column=2, value=value)
         row_index = len(rows) + 5
-        actuals_sheet.cell(row=row_index, column=1, value="Downtime by category").font = Font(
-            bold=True
-        )
+        actuals_sheet.cell(
+            row=row_index, column=1, value="Downtime by category"
+        ).font = Font(bold=True)
         for category, minutes in analysis.downtime_by_category.items():
             row_index += 1
             actuals_sheet.cell(row=row_index, column=1, value=category)

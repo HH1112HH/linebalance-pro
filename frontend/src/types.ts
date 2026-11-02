@@ -4,12 +4,7 @@ export type ViewKey = ScenarioKey | "custom";
 export type SamBasis = "INCLUDES_ALLOWANCE" | "EXCLUDES_ALLOWANCE";
 export type StationStatus = "bottleneck" | "watch" | "normal" | "underutilized";
 export type LossCategory =
-  | "MACHINE"
-  | "MATERIAL"
-  | "MANPOWER"
-  | "QUALITY"
-  | "CHANGEOVER"
-  | "OTHER";
+  "MACHINE" | "MATERIAL" | "MANPOWER" | "QUALITY" | "CHANGEOVER" | "OTHER";
 
 export interface LineConfig {
   shift_id: string;

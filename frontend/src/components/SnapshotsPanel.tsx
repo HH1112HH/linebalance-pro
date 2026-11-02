@@ -46,8 +46,8 @@ export default function SnapshotsPanel({
       </div>
 
       <p className="panel-intro">
-        Save the current request and result in this browser. There is no
-        server-side scenario write API on the public demo.
+        Save the current request and result in this browser. There is no server-side
+        scenario write API on the public demo.
       </p>
 
       <div className="snapshot-form">

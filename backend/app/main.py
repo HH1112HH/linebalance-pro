@@ -93,7 +93,9 @@ async def protect_public_api(request: Request, call_next):
                     },
                 )
         except ValueError:
-            return JSONResponse(status_code=400, content={"detail": "Invalid Content-Length."})
+            return JSONResponse(
+                status_code=400, content={"detail": "Invalid Content-Length."}
+            )
 
     key = _client_key(request)
     now = time.monotonic()
@@ -120,7 +122,9 @@ async def protect_public_api(request: Request, call_next):
     try:
         response = await call_next(request)
     except Exception:
-        logger.exception("Unhandled API error for %s %s", request.method, request.url.path)
+        logger.exception(
+            "Unhandled API error for %s %s", request.method, request.url.path
+        )
         raise
 
     response.headers["X-Content-Type-Options"] = "nosniff"
@@ -208,7 +212,9 @@ def optimize(request: OptimizeRequest) -> OptimizeResponse:
 @app.post("/api/export")
 def export(payload: ExportPayload) -> StreamingResponse:
     content = build_workbook(payload)
-    filename = f"linebalance_{payload.request.style_code or 'plan'}.xlsx".replace(" ", "_")
+    filename = f"linebalance_{payload.request.style_code or 'plan'}.xlsx".replace(
+        " ", "_"
+    )
     return StreamingResponse(
         BytesIO(content),
         media_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
@@ -236,7 +242,9 @@ def time_study(record: TimeStudyRecord) -> TimeStudyResult:
     )
     variance = None
     if record.approved_sam_sec:
-        variance = round(pct(standard - record.approved_sam_sec, record.approved_sam_sec), 2)
+        variance = round(
+            pct(standard - record.approved_sam_sec, record.approved_sam_sec), 2
+        )
     notes = [
         "Aggregate calculation for human/walking work only.",
         "Normal time = observed time x performance rating.",
@@ -245,7 +253,9 @@ def time_study(record: TimeStudyRecord) -> TimeStudyResult:
         "Approve the standard time before using it as SAM in the optimizer.",
     ]
     if record.status != "APPROVED":
-        notes.append("This record is not approved yet; do not treat it as an official SAM.")
+        notes.append(
+            "This record is not approved yet; do not treat it as an official SAM."
+        )
     return TimeStudyResult(
         operation_id=record.operation_id,
         normal_time_sec=normal,

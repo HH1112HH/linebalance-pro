@@ -1,9 +1,5 @@
 import { useState } from "react";
-import type {
-  BaselineStation,
-  OptimizeResult,
-  StationStatus,
-} from "../types";
+import type { BaselineStation, OptimizeResult, StationStatus } from "../types";
 import { cx, formatNumber } from "../utils";
 
 interface Props {
@@ -149,9 +145,9 @@ export default function WorkloadPanel({ result, baselineStations }: Props) {
       </div>
 
       <p className="panel-footnote">
-        Bar length is planning SAM per station, not machine utilization. The
-        effective takt is the planning cycle allowance at the planned efficiency;
-        the demand takt is the customer requirement at 100% of scheduled time.
+        Bar length is planning SAM per station, not machine utilization. The effective
+        takt is the planning cycle allowance at the planned efficiency; the demand takt
+        is the customer requirement at 100% of scheduled time.
       </p>
     </section>
   );

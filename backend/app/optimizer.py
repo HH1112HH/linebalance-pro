@@ -8,7 +8,7 @@ import re
 import time
 import uuid
 from dataclasses import dataclass
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from typing import Any
 
 import pulp
@@ -135,7 +135,7 @@ def _metadata(
         input_hash=input_hash,
         solver_status=solver_status,
         solve_time_sec=round(time.perf_counter() - started_at, 3),
-        created_at=datetime.now(timezone.utc).isoformat(),
+        created_at=datetime.now(UTC).isoformat(),
         lexicographic_proven=lexicographic_proven,
         stage1_objective=stage1_objective,
         stage2_objective=stage2_objective,
@@ -191,7 +191,10 @@ def _build_model(
     # 3. Station/operation linkage and prefix symmetry breaking.
     for op_index, op in enumerate(operations, start=1):
         for station in stations:
-            problem += x[op.id][station] <= z[station], f"x_station_{op_index}_{station}"
+            problem += (
+                x[op.id][station] <= z[station],
+                f"x_station_{op_index}_{station}",
+            )
     for station in stations:
         problem += (
             z[station] <= pulp.lpSum(x[op.id][station] for op in operations),
@@ -204,14 +207,14 @@ def _build_model(
     # not change standard SAM in the MVP.
     for op_index, op in enumerate(operations, start=1):
         eligible_worker_ids = [
-            worker.id
-            for worker in workers
-            if (op.id, worker.id) in validation.eligible
+            worker.id for worker in workers if (op.id, worker.id) in validation.eligible
         ]
         for station in stations:
             problem += (
                 x[op.id][station]
-                <= pulp.lpSum(y[station][worker_id] for worker_id in eligible_worker_ids),
+                <= pulp.lpSum(
+                    y[station][worker_id] for worker_id in eligible_worker_ids
+                ),
                 f"skill_{op_index}_{station}",
             )
 
@@ -231,18 +234,24 @@ def _build_model(
     for station in stations:
         if machine_types:
             problem += (
-                pulp.lpSum(m[station][machine_type] for machine_type in machine_types) <= 1,
+                pulp.lpSum(m[station][machine_type] for machine_type in machine_types)
+                <= 1,
                 f"one_machine_{station}",
             )
         for machine_index, machine_type in enumerate(machine_types, start=1):
-            problem += m[station][machine_type] <= z[station], (
-                f"machine_station_{station}_{machine_index}"
+            problem += (
+                m[station][machine_type] <= z[station],
+                (f"machine_station_{station}_{machine_index}"),
             )
-            problem += m[station][machine_type] <= pulp.lpSum(
-                x[op.id][station]
-                for op in operations
-                if op.machine_type == machine_type
-            ), f"machine_needed_{station}_{machine_index}"
+            problem += (
+                m[station][machine_type]
+                <= pulp.lpSum(
+                    x[op.id][station]
+                    for op in operations
+                    if op.machine_type == machine_type
+                ),
+                f"machine_needed_{station}_{machine_index}",
+            )
 
     for machine_index, machine_type in enumerate(machine_types, start=1):
         problem += (
@@ -254,7 +263,7 @@ def _build_model(
     # A worker cannot staff a station equipped with a machine they cannot operate.
     for station in stations:
         for worker_index, worker in enumerate(workers, start=1):
-            certified = {item for item in worker.machine_types}
+            certified = set(worker.machine_types)
             for machine_index, machine_type in enumerate(machine_types, start=1):
                 if "ANY" in certified or machine_type in certified:
                     continue
@@ -268,9 +277,7 @@ def _build_model(
         validation.precedence_pairs, start=1
     ):
         problem += (
-            pulp.lpSum(
-                station * x[predecessor][station] for station in stations
-            )
+            pulp.lpSum(station * x[predecessor][station] for station in stations)
             <= pulp.lpSum(station * x[successor][station] for station in stations),
             f"precedence_{pair_index}",
         )
@@ -288,8 +295,7 @@ def _build_model(
         problem += (
             load[station]
             == pulp.lpSum(
-                validation.planning_sam[op.id] * x[op.id][station]
-                for op in operations
+                validation.planning_sam[op.id] * x[op.id][station] for op in operations
             ),
             f"load_definition_{station}",
         )
@@ -359,7 +365,7 @@ def _layout_from_baseline(
     assignment: dict[str, int] = {}
     station_worker: dict[int, str] = {}
     station_machines: dict[int, set[str]] = {}
-    loads: dict[int, float] = {station: 0.0 for station in station_map.values()}
+    loads: dict[int, float] = dict.fromkeys(station_map.values(), 0.0)
     seen_ops: set[str] = set()
 
     for item in baseline.items:
@@ -448,6 +454,7 @@ def _apply_solution_warm_start(
     """Copy a stage-1 solution into the stage-2 model."""
     if set(model.stations) != set(source.stations):
         return False
+
     def binary(variable: pulp.LpVariable | None) -> float:
         # HiGHS rejects initial values such as 1.0000000000000122 for a binary
         # variable. Round every binary MIP start explicitly.
@@ -514,7 +521,7 @@ def _solver_version() -> str:
 def _solve(
     problem: pulp.LpProblem, time_limit: float, *, warm_start: bool = False
 ) -> Any:
-    limit = max(1, int(math.ceil(time_limit)))
+    limit = max(1, math.ceil(time_limit))
     if SOLVER_BACKEND == "cbc":
         solver = pulp.COIN_CMD(
             msg=False,
@@ -606,8 +613,10 @@ def _model_infeasible_response(
             feasible=False,
             error_type="MODEL",
             issues=[
-                "No feasible assignment exists under the current skill, machine, "
-                "precedence, takt and headcount constraints."
+                (
+                    "No feasible assignment exists under the current skill, machine, "
+                    "precedence, takt and headcount constraints."
+                )
             ],
             suggestions=_model_suggestions(req),
         ),
@@ -643,8 +652,10 @@ def _solver_error_response(
             error_type="SOLVER",
             issues=[message],
             suggestions=[
-                "Check that the configured solver (HiGHS by default) is installed "
-                "and available on the server.",
+                (
+                    "Check that the configured solver (HiGHS by default) is installed "
+                    "and available on the server."
+                ),
                 "Try a larger solver_time_limit_sec or a smaller data set.",
                 "If the problem is infeasible, relax takt/headcount/machine limits.",
             ],
@@ -670,9 +681,13 @@ def _data_suggestions(validation: ValidationResult) -> list[str]:
     if "cycle" in lowered:
         suggestions.insert(0, "Remove the precedence cycle before optimizing.")
     if "machine" in lowered:
-        suggestions.insert(0, "Add an available machine or change the operation's machine_type.")
+        suggestions.insert(
+            0, "Add an available machine or change the operation's machine_type."
+        )
     if "grade" in lowered or "skill" in lowered:
-        suggestions.insert(0, "Add a qualified worker or lower the required skill grade.")
+        suggestions.insert(
+            0, "Add a qualified worker or lower the required skill grade."
+        )
     if "headcount" in lowered or "max_workers" in lowered:
         suggestions.insert(0, "Increase max_workers or reduce the target output.")
     return list(dict.fromkeys(suggestions))
@@ -796,16 +811,22 @@ def _post_suggestions(
     suggestions: list[str] = []
     codes = {warning.code for warning in warnings}
     if "single_point_of_failure" in codes:
-        suggestions.append("Cross-train at least one backup worker for single-point operations.")
+        suggestions.append(
+            "Cross-train at least one backup worker for single-point operations."
+        )
     if "station_over_effective_takt" in codes or "capacity_target_not_met" in codes:
         suggestions.append(
             "Move work from the bottleneck station, split the longest operation, or "
             "improve planned efficiency."
         )
     if "unused_workers" in codes:
-        suggestions.append("Use unused qualified workers for bottleneck relief or reduce max_workers.")
+        suggestions.append(
+            "Use unused qualified workers for bottleneck relief or reduce max_workers."
+        )
     if "machine_capacity_shared" in codes:
-        suggestions.append("Check machine allocation and add capacity for shared machine types.")
+        suggestions.append(
+            "Check machine allocation and add capacity for shared machine types."
+        )
     if req.config.objective == "min_bottleneck" and stations:
         suggestions.append(
             "Run a second scenario with min_workers to compare headcount against bottleneck time."
@@ -947,7 +968,10 @@ def _extract_solution(
     }
 
     max_load = max(
-        sum(validation.planning_sam[operation.id] for operation in operations_by_station[station])
+        sum(
+            validation.planning_sam[operation.id]
+            for operation in operations_by_station[station]
+        )
         for station in ordered_stations
     )
 
@@ -1011,7 +1035,9 @@ def _extract_solution(
         ]
         operation_ids.sort(key=lambda operation_id: topo_index.get(operation_id, 0))
         qualified = sum(
-            1 for operation in operations if (operation.id, worker.id) in validation.eligible
+            1
+            for operation in operations
+            if (operation.id, worker.id) in validation.eligible
         )
         worker_summary.append(
             WorkerSummary(
@@ -1028,11 +1054,17 @@ def _extract_solution(
                 ),
                 operation_ids=operation_ids,
                 assigned_sam_sec=round(
-                    sum(operation_by_id[operation_id].sam_sec for operation_id in operation_ids),
+                    sum(
+                        operation_by_id[operation_id].sam_sec
+                        for operation_id in operation_ids
+                    ),
                     3,
                 ),
                 assigned_planning_sam_sec=round(
-                    sum(validation.planning_sam[operation_id] for operation_id in operation_ids),
+                    sum(
+                        validation.planning_sam[operation_id]
+                        for operation_id in operation_ids
+                    ),
                     3,
                 ),
                 skills=worker.skills,
@@ -1052,9 +1084,7 @@ def _extract_solution(
     )
 
     warnings = _post_warnings(req, validation, stations_out, worker_summary, kpis)
-    baseline_comparison = build_baseline_comparison(
-        req, validation, stations_out, kpis
-    )
+    baseline_comparison = build_baseline_comparison(req, validation, stations_out, kpis)
     if baseline_comparison is not None and baseline_comparison.violations:
         warnings.append(
             WarningItem(
@@ -1119,9 +1149,7 @@ def solve_line_balancing(req: OptimizeRequest) -> OptimizeResponse:
     started_at = time.perf_counter()
     validation = validate_request(req)
     solver_available, solver_path = check_solver()
-    solver_message = (
-        f"{SOLVER_BACKEND.upper()}: {solver_path}" if solver_path else None
-    )
+    solver_message = f"{SOLVER_BACKEND.upper()}: {solver_path}" if solver_path else None
 
     if validation.errors:
         return _data_error_response(
@@ -1191,8 +1219,12 @@ def solve_line_balancing(req: OptimizeRequest) -> OptimizeResponse:
                 req,
                 validation,
                 stage=2,
-                cmax_upper=stage1_objective if req.config.objective == "min_bottleneck" else None,
-                workers_fixed=stage1_workers if req.config.objective == "min_workers" else None,
+                cmax_upper=stage1_objective
+                if req.config.objective == "min_bottleneck"
+                else None,
+                workers_fixed=stage1_workers
+                if req.config.objective == "min_workers"
+                else None,
             )
             second_warm_started = _apply_solution_warm_start(
                 second, first, req, validation

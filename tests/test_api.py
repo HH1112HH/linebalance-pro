@@ -39,9 +39,15 @@ def test_sample_endpoints_expose_two_scenarios_and_baseline():
     assert stretch_data["config"]["target_qty"] == 420
     assert stretch_data["config"]["max_workers"] == 24
     assert len(stretch_data["baseline_assignment"]["items"]) == 40
-    assert len(
-        {item["station_id"] for item in stretch_data["baseline_assignment"]["items"]}
-    ) == 24
+    assert (
+        len(
+            {
+                item["station_id"]
+                for item in stretch_data["baseline_assignment"]["items"]
+            }
+        )
+        == 24
+    )
 
     assert feasible_data["config"]["target_qty"] == 400
     assert feasible_data["config"]["max_workers"] == 26

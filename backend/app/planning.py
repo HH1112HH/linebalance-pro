@@ -179,15 +179,23 @@ def build_planning_summary(
         theoretical_capacity_achievement_pct=round(theoretical_achievement, 2),
         machine_requirements=_machine_requirements(req, validation, stations),
         notes=[
-            "Net available time = (shift minutes - break minutes) x 60. "
-            "Allowance is applied once inside planning SAM, never again here.",
-            "Theoretical capacity = available HC x net shift minutes x planned "
-            "efficiency / planning garment SAM. It ignores precedence, machine "
-            "and line-balance constraints, so it is not a promise of output.",
-            "Daily/period capacity and target achievement use the optimizer's "
-            "bottleneck-constrained capacity, not the theoretical capacity.",
-            "Required HC is a theoretical estimate. Skill, machine, precedence and "
-            "bottleneck constraints can require more people than this estimate.",
+            (
+                "Net available time = (shift minutes - break minutes) x 60. "
+                "Allowance is applied once inside planning SAM, never again here."
+            ),
+            (
+                "Theoretical capacity = available HC x net shift minutes x planned "
+                "efficiency / planning garment SAM. It ignores precedence, machine "
+                "and line-balance constraints, so it is not a promise of output."
+            ),
+            (
+                "Daily/period capacity and target achievement use the optimizer's "
+                "bottleneck-constrained capacity, not the theoretical capacity."
+            ),
+            (
+                "Required HC is a theoretical estimate. Skill, machine, precedence and "
+                "bottleneck constraints can require more people than this estimate."
+            ),
         ],
     )
 
@@ -218,8 +226,10 @@ def build_planning_summary(
             "HC gap = actual HC - standard HC; positive means excess, negative means shortage.",
             "Attendance is a manual input in the MVP; there is no HR/MES integration.",
             "Optimized HC is the number of stations used by the MILP solution.",
-            "Transfer suggestions only include unused workers who are eligible for "
-            "the bottleneck operation.",
+            (
+                "Transfer suggestions only include unused workers who are eligible for "
+                "the bottleneck operation."
+            ),
         ],
     )
 

@@ -19,10 +19,14 @@
 ```powershell
 # Backend
 .venv\Scripts\python.exe -m pytest
+.venv\Scripts\python.exe -m ruff check backend tests
+.venv\Scripts\python.exe -m ruff format --check backend tests
 .venv\Scripts\python.exe -m uvicorn backend.app.main:app --reload --port 8000
 
 # Frontend
 npm --prefix frontend run dev
+npm --prefix frontend run lint
+npm --prefix frontend run format:check
 npm --prefix frontend run typecheck
 npm --prefix frontend run build
 
@@ -159,7 +163,8 @@ powershell -ExecutionPolicy Bypass -File scripts/verify.ps1
   - `standard_load_sec` = tổng planning SAM.
 - Test KPI mirror theo checklist trong `KPI_SPEC.md` §14.
 - Test API: health, sample, optimize, actuals, time study, 413, 429; concurrency nếu có thể.
-- Frontend: `npm run build` (đã gồm `tsc --noEmit`) phải pass.
+- Backend phải pass `ruff check` và `ruff format --check`.
+- Frontend phải pass `npm run lint`, `npm run format:check` và `npm run build` (đã gồm `tsc --noEmit`).
 - Thay đổi UI lớn: chạy `frontend/scripts/ui-check.mjs` và `responsive-check.mjs`.
 - Trước khi báo done: chạy `scripts/verify.ps1` và ghi lại command + kết quả.
 

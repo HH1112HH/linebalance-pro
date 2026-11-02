@@ -3,8 +3,8 @@
     Runs the project verification gates.
 
 .DESCRIPTION
-    Backend: pytest
-    Frontend: TypeScript typecheck + Vite production build
+    Backend: pytest + Ruff lint/format check
+    Frontend: ESLint + Prettier check + TypeScript typecheck + Vite production build
     Run from anywhere; paths are resolved from the repo root.
 
 .PARAMETER SkipFrontend
@@ -44,9 +44,34 @@ try {
         throw "Backend tests failed (exit $LASTEXITCODE)."
     }
 
+    Write-Host ""
+    Write-Host "==> Backend lint" -ForegroundColor Cyan
+    & $python -m ruff check backend tests
+    if ($LASTEXITCODE -ne 0) {
+        throw "Ruff check failed (exit $LASTEXITCODE). Run: .venv\Scripts\python.exe -m pip install -r backend\requirements-dev.txt"
+    }
+    & $python -m ruff format --check backend tests
+    if ($LASTEXITCODE -ne 0) {
+        throw "Ruff format check failed (exit $LASTEXITCODE). Run: .venv\Scripts\python.exe -m ruff format backend tests"
+    }
+
     if (-not $SkipFrontend) {
         if (-not (Test-Path "frontend\node_modules")) {
             throw "frontend\node_modules is missing. Run: npm --prefix frontend install"
+        }
+
+        Write-Host ""
+        Write-Host "==> Frontend lint" -ForegroundColor Cyan
+        npm --prefix frontend run lint
+        if ($LASTEXITCODE -ne 0) {
+            throw "Frontend lint failed (exit $LASTEXITCODE)."
+        }
+
+        Write-Host ""
+        Write-Host "==> Frontend format check" -ForegroundColor Cyan
+        npm --prefix frontend run format:check
+        if ($LASTEXITCODE -ne 0) {
+            throw "Frontend format check failed (exit $LASTEXITCODE)."
         }
 
         Write-Host ""

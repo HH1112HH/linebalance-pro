@@ -36,9 +36,9 @@ def analyze_actuals(req: OptimizeRequest) -> ActualsAnalysis | None:
 
     # Earned standard minutes must use the same SAM basis as planning:
     # allowance is applied once when sam_basis = EXCLUDES_ALLOWANCE.
-    garment_planning_sam_min = sum(
-        planning_sam_sec(op, req.config) for op in req.operations
-    ) / 60.0
+    garment_planning_sam_min = (
+        sum(planning_sam_sec(op, req.config) for op in req.operations) / 60.0
+    )
     production_achievement = pct(actual_output, target_output)
     actual_labor_efficiency = None
     if actual_direct_labor_minutes and actual_direct_labor_minutes > 0:
@@ -55,8 +55,7 @@ def analyze_actuals(req: OptimizeRequest) -> ActualsAnalysis | None:
     downtime_by_category: dict[str, float] = {}
     for event in req.downtime_events:
         downtime_by_category[event.loss_category] = round(
-            downtime_by_category.get(event.loss_category, 0.0)
-            + event.duration_minutes,
+            downtime_by_category.get(event.loss_category, 0.0) + event.duration_minutes,
             3,
         )
     event_total = sum(downtime_by_category.values())

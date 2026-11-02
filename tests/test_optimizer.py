@@ -154,8 +154,7 @@ def test_baseline_comparison_is_computed_from_input_assignment():
         comparison.after.workers_used - comparison.before.workers_used
     )
     assert comparison.bottleneck_delta_sec == pytest.approx(
-        comparison.before.bottleneck_load_sec
-        - comparison.after.bottleneck_load_sec
+        comparison.before.bottleneck_load_sec - comparison.after.bottleneck_load_sec
     )
 
 

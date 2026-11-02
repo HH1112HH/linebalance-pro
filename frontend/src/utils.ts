@@ -1,7 +1,4 @@
-export function formatNumber(
-  value: number | null | undefined,
-  digits = 1,
-): string {
+export function formatNumber(value: number | null | undefined, digits = 1): string {
   if (value === null || value === undefined || Number.isNaN(value)) return "—";
   return value.toLocaleString("en-US", {
     minimumFractionDigits: digits,
@@ -9,10 +6,7 @@ export function formatNumber(
   });
 }
 
-export function formatPct(
-  value: number | null | undefined,
-  digits = 1,
-): string {
+export function formatPct(value: number | null | undefined, digits = 1): string {
   if (value === null || value === undefined || Number.isNaN(value)) return "—";
   return `${formatNumber(value, digits)}%`;
 }

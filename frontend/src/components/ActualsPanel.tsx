@@ -16,8 +16,8 @@ export default function ActualsPanel({ actuals }: Props) {
           </div>
         </div>
         <div className="empty-state">
-          No actuals supplied. Add a shift snapshot in the form below to
-          calculate achievement and labor efficiency.
+          No actuals supplied. Add a shift snapshot in the form below to calculate
+          achievement and labor efficiency.
         </div>
       </section>
     );
@@ -82,10 +82,7 @@ export default function ActualsPanel({ actuals }: Props) {
               <span className="dt-label">{category}</span>
               <div className="dt-track">
                 <div
-                  className={cx(
-                    "dt-bar",
-                    category === "UNSPECIFIED" && "dt-bar-muted",
-                  )}
+                  className={cx("dt-bar", category === "UNSPECIFIED" && "dt-bar-muted")}
                   style={{ width: `${Math.max(2, (value / maxCategory) * 100)}%` }}
                 />
               </div>

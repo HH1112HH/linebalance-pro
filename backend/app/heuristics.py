@@ -82,9 +82,10 @@ def topological_order(operations: list[Operation]) -> list[Operation]:
 
 
 def _eligible(worker: Worker, operation: Operation) -> bool:
-    return (
-        skill_grade(worker, operation) >= operation.skill_required
-        and worker_can_operate_machine(worker, operation.machine_type)
+    return skill_grade(
+        worker, operation
+    ) >= operation.skill_required and worker_can_operate_machine(
+        worker, operation.machine_type
     )
 
 
@@ -264,7 +265,9 @@ def _pack_stations(
         for operation in operations
     }
     successors: dict[str, list[str]] = {operation.id: [] for operation in operations}
-    indegree = {operation.id: len(predecessors[operation.id]) for operation in operations}
+    indegree = {
+        operation.id: len(predecessors[operation.id]) for operation in operations
+    }
     for operation in operations:
         for predecessor in predecessors[operation.id]:
             successors[predecessor].append(operation.id)

@@ -15,9 +15,7 @@ export default function StationTable({ result }: Props) {
           <span className="eyebrow">Assignment detail</span>
           <h2 id="station-title">Station, worker and operation map</h2>
         </div>
-        <span className="panel-chip chip-muted">
-          {result.stations.length} stations
-        </span>
+        <span className="panel-chip chip-muted">{result.stations.length} stations</span>
       </div>
 
       <div className="table-wrap station-table-wrap">
@@ -41,10 +39,7 @@ export default function StationTable({ result }: Props) {
                   <span className="row-note">{station.worker_name}</span>
                 </td>
                 <td>
-                  <span
-                    className="ops-cell"
-                    title={station.operation_names.join(", ")}
-                  >
+                  <span className="ops-cell" title={station.operation_names.join(", ")}>
                     {station.operation_ids.join(" · ")}
                   </span>
                 </td>
@@ -65,8 +60,8 @@ export default function StationTable({ result }: Props) {
         </table>
       </div>
       <p className="panel-footnote">
-        Utilization is station load divided by the line bottleneck, not machine
-        runtime. Manual operations have no machine requirement.
+        Utilization is station load divided by the line bottleneck, not machine runtime.
+        Manual operations have no machine requirement.
       </p>
     </section>
   );

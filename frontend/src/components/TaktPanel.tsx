@@ -49,17 +49,17 @@ export default function TaktPanel({ result }: Props) {
           <span className="eyebrow">Demand takt</span>
           <strong>{formatNumber(demand, 2)}s</strong>
           <p>
-            27,000 available seconds ÷ {kpis.target_qty} pcs. This is the
-            customer requirement at 100% of scheduled time.
+            27,000 available seconds ÷ {kpis.target_qty} pcs. This is the customer
+            requirement at 100% of scheduled time.
           </p>
         </article>
         <article>
           <span className="eyebrow">Effective takt</span>
           <strong>{formatNumber(effective, 2)}s</strong>
           <p>
-            27,000s × {formatPct(kpis.planned_efficiency * 100, 0)} planned
-            efficiency ÷ {kpis.target_qty} pcs. This is the planning cycle
-            allowance, not the demand takt.
+            27,000s × {formatPct(kpis.planned_efficiency * 100, 0)} planned efficiency ÷{" "}
+            {kpis.target_qty} pcs. This is the planning cycle allowance, not the demand
+            takt.
           </p>
         </article>
         <article className="takt-decision">

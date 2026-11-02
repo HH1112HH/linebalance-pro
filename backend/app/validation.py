@@ -3,7 +3,7 @@ from __future__ import annotations
 import heapq
 from dataclasses import dataclass, field
 
-from .models import OptimizeRequest, Operation, WarningItem, Worker
+from .models import Operation, OptimizeRequest, WarningItem, Worker
 from .utils import (
     effective_allowance_pct,
     effective_takt_time_sec,
@@ -43,7 +43,7 @@ def _cycle_nodes(
     operation_ids: list[str], predecessors: dict[str, list[str]]
 ) -> list[str] | None:
     adjacency: dict[str, list[str]] = {op_id: [] for op_id in operation_ids}
-    indegree: dict[str, int] = {op_id: 0 for op_id in operation_ids}
+    indegree: dict[str, int] = dict.fromkeys(operation_ids, 0)
     for op_id, preds in predecessors.items():
         for pred in preds:
             if pred not in adjacency:
@@ -73,7 +73,7 @@ def _topological_order(
 ) -> list[str]:
     """Deterministic topological order, used for in-station sequencing."""
     adjacency: dict[str, list[str]] = {op_id: [] for op_id in operation_ids}
-    indegree: dict[str, int] = {op_id: 0 for op_id in operation_ids}
+    indegree: dict[str, int] = dict.fromkeys(operation_ids, 0)
     for pred, succ in set(precedence_pairs):
         if pred in adjacency and succ in adjacency:
             adjacency[pred].append(succ)
@@ -83,7 +83,9 @@ def _topological_order(
     for op_id in operation_ids:
         if indegree[op_id] == 0:
             operation = operation_by_id[op_id]
-            heap.append((operation.sequence if operation.sequence is not None else 10**9, op_id))
+            heap.append(
+                (operation.sequence if operation.sequence is not None else 10**9, op_id)
+            )
     heapq.heapify(heap)
 
     order: list[str] = []
@@ -96,7 +98,10 @@ def _topological_order(
                 operation = operation_by_id[nxt]
                 heapq.heappush(
                     heap,
-                    (operation.sequence if operation.sequence is not None else 10**9, nxt),
+                    (
+                        operation.sequence if operation.sequence is not None else 10**9,
+                        nxt,
+                    ),
                 )
     return order
 
@@ -140,13 +145,19 @@ def validate_request(req: OptimizeRequest) -> ValidationResult:
         )
 
     if len(set(operation_ids)) != len(operation_ids):
-        result.errors.append("Duplicate operation IDs found. Each operation ID must be unique.")
+        result.errors.append(
+            "Duplicate operation IDs found. Each operation ID must be unique."
+        )
     if len(set(worker_ids)) != len(worker_ids):
-        result.errors.append("Duplicate worker IDs found. Each worker ID must be unique.")
+        result.errors.append(
+            "Duplicate worker IDs found. Each worker ID must be unique."
+        )
 
     machine_ids = [machine.id for machine in req.machines]
     if len(set(machine_ids)) != len(machine_ids):
-        result.errors.append("Duplicate machine IDs found. Each machine ID must be unique.")
+        result.errors.append(
+            "Duplicate machine IDs found. Each machine ID must be unique."
+        )
     for machine in req.machines:
         if machine.available:
             machine_type = norm_code(machine.machine_type)
@@ -172,7 +183,9 @@ def validate_request(req: OptimizeRequest) -> ValidationResult:
         predecessors[op.id] = cleaned
         for pred in cleaned:
             if pred == op.id:
-                result.errors.append(f"Operation {op.id} cannot be its own predecessor.")
+                result.errors.append(
+                    f"Operation {op.id} cannot be its own predecessor."
+                )
             elif pred not in valid_ids:
                 result.errors.append(
                     f"Operation {op.id} references missing predecessor {pred}."
@@ -189,13 +202,17 @@ def validate_request(req: OptimizeRequest) -> ValidationResult:
     # Workforce
     result.available_workers = [worker for worker in workers if worker.available]
     if not result.available_workers:
-        result.errors.append("No available workers. Mark at least one worker as available.")
+        result.errors.append(
+            "No available workers. Mark at least one worker as available."
+        )
 
     requested_max = req.config.max_workers or len(result.available_workers)
     result.max_workers = min(requested_max, len(result.available_workers))
     if result.max_workers <= 0:
         result.errors.append("max_workers must be greater than zero.")
-    if req.config.max_workers is not None and requested_max > len(result.available_workers):
+    if req.config.max_workers is not None and requested_max > len(
+        result.available_workers
+    ):
         result.warnings.append(
             WarningItem(
                 severity="info",
@@ -219,11 +236,11 @@ def validate_request(req: OptimizeRequest) -> ValidationResult:
 
     # Planning SAM and eligibility. Skill grade is an eligibility gate only;
     # it is not a productivity multiplier in the MVP.
-    result.planning_sam = {
-        op.id: planning_sam_sec(op, req.config) for op in operations
-    }
+    result.planning_sam = {op.id: planning_sam_sec(op, req.config) for op in operations}
     result.total_planning_sam = round(sum(result.planning_sam.values()), 6)
-    result.max_single_planning_sam = round(max(result.planning_sam.values(), default=0.0), 6)
+    result.max_single_planning_sam = round(
+        max(result.planning_sam.values(), default=0.0), 6
+    )
 
     for op in operations:
         skilled = [
@@ -350,9 +367,7 @@ def validate_request(req: OptimizeRequest) -> ValidationResult:
 
     # Machine capacity information
     for machine_type in sorted(result.required_machine_types):
-        required_ops = sum(
-            1 for op in operations if op.machine_type == machine_type
-        )
+        required_ops = sum(1 for op in operations if op.machine_type == machine_type)
         capacity = result.machine_capacity.get(machine_type, 0)
         if 0 < capacity < required_ops:
             result.warnings.append(
