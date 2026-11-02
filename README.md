@@ -57,6 +57,17 @@ The solver runs a **two-stage lexicographic MILP**:
 
 `OPTIMAL` is reported only when both stages are proven within the time limit.
 
+### Sample benchmark
+
+Synthetic 40-operation line, 60 s solver limit, 2 solver threads:
+
+| Scenario | Workers | Status | Bottleneck | Stations | Capacity @ 85% | Target |
+|---|---:|---|---:|---:|---:|---|
+| A — stretch | 24 | `OPTIMAL` | 58.0 s | 23 | 395.7 | 420 not met |
+| B — feasible | 25 used (26 available) | `OPTIMAL` | 56.0 s | 25 | 409.8 | 400 met |
+
+Target 420 requires a bottleneck of at most 54.64 s. With 24 workers, 58.0 s is the **proven optimum**, not a timeout. Results depend on hardware, solver version, and the configured time limit.
+
 ---
 
 ## Quick start
