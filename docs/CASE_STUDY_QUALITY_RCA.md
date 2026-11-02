@@ -18,6 +18,8 @@
 | First Pass Yield (FPY) | 97.53% | 99.01% | +1.48 điểm % |
 | Rework time | 135 phút | 54 phút | −81 phút (−60.0%) |
 | Top defect | Lệch cổ 18 (40.0%) | Cổ không đều 6 (33.3%) | Lệch cổ giảm 72.2% |
+| DPMO (1 cơ hội/áo) | 24,725 | 9,890 | −14,835 |
+| Z-benchmark (không 1.5σ) | 3.47 | 3.83 | +0.36 |
 
 **Root cause đã xác minh trong bộ dữ liệu synthetic:**
 
@@ -236,7 +238,7 @@ Rework time = 45 defect × 3.0 phút/defect
 
 ### 5.5. Điều không được claim
 
-- Không claim “giảm 60% là statistically significant” vì chỉ 5 ngày, không có hypothesis test.
+- Không claim “giảm 60% là statistically significant” trong sản xuất chỉ từ 5 ngày. Test minh họa ở §6A cho p ≈ 0.0006 trên dữ liệu synthetic, nhưng giả định inspection độc lập và không thay thế validation production.
 - Không claim “zero defect” vì còn 18 defect.
 - Không quy đổi 81 phút rework thành tiền khi chưa có cost of quality.
 - Không claim kết quả này áp dụng cho mọi style/line.
@@ -278,6 +280,63 @@ Defect rate >1.50% trong 2 ngày liên tiếp
 - **Daily:** QC kiểm defect rate, first-piece record.
 - **Weekly:** Line Engineer audit guide presence và SOP adherence.
 - **Monthly:** IE/Quality review Pareto, training record, cost of quality (nếu có dữ liệu).
+
+---
+
+## 6A. Six Sigma metrics — chạy thêm trên dữ liệu synthetic
+
+> **Phạm vi:** phân tích bổ sung cho case study; không phải KPI contract của API.
+> **Giả định:** 1 cơ hội/áo (collar attachment), 100% inspection, các defect độc lập.
+
+**Công thức:**
+
+```text
+DPMO = defects / opportunities × 1,000,000
+Z_benchmark = 0.8406 + sqrt(29.37 − 2.221 × ln(DPMO))
+```
+
+Z-benchmark là **short-term Z**, chưa cộng 1.5σ shift.
+
+| Chỉ số | Trước | Sau | Ghi chú |
+|---|---:|---:|---|
+| Defect rate | 2.47% | 0.99% | 45/1,820; 18/1,820 |
+| DPMO | 24,725 | 9,890 | 1 cơ hội/áo |
+| Z-benchmark | 3.47 | 3.83 | Không cộng 1.5σ |
+
+### 6A.1. Two-proportion z-test
+
+So sánh tỷ lệ defect trước/sau:
+
+```text
+p1 = 45 / 1,820 = 0.024725
+p2 = 18 / 1,820 = 0.009890
+p_pool = 63 / 3,640 = 0.017308
+SE = sqrt(p_pool × (1 − p_pool) × (2 / 1,820)) = 0.004323
+z = (p1 − p2) / SE = 3.4315
+p-value (2 phía) ≈ 0.0006
+95% CI (unpooled) = 0.64 – 2.33 điểm %
+```
+
+**Cách đọc:** Với giả thuyết H0 “hai tỷ lệ bằng nhau”, chênh lệch quan sát khó xảy ra (p ≈ 0.0006). Đây là **minh họa trên dữ liệu synthetic**, giả định inspection độc lập; không chứng minh nhân quả và không thay thế validation production.
+
+### 6A.2. p-chart
+
+Giả định 364 pcs/ngày (1,820 / 5):
+
+| Giai đoạn | p̄ | UCL | LCL | Điểm ngoài limit |
+|---|---:|---:|---:|---:|
+| Trước | 2.47% | 4.91% | 0.03% | 0/5 |
+| Sau | 0.99% | 2.55% | 0% | 0/5 |
+
+Cả 5 điểm mỗi giai đoạn nằm trong limit, không có special-cause signal trong từng giai đoạn; tín hiệu chính là **level shift** giữa hai giai đoạn. Với chỉ 5 điểm, limit là provisional; muốn kết luận ổn định cần 20–25 subgroup.
+
+### 6A.3. Giới hạn
+
+- 1 cơ hội/áo là giả định; nếu một áo có nhiều cơ hội lỗi, DPMO thay đổi.
+- 5 ngày, 2 inspectors, chưa có GR&R; inspection có thể bỏ sót defect.
+- z-test giả định defect độc lập; nếu defect cluster theo ngày/operator, p-value bị lạc quan.
+- Chưa có cost of quality; không quy đổi 81 phút rework thành tiền.
+- Không gọi “Six Sigma certified” hoặc “statistically proven in production”.
 
 ---
 
@@ -331,7 +390,7 @@ Defect rate >1.50% trong 2 ngày liên tiếp
 | 5 ngày pilot | Chưa đủ dài hạn | Theo dõi 4 tuần, so sánh cùng style/line |
 | Chưa có GR&R | Đo lường có thể sai | Làm attribute agreement study với 2–3 inspectors |
 | Chưa stratify theo operator/shift | Có thể còn biến số ẩn | Phân tích theo shift/operator group, không dùng tên cá nhân |
-| Chưa có hypothesis test | Chưa chứng minh statistical significance | Dùng proportion test / control chart với dữ liệu đủ lớn |
+| Hypothesis test mới là minh họa | p ≈ 0.0006 trên synthetic, giả định independence; chưa đủ cho production | Chạy lại với dữ liệu thật, kiểm tra clustering, baseline ≥4 tuần |
 | Chưa có cost of quality | Chưa quy đổi tiền | Thu thập rework cost, scrap cost, inspection cost |
 
 **Điều kiện để gọi là “verified” trong production:**
@@ -356,6 +415,10 @@ Defect rate >1.50% trong 2 ngày liên tiếp
 - [x] Có countermeasure + owner + due date.
 - [x] Có before/after cùng kỳ, cùng sản lượng.
 - [x] Có Control Plan với owner/frequency/reaction.
+- [x] Có DPMO và Z-benchmark minh họa, ghi rõ 1 cơ hội/áo.
+- [x] Có two-proportion z-test + 95% CI, ghi rõ giả định independence.
+- [x] Có p-chart minh họa và caveat 5 điểm.
+- [x] Không gọi “Six Sigma certified” hoặc “statistically proven in production”.
 - [x] Có giới hạn và điều kiện xác minh.
 - [x] Không quy đổi tiền khi chưa có cost data.
 - [x] Không claim nhân quả tuyệt đối.

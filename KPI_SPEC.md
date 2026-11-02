@@ -660,6 +660,27 @@ Không suy ra OEE từ machine allocation, số máy available hoặc tổng dow
 
 ---
 
+## 12A. Quality case-study metrics — docs-only
+
+> Chỉ dùng cho case study T07; không có trong API response và không thay đổi KPI contract.
+
+| Metric | Công thức | Ví dụ T07 |
+|---|---|---|
+| Defect rate | `defects / inspected × 100` | 45/1,820 = 2.47%; 18/1,820 = 0.99% |
+| FPY | `(inspected − defects) / inspected × 100` | 97.53% → 99.01% |
+| DPMO | `defects / opportunities × 1,000,000` | 24,725 → 9,890 (1 cơ hội/áo) |
+| Z-benchmark | `0.8406 + sqrt(29.37 − 2.221 × ln(DPMO))` | 3.47 → 3.83 |
+
+**Quy tắc:**
+
+- DPMO phải ghi rõ **opportunity definition**; T07 giả định 1 cơ hội/áo (collar attachment). Nếu một áo có nhiều cơ hội lỗi, DPMO thay đổi.
+- Z-benchmark trên là **short-term Z**, không cộng 1.5σ shift. Nếu so với sigma level ngành, phải ghi rõ phương pháp.
+- Two-proportion z-test và p-chart chỉ là **case-study analysis**, không phải KPI API; kết quả synthetic không chứng minh nhân quả hoặc năng lực sản xuất.
+- Không gọi “Six Sigma certified” hoặc “statistically proven in production” từ dữ liệu 5 ngày.
+- Không thêm field DPMO/sigma vào `Kpi` hoặc API nếu chưa có test và quyết định mới trong `CHECKLIST.md`.
+
+---
+
 ## 13. Quy tắc đặt tên và anti-pattern
 
 | Không dùng | Dùng đúng | Lý do |

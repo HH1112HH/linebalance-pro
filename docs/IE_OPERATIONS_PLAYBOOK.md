@@ -62,7 +62,7 @@
 | 1 | Time Study & Standard Work | Observation sheet, tách element human/machine/walking, NT/ST/SAM, labor/operator/machine/station cycle, Yamazumi, Standard Work, Q&A | §3.1–3.14 | `[x]` knowledge; `[~]` software: UI aggregate |
 | 2 | Hourly Production Control | Hourly plan theo bucket, cumulative gap, projected output, WIP theo buffer, escalation, CSV | §4.1–4.11; `docs/data/hourly_actuals.csv` | `[x]` knowledge; `[~]` software: chưa có backend model |
 | 3 | Lean 8 Wastes | TIMWOODS, Muda/Mura/Muri, 4 cơ sở đo, Pareto, root cause, CSV | §5.1–5.11; `docs/data/waste_observation.csv` | `[x]` knowledge; `[~]` software: không phải feature |
-| 4 | DMAIC & Six Sigma | 5 bước, T07 case study, fishbone/5 Why, Control Plan | §6.1–6.7; `docs/CASE_STUDY_QUALITY_RCA.md` | `[x]` |
+| 4 | DMAIC & Six Sigma | 5 bước, T07 case study, fishbone/5 Why, Control Plan, DPMO/Z minh họa | §6.1–6.7, §6.5.1; `docs/CASE_STUDY_QUALITY_RCA.md` | `[x]` |
 | 5 | Kaizen A3 & Control Plan | A3, T08 case study, estimated/verified saving, Control Plan | §7.1–7.7; `docs/CASE_STUDY_KAIZEN.md` | `[x]` |
 | 6 | OEE & Downtime | Công thức A × P × Q, downtime events, lưu ý không suy OEE từ allocation | §8.1–8.3; `KPI_SPEC.md` §12 | `[~]` formula only; thiếu A/P/Q data |
 | 7 | Layout & Ergonomics | Spaghetti, material flow, U-shape, ergonomics checklist (outline) | §9.1–9.2 | `[~]` outline; chưa có case study |
@@ -1146,6 +1146,8 @@ Biết dùng DMAIC để giải quyết vấn đề chất lượng/năng suất
 | FPY | 97.53% | 99.01% | +1.48 pp |
 | Rework | 135 phút | 54 phút | −81 phút |
 | Lệch cổ | 18 (40.0%) | 5 (27.8%) | −72.2% |
+| DPMO (1 cơ hội/áo) | 24,725 | 9,890 | −14,835 |
+| Z-benchmark (không 1.5σ) | 3.47 | 3.83 | +0.36 |
 
 **Root cause:** collar guide không được lắp lại sau changeover; checklist thiếu guide check; không có first-piece approval; không có owner/audit cho setup standard. Đây là lỗi method/setup control, không phải “operator bất cẩn”.
 
@@ -1180,6 +1182,26 @@ Biết dùng DMAIC để giải quyết vấn đề chất lượng/năng suất
 | Guide presence | 100% | Mỗi changeover | Supervisor | Thiếu → dừng setup, first-piece lại |
 | First-piece approval | 100% | Mỗi changeover | QC | Không sign-off → không sản xuất |
 
+### 6.5.1. Six Sigma metrics — chạy thêm
+
+> Chi tiết và caveat: `docs/CASE_STUDY_QUALITY_RCA.md` §6A.
+
+```text
+DPMO = defects / opportunities × 1,000,000
+Z_benchmark = 0.8406 + sqrt(29.37 − 2.221 × ln(DPMO))
+```
+
+| Chỉ số | Trước | Sau |
+|---|---:|---:|
+| DPMO (1 cơ hội/áo) | 24,725 | 9,890 |
+| Z-benchmark (không 1.5σ) | 3.47 | 3.83 |
+
+**Two-proportion z-test:** z = 3.43; p ≈ 0.0006 (2 phía); 95% CI 0.64–2.33 điểm %.
+
+**p-chart** (364 pcs/ngày): trước p̄ = 2.47%, UCL = 4.91%, LCL = 0.03%; sau p̄ = 0.99%, UCL = 2.55%, LCL = 0%. Cả 5 điểm mỗi giai đoạn trong limit; đây là level shift, không phải special-cause trong giai đoạn.
+
+**Caveat:** synthetic, 1 cơ hội/áo, giả định inspection độc lập, chỉ 5 điểm; không claim “Six Sigma certified” hoặc production significance.
+
 ### 6.6. Câu hỏi phỏng vấn
 
 1. DMAIC khác gì với “làm cải tiến” thông thường?
@@ -1207,6 +1229,9 @@ Biết dùng DMAIC để giải quyết vấn đề chất lượng/năng suất
 - [x] Có countermeasure + owner + due date.
 - [x] Có before/after cùng kỳ, cùng sản lượng.
 - [x] Có Control Plan với reaction.
+- [x] Có DPMO và Z-benchmark minh họa, ghi rõ 1 cơ hội/áo.
+- [x] Có two-proportion z-test + 95% CI và p-chart minh họa.
+- [x] Không claim “Six Sigma certified” hoặc production significance từ dữ liệu synthetic.
 - [x] Không claim nhân quả tuyệt đối; không quy đổi tiền khi chưa có cost data.
 
 ---

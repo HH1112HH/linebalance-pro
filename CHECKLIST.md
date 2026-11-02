@@ -663,3 +663,11 @@ Mỗi lần chạy phải có `RunMetadata`:
 - Thêm `CONTRIBUTING.md`: setup local, quality gate `scripts/verify.ps1`, quy ước commit và checklist PR.
 - Giữ nguyên phạm vi demo: không thêm auth, database, multi-plant hoặc dữ liệu thật.
 - Không đổi semantics KPI/MILP; `v0.2.0` vẫn là release tính năng, các tài liệu mới nằm trên `main`.
+
+### 2026-11-02 — Bổ sung Six Sigma metrics cho T07 (docs-only)
+
+- Thêm DPMO, Z-benchmark, two-proportion z-test và p-chart vào `docs/CASE_STUDY_QUALITY_RCA.md` §6A và playbook §6.5.1.
+- Kết quả chạy lại từ CSV: DPMO **24,725 → 9,890**; Z-benchmark **3.47 → 3.83**; z = **3.43**, p ≈ **0.0006** (2 phía), 95% CI **0.64–2.33 điểm %**; p-chart không có điểm ngoài limit (5 điểm/giai đoạn).
+- Giả định: 1 cơ hội/áo, inspection độc lập, dữ liệu synthetic, không cộng 1.5σ shift; không claim production significance hoặc “Six Sigma certified”.
+- Phạm vi: chỉ docs/case study; không thêm API, model hoặc test code. `KPI_SPEC.md` §12A ghi công thức docs-only, không thay đổi KPI contract.
+- Lý do: Module 4 cần phần Six Sigma định lượng; case study trước đây chỉ có defect rate/FPY, chưa có DPMO/sigma/test.
