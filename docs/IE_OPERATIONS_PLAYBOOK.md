@@ -11,9 +11,9 @@
 | Mục đích | Đọc |
 |---|---|
 | Ôn nhanh 5 phút | §1 Trạng thái + §2 Learning path |
-| Học đầy đủ | Module 1–5 (§3–§7) |
+| Học đầy đủ | Module 1–10 (§3–§12) |
 | Tra công thức | Module 1, 2, 3, 6 + `KPI_SPEC.md` |
-| Chuẩn bị phỏng vấn | Q&A từng module + Module 10 (§12) |
+| Chuẩn bị phỏng vấn | Q&A từng module + Module 10 (§12) + `docs/INTERVIEW_PREP.md` |
 | Biết việc tiếp theo | §13 |
 
 ## Mục lục
@@ -67,35 +67,33 @@
 | 6 | OEE & Downtime | A/P/Q, 6 big losses, điều kiện áp dụng và bẫy station thủ công, ví dụ PRESS-01 synthetic, Pareto downtime | §8.1–8.12; `docs/data/oee_machine_log.csv`; `KPI_SPEC.md` §12 | `[x]` knowledge + synthetic; `[~]` software: chưa có OEE API (`N/A`) |
 | 7 | Layout & Ergonomics | Spaghetti, flow, POU/FIFO, lựa chọn U-cell, ergonomic screen, case study ST01 | §9.1–9.12; `docs/CASE_STUDY_LAYOUT_ERGONOMICS.md`; `docs/layout_study_before_after.svg` | `[x]` knowledge + synthetic; `[~]` EHS/pilot thật chưa xác nhận |
 | 8 | SMED & Changeover | Internal/external, 4 giai đoạn SMED, changeover study synthetic 5+5 lần, waterfall, tác động OEE | §10.1–10.14; `docs/data/smed_changeover_study.csv` | `[x]` knowledge + synthetic; `[~]` software: không có changeover API |
-| 9 | Cross-functional Management | Vai trò Production/Quality/Maintenance/Planning/Warehouse/HR/EHS (outline) | §11.1–11.3 | `[~]` outline; chưa có case study |
-| 10 | Interview Preparation | 5 case, STAR, English terms, 2-minute answers (outline) | §12.1–12.2; `CHECKLIST.md` §7 | `[~]` outline; `docs/INTERVIEW_PREP.md` chưa có |
+| 9 | Cross-functional Management | Vai trò 8 nhóm, RACI, decision boundary, Red escalation, hourly case và handover | §11.1–11.10; Module 2 case | `[x]` knowledge + synthetic; `[~]` authority matrix thật phụ thuộc site |
+| 10 | Interview Preparation | 5 STAR case, intro, English answers, technical follow-ups, glossary, 7-min demo | §12.1–12.6; `docs/INTERVIEW_PREP.md` | `[x]` prep template; `[~]` cá nhân hóa bằng kinh nghiệm thật |
 
 **Đọc nhanh:**
 
-- **P0 đã đủ nội dung:** Module 1–5.
-- **P1 có ví dụ synthetic:** Module 6 (OEE), Module 7 (Layout & Ergonomics) và Module 8 (SMED); pacer, EHS và video changeover vẫn cần xác nhận thật.
-- **P1 còn outline:** Module 9–10.
+- **Knowledge:** Module 1–10 đã có nội dung, ví dụ/checklist và Q&A; Module 10 có file prep tiếng Anh riêng.
+- **Synthetic case:** Module 4, 5, 6, 7, 8 và 9; không phải production evidence.
+- **Còn xác nhận ngoài portfolio:** Module 6 pacer, Module 7 EHS/handler time, Module 8 video/pilot; RACI Module 9 tùy site; Module 10 cần điền kinh nghiệm cá nhân.
 - **Phần mềm:** optimizer + dashboard + 3 form đã có; Time Study là aggregate; Hourly và 8 Wastes là docs/CSV; OEE để `N/A`.
-- **Case study:** T07/T08 đã xong; không mở rộng software chỉ để biến chúng thành feature.
+- **Case study:** T07/T08 và Layout/Ergonomics synthetic đã có; không mở rộng software chỉ để biến chúng thành feature.
 
 ---
 
 ## 2. Learning path <a id="learning-path"></a>
 
-**Ưu tiên học trước:**
+**Learning path — 10 module:**
 
 1. Time Study & Standard Work
 2. Hourly Production Control
 3. Lean 8 Wastes
-4. DMAIC & Kaizen A3
-5. OEE & Downtime
-
-**Sau đó mở rộng:**
-
-6. Layout & Ergonomics
-7. SMED & Changeover
-8. Cross-functional Management
-9. Interview English
+4. DMAIC & Six Sigma
+5. Kaizen A3 & Control Plan
+6. OEE & Downtime
+7. Layout & Ergonomics
+8. SMED & Changeover
+9. Cross-functional Management
+10. Interview Preparation
 
 ---
 
@@ -1937,52 +1935,219 @@ Sau SMED, downtime còn lại là breakdown 25 phút (**51.6%**) và changeover 
 
 ## 11. Module 9 — Cross-functional Management <a id="module-9"></a>
 
-### 11.1. Nội dung
+### 11.1. Mục tiêu và nguyên tắc
 
-- Production: kế hoạch, sản lượng, HC.
-- Quality: lỗi, rework, FPY.
-- Maintenance: downtime, bảo trì.
-- Planning: lệnh sản xuất, nguyên liệu.
-- Warehouse: cấp phát, tồn kho.
-- HR: attendance, tuyển dụng, đào tạo.
-- EHS: an toàn, môi trường.
+Shift Line Engineer phối hợp để **giữ an toàn, chất lượng và dòng sản xuất**, nhưng không thay quyền chuyên môn của Quality, Maintenance, Planning, HR hay EHS. Sau module này phải:
 
-### 11.2. Cách thể hiện trong phỏng vấn
+- đưa các bộ phận về cùng một bộ dữ liệu và cùng một mốc thời gian;
+- biết ai thực hiện, ai quyết định, ai cần được hỏi và ai cần được thông báo;
+- escalation theo ngưỡng/standard của site, giao owner + due time + next update;
+- đóng action bằng bằng chứng, không chỉ bằng “đã báo”.
 
-Dùng một tình huống thực tế, nói rõ:
-- ai liên quan;
-- dữ liệu nào dùng chung;
-- ai ra quyết định;
-- escalation khi nào.
+**Thứ tự ưu tiên:** Safety → Quality/containment → Material & machine stability → Output recovery → Cost. Không chase target bằng cách bypass guard, bỏ first-piece, đẩy WIP vượt cap hoặc ghi số liệu không đúng.
 
-### 11.3. Trạng thái
+> Vai trò/RACI bên dưới là **mẫu portfolio**, không phải cơ cấu hay quyền hạn chính thức của HBI. SOP, authority matrix và emergency rules tại site luôn được ưu tiên.
 
-`[~]` Mới có outline vai trò các bộ phận; chưa có case study cross-functional, RACI hoặc escalation thực tế.
+### 11.2. Vai trò các bộ phận
+
+| Bộ phận | Đóng góp/decisions thường gặp | Dữ liệu cần chia sẻ | Không nên làm thay |
+|---|---|---|---|
+| Production / Shift Supervisor | Điều phối người và line trong ca; containment vận hành; huddle/handover | Hourly plan/actual, attendance, WIP, action status | Không tự release hàng Quality đang hold; không bỏ qua EHS |
+| IE / Line Engineer | Xác minh metric, bottleneck, SAM/routing, capacity; đề xuất countermeasure | Time study đã duyệt, balance, gap, loss evidence | Không tự thay approved SAM hoặc target |
+| Quality | Defect definition, containment, disposition/release theo QMS, FPY | Defect/Pareto, first-piece, inspection limits | Không đổi tiêu chuẩn quality để chase output |
+| Maintenance | Chẩn đoán, sửa chữa, PM, machine-safe release | Downtime/event, repair status, parts/ETA | Không bỏ guard/interlock hoặc bàn giao máy chưa an toàn |
+| Planning | Order priority, target/replan, material plan, due date | Demand, schedule, shortage, revised plan | Không biến forecast thành actual hoặc ép sản xuất vượt lệnh |
+| Warehouse / Material Handler | Lot/size/quantity accuracy, replenishment, FIFO, material movement | On-hand, issue/receipt, ETA, shortage, milk-run | Không thay đổi lot/size hoặc chất lượng vật tư không có traceability |
+| HR / Training | Attendance records, cross-training/qualification, labor policy | HC available, skill authorization, training status | Không tự gán người chưa đủ qualification vào operation |
+| EHS | Hazard/risk assessment, site safety requirements, stop-work response | Hazard, clearance, PPE/ergonomic requirements | Không trade safety lấy output; site policy quyết định authority |
+
+### 11.3. RACI mẫu cho một ca
+
+`R` = thực hiện; `A` = chịu trách nhiệm cuối cùng/ra quyết định trong phạm vi; `C` = tham vấn; `I` = được thông báo. Mỗi dòng chỉ định **một A** để tránh “mọi người cùng chịu trách nhiệm, không ai quyết định”.
+
+| Hoạt động | A | R | C | I |
+|---|---|---|---|---|
+| Xác minh hourly plan/actual và gap | Shift Supervisor | Production recorder/Line Leader | IE, Planning | Production Manager, Quality |
+| WIP vượt buffer cap | Shift Supervisor | Production / Line Leader | IE, Warehouse, Quality | Production Manager, Planning |
+| Chẩn đoán, sửa và release máy | Maintenance Lead | Maintenance Technician | Production, EHS khi có hazard | IE, Planning |
+| Containment và disposition hàng lỗi | Quality Lead | QC + Production theo hướng dẫn Quality | IE, Planning | Shift Supervisor, Production Manager |
+| Thiếu vật tư / xác nhận ETA | Planning Lead | Warehouse / Material Handler | Production, IE | Shift Supervisor, Quality nếu lot ảnh hưởng |
+| Redeploy người / overtime / skill coverage | Production Manager | Shift Supervisor | HR, IE, Quality | Planning |
+| Hazard, guarding, ergonomics, aisle clearance | EHS Lead theo site policy | Người phát hiện + Supervisor bảo vệ khu vực | Maintenance, IE, Facilities | Production Manager |
+| Recovery plan / thay đổi lịch chạy | Production Manager | Shift Supervisor + IE | Planning, Quality, Maintenance, Warehouse, HR, EHS theo loss | Các ca liên quan |
+| Handover action còn mở | Shift Supervisor bàn giao | Action owner cập nhật status/evidence | IE và owner liên quan | Ca nhận việc / manager |
+
+**Decision boundary:** Quality giữ quyền hold/release theo QMS; Maintenance quyết định trạng thái kỹ thuật an toàn của máy; EHS/site procedure quyết định phản ứng safety; Planning/Production Manager phê duyệt schedule/resource changes theo authority tại site. Shift Engineer tổng hợp dữ liệu, đề xuất, theo dõi và escalate — không tự vượt quyền này.
+
+### 11.4. Operating rhythm và escalation
+
+| Nhịp | Nội dung | Output |
+|---|---|---|
+| Start-of-shift huddle | Target/style, attendance/qualification, material, machine readiness, quality/safety alert | Risk list + owner trước khi chạy |
+| Hourly review | Cumulative plan/actual, gap/projected, WIP từng buffer, downtime/loss | Action trong giờ + next check time |
+| Escalation huddle | Khi đạt Yellow/Orange/Red, WIP cap, quality hold hoặc safety trigger của site | Containment, decision owner, ETA, recovery/replan |
+| Shift handover | Actual cuối ca, open downtime/quality/material/WIP, action status | Người nhận xác nhận owner và due time |
+
+Ngưỡng Yellow/Orange/Red và WIP lấy theo **Module 2 §4.6**; không tạo một bộ ngưỡng mâu thuẫn. Một escalation message tối thiểu phải có:
+
+```text
+WHEN: timestamp / shift / line / style
+WHAT: target, plan-to-time, actual, gap, projection, WIP/buffer cap
+LOSS: category + observed minutes/pcs; facts separated from hypotheses
+CONTAINMENT: action đã làm để bảo vệ safety/quality/WIP
+ASK: quyết định hoặc nguồn lực cần ai phê duyệt
+OWNER + DUE: ai làm, hạn phản hồi
+NEXT UPDATE: giờ cập nhật tiếp theo; tiêu chí đóng/escalate cấp cao hơn
+```
+
+### 11.5. Case study synthetic — Red escalation lúc 12:00
+
+> Dùng hourly case của Module 2; toàn bộ dữ liệu synthetic, không phải ca sản xuất thật.
+
+| Mốc 12:00 | Giá trị |
+|---|---:|
+| Target / shift | 420 pcs |
+| Cumulative plan | 224 pcs |
+| Cumulative actual | 172 pcs |
+| Gap | −52 pcs (−23.21%) |
+| Projected end-of-shift | 172 / 4.0 × 7.5 = 322.5 pcs (76.8% target) |
+| WIP tại `ST05-IN` | 38 pcs; cap 25 (vượt 13 pcs) |
+| Loss events đã log đến 12:00 | 25 phút category `MACHINE`; 15 phút category `MATERIAL`; chưa cộng thành line-stop vì common measurement basis chưa xác nhận |
+
+Theo Module 2 §4.6, đây là **Red**: gap < −15% và projection <90%; đồng thời buffer WIP vượt cap.
+Response window cho Red là **15 phút** theo Module 2 §4.6; trong ví dụ này next update được đặt lúc 12:15.
+
+**Response theo nhóm:**
+
+1. **Shift Supervisor/Production:** xác minh counter và timestamp; gọi Red huddle; kiểm soát feed tại đúng buffer `ST05-IN` theo pull/WIP cap — không dồn thêm hàng vào trước bottleneck.
+2. **IE:** xác minh gap/projection, chỉ rõ observation khác hypothesis; kiểm tra bottleneck và cập nhật loss board. Giữ 25 phút `MACHINE` và 15 phút `MATERIAL` tách riêng; không cộng thành 40 line-min.
+3. **Maintenance:** rà event machine 25 phút đã xảy ra ở bucket 08:00–09:00, xác nhận countermeasure/current condition; nếu tái diễn thì xử lý theo work instruction và chỉ release theo site safety procedure.
+4. **Planning + Warehouse:** xác nhận material wait 15 phút ở bucket 10:00–11:00 đã được giải quyết chưa, kiểm tra collar interlining/lot/ETA và xác nhận ưu tiên order/cấp liệu.
+5. **HR + Production:** HR được notify theo Red escalation của Module 2; xác minh attendance/qualification nếu cân nhắc redeploy. Không suy “thiếu người” chỉ từ output thấp và không gán người chưa trained.
+6. **Quality:** duy trì inspection/quality gate; nếu có nghi ngờ lỗi thì containment/disposition theo QMS, không bỏ kiểm tra để bù sản lượng.
+7. **EHS:** tham gia ngay nếu có unsafe condition; không chạy máy/di chuyển vật tư khi chưa clear hazard.
+8. **Production Manager + Planning (HR consult về labor option):** nếu recovery forecast vẫn dưới target, quyết định replan/overtime/resource theo authority; báo target risk thật, không gọi 322.5 là cam kết.
+
+**Close criteria:** WIP trở lại ≤ cap hoặc có disposition được duyệt; máy/material status rõ; quality gate được giữ; owner/ETA ghi trên handover; actual/projected được cập nhật. Target chỉ được đánh dấu achieved khi actual đạt target theo định nghĩa đã chốt.
+
+### 11.6. Handover/action log
+
+| Field | Ví dụ trong case |
+|---|---|
+| Timestamp / issue ID | 12:00 / `RED-LINE01-20261027-01` (synthetic ID) |
+| Signal | Gap −23.21%; projected 322.5/420; WIP `ST05-IN` 38/25 |
+| Confirmed facts | 25 min category `MACHINE`, 15 min category `MATERIAL`; line-stop basis chưa xác nhận |
+| Hypotheses (chưa xác minh) | Thread path gây repeat stop; cấp mex chậm |
+| Containment | Stop feeding buffer theo cap; giữ quality gate |
+| Action / owner / due | Maintenance check / Warehouse ETA / Planning recovery plan — mỗi action có owner riêng |
+| Decision / approver | Replan/overtime nếu cần — Production Manager/Planning theo site authority |
+| Next update / close evidence | 12:15 (Red response window); log actual, WIP, machine/material status |
+
+Không gộp nhiều phòng ban thành một action “các bộ phận xử lý”. Mỗi action cần một owner, due time và bằng chứng hoàn tất.
+
+### 11.7. Cách xử lý bất đồng
+
+1. Quay về định nghĩa và timestamp chung (plan, actual, buffer, downtime category, quality hold).
+2. Tách **fact**, **hypothesis**, **decision**; nêu điều chưa biết.
+3. Giữ decision rights: Quality quyết định disposition; Maintenance machine release; EHS safety; Planning/Production Manager schedule/resource theo authority.
+4. Nếu target và safety/quality xung đột, ưu tiên control/containment; escalate thay vì tự bỏ tiêu chuẩn.
+5. Ghi quyết định, owner, due time và next update để ca sau tiếp tục.
+
+### 11.8. Câu hỏi phỏng vấn
+
+1. Em làm gì khi Production muốn chạy nhanh nhưng Quality đang hold hàng?
+2. Ai chịu trách nhiệm khi máy dừng: IE hay Maintenance?
+3. Làm sao xử lý khi Warehouse nói đã cấp đủ nhưng line báo thiếu?
+4. Khi nào em tự điều chuyển người, khi nào cần HR/manager?
+5. Em handover open issue thế nào để không mất action giữa hai ca?
+
+**Model answer — Red escalation:**
+
+> Ở case synthetic lúc 12:00, plan-to-time là 224 pcs nhưng actual 172, gap −23.21%; projection chỉ 322.5/420 và WIP `ST05-IN` là 38 so với cap 25. Em xác minh timestamp/counter rồi gọi Red huddle. Production kiểm soát feed tại buffer; IE xác nhận gap và giữ 25 phút category MACHINE tách khỏi 15 phút category MATERIAL vì common line-stop basis chưa được xác nhận; Maintenance rà machine event; Planning/Warehouse xác nhận vật tư và ETA; Quality giữ quality gate; HR được notify theo Red escalation và kiểm tra attendance/qualification nếu có labor option. Nếu forecast không phục hồi, Production Manager/Planning quyết định replan theo authority. Em ghi từng owner, due time và next update. Đây là dữ liệu synthetic nên em không trình bày như thành tích sản xuất thật.
+
+### 11.9. Checklist hoàn thành
+
+- [x] Có vai trò Production, IE, Quality, Maintenance, Planning, Warehouse, HR, EHS.
+- [x] Có RACI một Accountable cho từng loại quyết định.
+- [x] Có decision boundary và ghi rõ site SOP/authority matrix được ưu tiên.
+- [x] Có operating rhythm, escalation message và handover/action log.
+- [x] Có Red case 12:00 nhất quán với Module 2; tách loss category/đơn vị.
+- [x] Có cách xử lý bất đồng, safety/quality không bị subordinate bởi output.
+- [x] Có model answer cross-functional và tối thiểu 3 câu hỏi phỏng vấn.
+- [ ] Thay RACI mẫu bằng authority matrix thật chỉ khi được site cho phép; hiện không có dữ liệu tổ chức HBI.
+
+### 11.10. Trạng thái
+
+`[x]` Knowledge, RACI mẫu và case study synthetic đầy đủ. `[~]` RACI là template học tập; phải xác nhận lại với SOP/authority matrix của từng site. Không thêm workflow hoặc module phần mềm.
 
 ---
 
 ## 12. Module 10 — Interview Preparation <a id="module-10"></a>
 
-### 12.1. Nội dung
+### 12.1. Mục tiêu
 
-- 5 case: bottleneck, manpower shortage, new style, quality problem, line moving.
-- STAR: Situation, Task, Action, Result.
-- English IE terms.
-- 2-minute answers.
+Trả lời có cấu trúc, dùng đúng thuật ngữ IE, nói rõ vai trò và con số, đồng thời không nhận case synthetic là thành tích production. Mỗi câu trả lời nên khoảng 90–120 giây; câu hỏi ngắn dùng phiên bản 30–45 giây.
 
-### 12.2. Trạng thái
+### 12.2. STAR và năm case bắt buộc
 
-`[~]` Đã có outline 5 case + thuật ngữ trong `CHECKLIST.md` §7; **`docs/INTERVIEW_PREP.md` chưa được tạo**. Cần viết câu trả lời 2 phút bằng tiếng Anh và model answer.
+| Case | Module tham chiếu | Trạng thái evidence |
+|---|---|---|
+| Bottleneck / target miss | 5, `CASE_STUDY_KAIZEN.md` | Portfolio simulation; target 420 không đạt |
+| Manpower shortage | 3, 4, 9 | Hypothetical response; không có outcome số giả định |
+| New style readiness | 1, 5, 9 | Readiness approach; không claim launch đã thực hiện |
+| Quality problem | 4, `CASE_STUDY_QUALITY_RCA.md` | T07 synthetic; không claim causality/production significance |
+| Line moving / transfer | 7, 8, 9 | Hypothetical cutover plan; site approval cần thiết |
+
+```text
+S — Situation: scope, baseline, timestamp/style/line.
+T — Task: trách nhiệm thực sự của mình.
+A — Action: data → analysis → coordination → containment/decision.
+R — Result: output/quality/safety/cost; nêu target đạt/chưa đạt và caveat.
+```
+
+### 12.3. Quy tắc cho câu trả lời portfolio
+
+- Với result synthetic: mở đầu bằng **“In my synthetic portfolio case…”**.
+- Với tình huống chưa làm: dùng **“If I faced this situation, I would…”**, không kể như đã làm.
+- Tách `modeled capacity` khỏi `actual output`; `estimated saving` khỏi `verified cash saving`.
+- Không gọi LBE là actual labor efficiency, machine allocation là utilization, hay effective takt là customer demand takt.
+- Nêu decision boundary: Quality/maintenance/EHS/site SOP không bị override để đạt sản lượng.
+- Nếu thiếu dữ liệu, nói rõ dữ liệu thiếu, người cần tham vấn và cách kiểm chứng.
+
+### 12.4. Tài liệu ôn phỏng vấn
+
+`docs/INTERVIEW_PREP.md` chứa:
+
+- giới thiệu bản thân 60 giây có placeholder;
+- 5 model answers STAR tiếng Anh;
+- bonus cross-functional Red escalation;
+- follow-up technical questions, English glossary và câu hỏi cho interviewer;
+- portfolio walkthrough 7 phút và checklist trước phỏng vấn.
+
+**Cá nhân hóa bắt buộc:** thay placeholder bằng sự thật, thêm case đã trực tiếp làm nếu có. Nếu chưa có, giữ cách trình bày portfolio/hypothetical; không thêm tên line, sản lượng, tỷ lệ, lương hay vai trò không có bằng chứng.
+
+### 12.5. Checklist hoàn thành
+
+- [x] Có 5 case đúng nhóm bottleneck, manpower, new style, quality, line moving.
+- [x] Có STAR format, intro 60 giây, câu trả lời tiếng Anh và glossary.
+- [x] Có follow-up về target 420, OEE, saving, cross-functional conflict.
+- [x] Có 7-minute portfolio walkthrough và câu hỏi cho interviewer.
+- [x] Ghi rõ project/dữ liệu synthetic; không claim kinh nghiệm HBI hoặc production result.
+- [ ] Điền thông tin cá nhân/kinh nghiệm thật trước khi dùng; bỏ mọi placeholder không đúng.
+- [ ] Luyện nói và điều chỉnh đáp án theo job description, site SOP và thời lượng interview.
+
+### 12.6. Trạng thái
+
+`[x]` Knowledge và `docs/INTERVIEW_PREP.md` đã có đủ template/model answers. `[~]` Ứng viên phải cá nhân hóa bằng dữ kiện thật và luyện nói; file không thay thế kinh nghiệm hoặc bằng chứng production.
 
 ---
 
 ## 13. Việc tiếp theo <a id="next-steps"></a>
 
-1. **Deploy public + acceptance** — ưu tiên cao nhất; checklist trong `ROADMAP.md` §9.
-2. **Chốt scope element-level Time Study** — hiện UI là aggregate; chỉ mở nếu cần cho demo.
-3. **Bổ sung dữ liệu OEE** — chỉ tính khi có đủ Availability, Performance, Quality; nếu thiếu, giữ `N/A`.
-4. **Tạo `docs/INTERVIEW_PREP.md`** — 5 case, STAR, câu trả lời tiếng Anh 2 phút.
-5. **Hoàn thiện tài liệu** — `DATA_DICTIONARY.md`, `SECURITY.md`, rà `MODEL.md`.
+1. **Deploy public + acceptance** — còn chờ Render/Netlify access; theo `DEPLOYMENT.md` và `ROADMAP.md` §9. Không nói demo live trước khi URL/health được kiểm tra.
+2. **Cá nhân hóa interview prep** — thay placeholder trong `docs/INTERVIEW_PREP.md` bằng kinh nghiệm thật và job description; không dùng kết quả synthetic như production achievement.
+3. **Nếu áp dụng tại một site** — làm theo site SOP/EHS trong hệ thống riêng; giữ dữ liệu nhà máy/nhân sự ngoài portfolio repo, vốn chỉ chứa synthetic data.
+4. **Giữ software scope đã đóng băng** — không thêm hourly/OEE/CAD/cross-functional workflow API nếu chưa có quyết định mới trong `CHECKLIST.md`.
 
 **Không tự động cập nhật SAM từ optimizer.** Mọi thay đổi method phải qua time study lại, xác nhận Standard Time và phê duyệt.
 
@@ -1992,6 +2157,7 @@ Dùng một tình huống thực tế, nói rõ:
 
 > Nguồn: review chuyên môn 3 module IE/Lean. Trạng thái: **12/13 done, 1 partial**.
 > `[x]` = đã sửa trong playbook/CSV; `[~]` = đã có khung nhưng chưa đủ case study/dữ liệu.
+> Đây là snapshot của review lúc đó; trạng thái 10 module hiện tại xem §1, các quyết định cập nhật xem `CHECKLIST.md` decision log.
 
 | # | Item | Mức | Trạng thái | Bằng chứng |
 |---:|---|---|---|---|
@@ -2027,9 +2193,15 @@ Dùng một tình huống thực tế, nói rõ:
 | Roadmap / acceptance | `ROADMAP.md` §9 |
 | T07 Quality RCA | `docs/CASE_STUDY_QUALITY_RCA.md` |
 | T08 Kaizen | `docs/CASE_STUDY_KAIZEN.md` |
+| Layout & Ergonomics | `docs/CASE_STUDY_LAYOUT_ERGONOMICS.md`, `docs/layout_study_before_after.svg` |
+| Cross-functional case | §11.5; hourly source in `docs/data/hourly_actuals.csv` |
+| Interview preparation | `docs/INTERVIEW_PREP.md` |
 | Hourly data | `docs/data/hourly_actuals.csv` |
 | Waste data | `docs/data/waste_observation.csv` |
 | Quality data | `docs/data/quality_defects.csv`, `docs/data/quality_setup_audit.csv` |
 | Kaizen cost | `docs/data/kaizen_cost_model.csv` |
+| OEE log | `docs/data/oee_machine_log.csv` |
+| SMED study | `docs/data/smed_changeover_study.csv` |
+| Layout route study | `docs/data/layout_route_observations.csv` |
 
 > Toàn bộ ví dụ và số liệu trong playbook là synthetic, không phải kết quả của HBI.

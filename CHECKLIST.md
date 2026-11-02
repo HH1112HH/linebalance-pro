@@ -711,3 +711,12 @@ Mỗi lần chạy phải có `RunMetadata`:
 - Giới hạn: handler replenishment time, tote mass/force, EHS clearance, ergonomics thật và production pilot chưa đo; **không claim net labor/cash saving hoặc safety/output improvement**.
 - Ghi định nghĩa transport route (m và operator-minutes, không cộng chéo) trong `KPI_SPEC.md` §11; docs-only, không phải KPI API.
 - Phạm vi docs-only; không đổi KPI API, backend, `types.ts`, CAD hay feature software. Checklist lịch sử ở CHECKLIST §1 item 10 được giữ nguyên; trạng thái cập nhật ghi tại entry này.
+
+### 2026-11-02 — Hoàn thiện Module 9–10 (docs-only)
+
+- Module 9: thay outline bằng stakeholder responsibilities, RACI mẫu (mỗi dòng một A), decision boundary, operating rhythm, escalation/handover template và Red case lúc 12:00 từ hourly synthetic. Ghi rõ site SOP/authority matrix được ưu tiên.
+- Giữ 25 phút category `MACHINE` tách khỏi 15 phút category `MATERIAL`; common line-stop basis chưa xác nhận nên không cộng thành 40 line-min.
+- Module 10: tạo `docs/INTERVIEW_PREP.md` với intro 60 giây, 5 STAR case tiếng Anh, cross-functional answer, technical follow-ups, glossary, portfolio demo 7 phút và honesty checklist.
+- Cập nhật playbook §1, §2, §11–§13 và Appendix B; thêm link interview guide vào README.
+- Quy tắc: mọi kết quả project đều synthetic; hypothetical answer dùng “I would”; không claim HBI production experience, public deployment, OEE, saving hoặc target achievement nếu chưa có evidence thật.
+- Phạm vi docs-only; không thêm API/backend/UI. Module 9 RACI cần xác nhận theo site thật; Module 10 cần cá nhân hóa bằng CV/kinh nghiệm thật trước phỏng vấn.
