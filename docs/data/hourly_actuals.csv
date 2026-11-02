@@ -1,0 +1,10 @@
+date,shift_id,line_id,style_code,hour_start,hour_end,planned_output,actual_output,buffer_id,wip_units,wip_cap,downtime_minutes,loss_category,attendance_hc,note
+2026-10-27,SHIFT_01,LINE_01,BASIC-TEE-001,08:00,09:00,56,40,ST05-IN,15,25,25,MACHINE,21,"Overlock thread break at ST05"
+2026-10-27,SHIFT_01,LINE_01,BASIC-TEE-001,09:00,10:00,56,44,ST05-IN,22,25,0,,21,"Recovery after machine stop"
+2026-10-27,SHIFT_01,LINE_01,BASIC-TEE-001,10:00,11:00,56,42,ST05-IN,30,25,15,MATERIAL,21,"Wait for collar interlining"
+2026-10-27,SHIFT_01,LINE_01,BASIC-TEE-001,11:00,12:00,56,46,ST05-IN,38,25,0,,21,"WIP above cap before bottleneck"
+2026-10-27,SHIFT_01,LINE_01,BASIC-TEE-001,12:00,12:30,0,0,ST05-IN,38,25,0,,21,"Meal break - not a loss"
+2026-10-27,SHIFT_01,LINE_01,BASIC-TEE-001,12:30,13:30,56,48,ST05-IN,35,25,10,MANPOWER,21,"Operator moved to cover absence"
+2026-10-27,SHIFT_01,LINE_01,BASIC-TEE-001,13:30,14:30,56,55,ST05-IN,30,25,0,,21,"Bottleneck recovery"
+2026-10-27,SHIFT_01,LINE_01,BASIC-TEE-001,14:30,15:30,56,55,ST05-IN,25,25,0,,21,"WIP reducing"
+2026-10-27,SHIFT_01,LINE_01,BASIC-TEE-001,15:30,16:00,28,30,ST05-IN,18,25,10,QUALITY,21,"Rework on collar alignment"

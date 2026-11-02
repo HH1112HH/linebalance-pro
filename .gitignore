@@ -1,0 +1,30 @@
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+*.egg-info/
+
+# Node
+node_modules/
+frontend/dist/
+frontend/.vite/
+*.tsbuildinfo
+
+# Environment / secrets
+.env
+.env.*
+!.env.example
+
+# Local tooling / editor
+.obsidian/
+.obsidian-mcp/
+.codegraph/
+opencode.json
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log

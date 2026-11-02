@@ -1,0 +1,3503 @@
+{
+  "status": "OPTIMAL",
+  "solver_status": "OPTIMAL",
+  "has_solution": true,
+  "solver_available": true,
+  "solver_message": "HIGHS: PuLP 4.2.0 / HiGHS 1.15.1",
+  "solve_time_sec": 26.999,
+  "data_source": "synthetic-demo-only",
+  "line_name": "Line A — Basic Tee (feasible 400 plan)",
+  "style_code": "BASIC-TEE-001",
+  "shift_id": "SHIFT_01",
+  "sam_basis": "INCLUDES_ALLOWANCE",
+  "allowance_applied_pct": 0.0,
+  "takt_time_sec": 67.5,
+  "effective_takt_time_sec": 57.375,
+  "available_seconds": 27000.0,
+  "stations": [
+    {
+      "station": 1,
+      "worker_id": "W20",
+      "worker_name": "Nguyễn Thị Bích",
+      "operation_ids": [
+        "OP010",
+        "OP020"
+      ],
+      "operation_names": [
+        "Kiểm tra nguyên phụ liệu",
+        "Ép mex cổ"
+      ],
+      "machine_types": [
+        "IRON"
+      ],
+      "standard_load_sec": 48.0,
+      "raw_sam_sec": 48.0,
+      "standard_utilization_pct": 83.66,
+      "idle_sec": 9.375,
+      "overload_sec": 0.0,
+      "capacity_pcs_h": 63.75,
+      "status": "normal"
+    },
+    {
+      "station": 2,
+      "worker_id": "W12",
+      "worker_name": "Lý Thị Ngọc",
+      "operation_ids": [
+        "OP030"
+      ],
+      "operation_names": [
+        "May vai trái"
+      ],
+      "machine_types": [
+        "OVERLOCK"
+      ],
+      "standard_load_sec": 30.0,
+      "raw_sam_sec": 30.0,
+      "standard_utilization_pct": 52.29,
+      "idle_sec": 27.375,
+      "overload_sec": 0.0,
+      "capacity_pcs_h": 102.0,
+      "status": "underutilized"
+    },
+    {
+      "station": 3,
+      "worker_id": "W15",
+      "worker_name": "Đỗ Văn Thắng",
+      "operation_ids": [
+        "OP040",
+        "OP050"
+      ],
+      "operation_names": [
+        "May vai phải",
+        "Nối vai"
+      ],
+      "machine_types": [
+        "OVERLOCK"
+      ],
+      "standard_load_sec": 56.0,
+      "raw_sam_sec": 56.0,
+      "standard_utilization_pct": 97.6,
+      "idle_sec": 1.375,
+      "overload_sec": 0.0,
+      "capacity_pcs_h": 54.64,
+      "status": "bottleneck"
+    },
+    {
+      "station": 4,
+      "worker_id": "W05",
+      "worker_name": "Võ Thanh Tùng",
+      "operation_ids": [
+        "OP060"
+      ],
+      "operation_names": [
+        "May cổ"
+      ],
+      "machine_types": [
+        "OVERLOCK"
+      ],
+      "standard_load_sec": 45.0,
+      "raw_sam_sec": 45.0,
+      "standard_utilization_pct": 78.43,
+      "idle_sec": 12.375,
+      "overload_sec": 0.0,
+      "capacity_pcs_h": 68.0,
+      "status": "normal"
+    },
+    {
+      "station": 5,
+      "worker_id": "W04",
+      "worker_name": "Phạm Quốc Bảo",
+      "operation_ids": [
+        "OP320",
+        "OP330"
+      ],
+      "operation_names": [
+        "May nẹp cổ",
+        "Diễu nẹp cổ"
+      ],
+      "machine_types": [
+        "SINGLE"
+      ],
+      "standard_load_sec": 52.0,
+      "raw_sam_sec": 52.0,
+      "standard_utilization_pct": 90.63,
+      "idle_sec": 5.375,
+      "overload_sec": 0.0,
+      "capacity_pcs_h": 58.85,
+      "status": "watch"
+    },
+    {
+      "station": 6,
+      "worker_id": "W18",
+      "worker_name": "Lê Thị Thu",
+      "operation_ids": [
+        "OP070",
+        "OP370"
+      ],
+      "operation_names": [
+        "Diễu cổ",
+        "May tag"
+      ],
+      "machine_types": [
+        "COVERSTITCH"
+      ],
+      "standard_load_sec": 51.0,
+      "raw_sam_sec": 51.0,
+      "standard_utilization_pct": 88.89,
+      "idle_sec": 6.375,
+      "overload_sec": 0.0,
+      "capacity_pcs_h": 60.0,
+      "status": "normal"
+    },
+    {
+      "station": 7,
+      "worker_id": "W13",
+      "worker_name": "Phan Anh Tuấn",
+      "operation_ids": [
+        "OP090"
+      ],
+      "operation_names": [
+        "Tra tay phải"
+      ],
+      "machine_types": [
+        "OVERLOCK"
+      ],
+      "standard_load_sec": 40.0,
+      "raw_sam_sec": 40.0,
+      "standard_utilization_pct": 69.72,
+      "idle_sec": 17.375,
+      "overload_sec": 0.0,
+      "capacity_pcs_h": 76.5,
+      "status": "normal"
+    },
+    {
+      "station": 8,
+      "worker_id": "W25",
+      "worker_name": "Nguyễn Hải Đăng",
+      "operation_ids": [
+        "OP080"
+      ],
+      "operation_names": [
+        "Tra tay trái"
+      ],
+      "machine_types": [
+        "OVERLOCK"
+      ],
+      "standard_load_sec": 40.0,
+      "raw_sam_sec": 40.0,
+      "standard_utilization_pct": 69.72,
+      "idle_sec": 17.375,
+      "overload_sec": 0.0,
+      "capacity_pcs_h": 76.5,
+      "status": "normal"
+    },
+    {
+      "station": 9,
+      "worker_id": "W26",
+      "worker_name": "Trần Thị Quỳnh",
+      "operation_ids": [
+        "OP100"
+      ],
+      "operation_names": [
+        "May sườn trái"
+      ],
+      "machine_types": [
+        "OVERLOCK"
+      ],
+      "standard_load_sec": 34.0,
+      "raw_sam_sec": 34.0,
+      "standard_utilization_pct": 59.26,
+      "idle_sec": 23.375,
+      "overload_sec": 0.0,
+      "capacity_pcs_h": 90.0,
+      "status": "underutilized"
+    },
+    {
+      "station": 10,
+      "worker_id": "W16",
+      "worker_name": "Nguyễn Thị Kim",
+      "operation_ids": [
+        "OP110"
+      ],
+      "operation_names": [
+        "May sườn phải"
+      ],
+      "machine_types": [
+        "OVERLOCK"
+      ],
+      "standard_load_sec": 34.0,
+      "raw_sam_sec": 34.0,
+      "standard_utilization_pct": 59.26,
+      "idle_sec": 23.375,
+      "overload_sec": 0.0,
+      "capacity_pcs_h": 90.0,
+      "status": "underutilized"
+    },
+    {
+      "station": 11,
+      "worker_id": "W09",
+      "worker_name": "Ngô Quang Huy",
+      "operation_ids": [
+        "OP120"
+      ],
+      "operation_names": [
+        "Diễu sườn"
+      ],
+      "machine_types": [
+        "COVERSTITCH"
+      ],
+      "standard_load_sec": 28.0,
+      "raw_sam_sec": 28.0,
+      "standard_utilization_pct": 48.8,
+      "idle_sec": 29.375,
+      "overload_sec": 0.0,
+      "capacity_pcs_h": 109.29,
+      "status": "underutilized"
+    },
+    {
+      "station": 12,
+      "worker_id": "W11",
+      "worker_name": "Trịnh Văn Long",
+      "operation_ids": [
+        "OP130"
+      ],
+      "operation_names": [
+        "May lai"
+      ],
+      "machine_types": [
+        "COVERSTITCH"
+      ],
+      "standard_load_sec": 46.0,
+      "raw_sam_sec": 46.0,
+      "standard_utilization_pct": 80.17,
+      "idle_sec": 11.375,
+      "overload_sec": 0.0,
+      "capacity_pcs_h": 66.52,
+      "status": "normal"
+    },
+    {
+      "station": 13,
+      "worker_id": "W08",
+      "worker_name": "Hoàng Thị Lan",
+      "operation_ids": [
+        "OP290"
+      ],
+      "operation_names": [
+        "May túi phải"
+      ],
+      "machine_types": [
+        "SINGLE"
+      ],
+      "standard_load_sec": 38.0,
+      "raw_sam_sec": 38.0,
+      "standard_utilization_pct": 66.23,
+      "idle_sec": 19.375,
+      "overload_sec": 0.0,
+      "capacity_pcs_h": 80.53,
+      "status": "normal"
+    },
+    {
+      "station": 14,
+      "worker_id": "W06",
+      "worker_name": "Đặng Thị Mai",
+      "operation_ids": [
+        "OP150",
+        "OP160"
+      ],
+      "operation_names": [
+        "May gấu tay trái",
+        "May gấu tay phải"
+      ],
+      "machine_types": [
+        "OVERLOCK"
+      ],
+      "standard_load_sec": 48.0,
+      "raw_sam_sec": 48.0,
+      "standard_utilization_pct": 83.66,
+      "idle_sec": 9.375,
+      "overload_sec": 0.0,
+      "capacity_pcs_h": 63.75,
+      "status": "normal"
+    },
+    {
+      "station": 15,
+      "worker_id": "W14",
+      "worker_name": "Vũ Thị Hạnh",
+      "operation_ids": [
+        "OP280"
+      ],
+      "operation_names": [
+        "May túi trái"
+      ],
+      "machine_types": [
+        "SINGLE"
+      ],
+      "standard_load_sec": 38.0,
+      "raw_sam_sec": 38.0,
+      "standard_utilization_pct": 66.23,
+      "idle_sec": 19.375,
+      "overload_sec": 0.0,
+      "capacity_pcs_h": 80.53,
+      "status": "normal"
+    },
+    {
+      "station": 16,
+      "worker_id": "W07",
+      "worker_name": "Bùi Văn Nam",
+      "operation_ids": [
+        "OP340",
+        "OP180"
+      ],
+      "operation_names": [
+        "May bèo lai",
+        "Diễu gấu tay phải"
+      ],
+      "machine_types": [
+        "COVERSTITCH"
+      ],
+      "standard_load_sec": 55.0,
+      "raw_sam_sec": 55.0,
+      "standard_utilization_pct": 95.86,
+      "idle_sec": 2.375,
+      "overload_sec": 0.0,
+      "capacity_pcs_h": 55.64,
+      "status": "watch"
+    },
+    {
+      "station": 17,
+      "worker_id": "W10",
+      "worker_name": "Dương Thị Hồng",
+      "operation_ids": [
+        "OP300",
+        "OP310"
+      ],
+      "operation_names": [
+        "Diễu túi trái",
+        "Diễu túi phải"
+      ],
+      "machine_types": [
+        "SINGLE"
+      ],
+      "standard_load_sec": 52.0,
+      "raw_sam_sec": 52.0,
+      "standard_utilization_pct": 90.63,
+      "idle_sec": 5.375,
+      "overload_sec": 0.0,
+      "capacity_pcs_h": 58.85,
+      "status": "watch"
+    },
+    {
+      "station": 18,
+      "worker_id": "W01",
+      "worker_name": "Nguyễn Thu Hà",
+      "operation_ids": [
+        "OP350",
+        "OP360"
+      ],
+      "operation_names": [
+        "Kiểm tra túi",
+        "Ủi túi"
+      ],
+      "machine_types": [
+        "IRON"
+      ],
+      "standard_load_sec": 38.0,
+      "raw_sam_sec": 38.0,
+      "standard_utilization_pct": 66.23,
+      "idle_sec": 19.375,
+      "overload_sec": 0.0,
+      "capacity_pcs_h": 80.53,
+      "status": "normal"
+    },
+    {
+      "station": 19,
+      "worker_id": "W03",
+      "worker_name": "Lê Hoàng Yến",
+      "operation_ids": [
+        "OP140",
+        "OP170"
+      ],
+      "operation_names": [
+        "Diễu lai",
+        "Diễu gấu tay trái"
+      ],
+      "machine_types": [
+        "COVERSTITCH"
+      ],
+      "standard_load_sec": 50.0,
+      "raw_sam_sec": 50.0,
+      "standard_utilization_pct": 87.15,
+      "idle_sec": 7.375,
+      "overload_sec": 0.0,
+      "capacity_pcs_h": 61.2,
+      "status": "normal"
+    },
+    {
+      "station": 20,
+      "worker_id": "W24",
+      "worker_name": "Hồ Văn Sơn",
+      "operation_ids": [
+        "OP190",
+        "OP200"
+      ],
+      "operation_names": [
+        "Kiểm tra thân áo",
+        "Cắt chỉ"
+      ],
+      "machine_types": [],
+      "standard_load_sec": 46.0,
+      "raw_sam_sec": 46.0,
+      "standard_utilization_pct": 80.17,
+      "idle_sec": 11.375,
+      "overload_sec": 0.0,
+      "capacity_pcs_h": 66.52,
+      "status": "normal"
+    },
+    {
+      "station": 21,
+      "worker_id": "W19",
+      "worker_name": "Phạm Văn Hùng",
+      "operation_ids": [
+        "OP210",
+        "OP380"
+      ],
+      "operation_names": [
+        "Ủi thân",
+        "Cắt chỉ tay"
+      ],
+      "machine_types": [
+        "IRON"
+      ],
+      "standard_load_sec": 41.0,
+      "raw_sam_sec": 41.0,
+      "standard_utilization_pct": 71.46,
+      "idle_sec": 16.375,
+      "overload_sec": 0.0,
+      "capacity_pcs_h": 74.63,
+      "status": "normal"
+    },
+    {
+      "station": 22,
+      "worker_id": "W02",
+      "worker_name": "Trần Minh Anh",
+      "operation_ids": [
+        "OP220",
+        "OP230",
+        "OP390"
+      ],
+      "operation_names": [
+        "Ủi tay",
+        "Gấp áo",
+        "Gấp tay áo"
+      ],
+      "machine_types": [
+        "IRON"
+      ],
+      "standard_load_sec": 54.0,
+      "raw_sam_sec": 54.0,
+      "standard_utilization_pct": 94.12,
+      "idle_sec": 3.375,
+      "overload_sec": 0.0,
+      "capacity_pcs_h": 56.67,
+      "status": "watch"
+    },
+    {
+      "station": 23,
+      "worker_id": "W21",
+      "worker_name": "Võ Thị Ánh",
+      "operation_ids": [
+        "OP240"
+      ],
+      "operation_names": [
+        "Đóng gói"
+      ],
+      "machine_types": [],
+      "standard_load_sec": 20.0,
+      "raw_sam_sec": 20.0,
+      "standard_utilization_pct": 34.86,
+      "idle_sec": 37.375,
+      "overload_sec": 0.0,
+      "capacity_pcs_h": 153.0,
+      "status": "underutilized"
+    },
+    {
+      "station": 24,
+      "worker_id": "W23",
+      "worker_name": "Đinh Thị Hòa",
+      "operation_ids": [
+        "OP250",
+        "OP260"
+      ],
+      "operation_names": [
+        "Dán nhãn",
+        "Kiểm tra cuối"
+      ],
+      "machine_types": [],
+      "standard_load_sec": 38.0,
+      "raw_sam_sec": 38.0,
+      "standard_utilization_pct": 66.23,
+      "idle_sec": 19.375,
+      "overload_sec": 0.0,
+      "capacity_pcs_h": 80.53,
+      "status": "normal"
+    },
+    {
+      "station": 25,
+      "worker_id": "W17",
+      "worker_name": "Trần Văn Dũng",
+      "operation_ids": [
+        "OP270",
+        "OP400"
+      ],
+      "operation_names": [
+        "Nhập kho",
+        "Đóng thùng"
+      ],
+      "machine_types": [],
+      "standard_load_sec": 37.0,
+      "raw_sam_sec": 37.0,
+      "standard_utilization_pct": 64.49,
+      "idle_sec": 20.375,
+      "overload_sec": 0.0,
+      "capacity_pcs_h": 82.7,
+      "status": "normal"
+    }
+  ],
+  "assignment": [
+    {
+      "id": "OP010",
+      "name": "Kiểm tra nguyên phụ liệu",
+      "sam_sec": 20.0,
+      "planning_sam_sec": 20.0,
+      "machine_type": null,
+      "skill_code": "INSPECTION",
+      "skill_required": 1,
+      "skill_grade": 2,
+      "skill_surplus": 1,
+      "is_quality_gate": true,
+      "station": 1,
+      "sequence_in_station": 1,
+      "worker_id": "W20",
+      "worker_name": "Nguyễn Thị Bích"
+    },
+    {
+      "id": "OP020",
+      "name": "Ép mex cổ",
+      "sam_sec": 28.0,
+      "planning_sam_sec": 28.0,
+      "machine_type": "IRON",
+      "skill_code": "FINISHING",
+      "skill_required": 2,
+      "skill_grade": 2,
+      "skill_surplus": 0,
+      "is_quality_gate": false,
+      "station": 1,
+      "sequence_in_station": 2,
+      "worker_id": "W20",
+      "worker_name": "Nguyễn Thị Bích"
+    },
+    {
+      "id": "OP030",
+      "name": "May vai trái",
+      "sam_sec": 30.0,
+      "planning_sam_sec": 30.0,
+      "machine_type": "OVERLOCK",
+      "skill_code": "SEWING",
+      "skill_required": 2,
+      "skill_grade": 3,
+      "skill_surplus": 1,
+      "is_quality_gate": false,
+      "station": 2,
+      "sequence_in_station": 1,
+      "worker_id": "W12",
+      "worker_name": "Lý Thị Ngọc"
+    },
+    {
+      "id": "OP040",
+      "name": "May vai phải",
+      "sam_sec": 30.0,
+      "planning_sam_sec": 30.0,
+      "machine_type": "OVERLOCK",
+      "skill_code": "SEWING",
+      "skill_required": 2,
+      "skill_grade": 2,
+      "skill_surplus": 0,
+      "is_quality_gate": false,
+      "station": 3,
+      "sequence_in_station": 1,
+      "worker_id": "W15",
+      "worker_name": "Đỗ Văn Thắng"
+    },
+    {
+      "id": "OP050",
+      "name": "Nối vai",
+      "sam_sec": 26.0,
+      "planning_sam_sec": 26.0,
+      "machine_type": "OVERLOCK",
+      "skill_code": "SEWING",
+      "skill_required": 2,
+      "skill_grade": 2,
+      "skill_surplus": 0,
+      "is_quality_gate": false,
+      "station": 3,
+      "sequence_in_station": 2,
+      "worker_id": "W15",
+      "worker_name": "Đỗ Văn Thắng"
+    },
+    {
+      "id": "OP060",
+      "name": "May cổ",
+      "sam_sec": 45.0,
+      "planning_sam_sec": 45.0,
+      "machine_type": "OVERLOCK",
+      "skill_code": "SEWING",
+      "skill_required": 3,
+      "skill_grade": 3,
+      "skill_surplus": 0,
+      "is_quality_gate": false,
+      "station": 4,
+      "sequence_in_station": 1,
+      "worker_id": "W05",
+      "worker_name": "Võ Thanh Tùng"
+    },
+    {
+      "id": "OP320",
+      "name": "May nẹp cổ",
+      "sam_sec": 30.0,
+      "planning_sam_sec": 30.0,
+      "machine_type": "SINGLE",
+      "skill_code": "SEWING",
+      "skill_required": 3,
+      "skill_grade": 3,
+      "skill_surplus": 0,
+      "is_quality_gate": false,
+      "station": 5,
+      "sequence_in_station": 1,
+      "worker_id": "W04",
+      "worker_name": "Phạm Quốc Bảo"
+    },
+    {
+      "id": "OP330",
+      "name": "Diễu nẹp cổ",
+      "sam_sec": 22.0,
+      "planning_sam_sec": 22.0,
+      "machine_type": "SINGLE",
+      "skill_code": "SEWING",
+      "skill_required": 2,
+      "skill_grade": 3,
+      "skill_surplus": 1,
+      "is_quality_gate": false,
+      "station": 5,
+      "sequence_in_station": 2,
+      "worker_id": "W04",
+      "worker_name": "Phạm Quốc Bảo"
+    },
+    {
+      "id": "OP070",
+      "name": "Diễu cổ",
+      "sam_sec": 35.0,
+      "planning_sam_sec": 35.0,
+      "machine_type": "COVERSTITCH",
+      "skill_code": "SEWING",
+      "skill_required": 2,
+      "skill_grade": 2,
+      "skill_surplus": 0,
+      "is_quality_gate": false,
+      "station": 6,
+      "sequence_in_station": 1,
+      "worker_id": "W18",
+      "worker_name": "Lê Thị Thu"
+    },
+    {
+      "id": "OP370",
+      "name": "May tag",
+      "sam_sec": 16.0,
+      "planning_sam_sec": 16.0,
+      "machine_type": null,
+      "skill_code": "FINISHING",
+      "skill_required": 1,
+      "skill_grade": 1,
+      "skill_surplus": 0,
+      "is_quality_gate": false,
+      "station": 6,
+      "sequence_in_station": 2,
+      "worker_id": "W18",
+      "worker_name": "Lê Thị Thu"
+    },
+    {
+      "id": "OP090",
+      "name": "Tra tay phải",
+      "sam_sec": 40.0,
+      "planning_sam_sec": 40.0,
+      "machine_type": "OVERLOCK",
+      "skill_code": "SEWING",
+      "skill_required": 3,
+      "skill_grade": 3,
+      "skill_surplus": 0,
+      "is_quality_gate": false,
+      "station": 7,
+      "sequence_in_station": 1,
+      "worker_id": "W13",
+      "worker_name": "Phan Anh Tuấn"
+    },
+    {
+      "id": "OP080",
+      "name": "Tra tay trái",
+      "sam_sec": 40.0,
+      "planning_sam_sec": 40.0,
+      "machine_type": "OVERLOCK",
+      "skill_code": "SEWING",
+      "skill_required": 3,
+      "skill_grade": 3,
+      "skill_surplus": 0,
+      "is_quality_gate": false,
+      "station": 8,
+      "sequence_in_station": 1,
+      "worker_id": "W25",
+      "worker_name": "Nguyễn Hải Đăng"
+    },
+    {
+      "id": "OP100",
+      "name": "May sườn trái",
+      "sam_sec": 34.0,
+      "planning_sam_sec": 34.0,
+      "machine_type": "OVERLOCK",
+      "skill_code": "SEWING",
+      "skill_required": 2,
+      "skill_grade": 3,
+      "skill_surplus": 1,
+      "is_quality_gate": false,
+      "station": 9,
+      "sequence_in_station": 1,
+      "worker_id": "W26",
+      "worker_name": "Trần Thị Quỳnh"
+    },
+    {
+      "id": "OP110",
+      "name": "May sườn phải",
+      "sam_sec": 34.0,
+      "planning_sam_sec": 34.0,
+      "machine_type": "OVERLOCK",
+      "skill_code": "SEWING",
+      "skill_required": 2,
+      "skill_grade": 2,
+      "skill_surplus": 0,
+      "is_quality_gate": false,
+      "station": 10,
+      "sequence_in_station": 1,
+      "worker_id": "W16",
+      "worker_name": "Nguyễn Thị Kim"
+    },
+    {
+      "id": "OP120",
+      "name": "Diễu sườn",
+      "sam_sec": 28.0,
+      "planning_sam_sec": 28.0,
+      "machine_type": "COVERSTITCH",
+      "skill_code": "SEWING",
+      "skill_required": 2,
+      "skill_grade": 2,
+      "skill_surplus": 0,
+      "is_quality_gate": false,
+      "station": 11,
+      "sequence_in_station": 1,
+      "worker_id": "W09",
+      "worker_name": "Ngô Quang Huy"
+    },
+    {
+      "id": "OP130",
+      "name": "May lai",
+      "sam_sec": 46.0,
+      "planning_sam_sec": 46.0,
+      "machine_type": "COVERSTITCH",
+      "skill_code": "SEWING",
+      "skill_required": 3,
+      "skill_grade": 3,
+      "skill_surplus": 0,
+      "is_quality_gate": false,
+      "station": 12,
+      "sequence_in_station": 1,
+      "worker_id": "W11",
+      "worker_name": "Trịnh Văn Long"
+    },
+    {
+      "id": "OP290",
+      "name": "May túi phải",
+      "sam_sec": 38.0,
+      "planning_sam_sec": 38.0,
+      "machine_type": "SINGLE",
+      "skill_code": "SEWING",
+      "skill_required": 2,
+      "skill_grade": 2,
+      "skill_surplus": 0,
+      "is_quality_gate": false,
+      "station": 13,
+      "sequence_in_station": 1,
+      "worker_id": "W08",
+      "worker_name": "Hoàng Thị Lan"
+    },
+    {
+      "id": "OP150",
+      "name": "May gấu tay trái",
+      "sam_sec": 24.0,
+      "planning_sam_sec": 24.0,
+      "machine_type": "OVERLOCK",
+      "skill_code": "SEWING",
+      "skill_required": 2,
+      "skill_grade": 3,
+      "skill_surplus": 1,
+      "is_quality_gate": false,
+      "station": 14,
+      "sequence_in_station": 1,
+      "worker_id": "W06",
+      "worker_name": "Đặng Thị Mai"
+    },
+    {
+      "id": "OP160",
+      "name": "May gấu tay phải",
+      "sam_sec": 24.0,
+      "planning_sam_sec": 24.0,
+      "machine_type": "OVERLOCK",
+      "skill_code": "SEWING",
+      "skill_required": 2,
+      "skill_grade": 3,
+      "skill_surplus": 1,
+      "is_quality_gate": false,
+      "station": 14,
+      "sequence_in_station": 2,
+      "worker_id": "W06",
+      "worker_name": "Đặng Thị Mai"
+    },
+    {
+      "id": "OP280",
+      "name": "May túi trái",
+      "sam_sec": 38.0,
+      "planning_sam_sec": 38.0,
+      "machine_type": "SINGLE",
+      "skill_code": "SEWING",
+      "skill_required": 2,
+      "skill_grade": 2,
+      "skill_surplus": 0,
+      "is_quality_gate": false,
+      "station": 15,
+      "sequence_in_station": 1,
+      "worker_id": "W14",
+      "worker_name": "Vũ Thị Hạnh"
+    },
+    {
+      "id": "OP340",
+      "name": "May bèo lai",
+      "sam_sec": 35.0,
+      "planning_sam_sec": 35.0,
+      "machine_type": "COVERSTITCH",
+      "skill_code": "SEWING",
+      "skill_required": 2,
+      "skill_grade": 2,
+      "skill_surplus": 0,
+      "is_quality_gate": false,
+      "station": 16,
+      "sequence_in_station": 1,
+      "worker_id": "W07",
+      "worker_name": "Bùi Văn Nam"
+    },
+    {
+      "id": "OP180",
+      "name": "Diễu gấu tay phải",
+      "sam_sec": 20.0,
+      "planning_sam_sec": 20.0,
+      "machine_type": "COVERSTITCH",
+      "skill_code": "SEWING",
+      "skill_required": 2,
+      "skill_grade": 2,
+      "skill_surplus": 0,
+      "is_quality_gate": false,
+      "station": 16,
+      "sequence_in_station": 2,
+      "worker_id": "W07",
+      "worker_name": "Bùi Văn Nam"
+    },
+    {
+      "id": "OP300",
+      "name": "Diễu túi trái",
+      "sam_sec": 26.0,
+      "planning_sam_sec": 26.0,
+      "machine_type": "SINGLE",
+      "skill_code": "SEWING",
+      "skill_required": 2,
+      "skill_grade": 2,
+      "skill_surplus": 0,
+      "is_quality_gate": false,
+      "station": 17,
+      "sequence_in_station": 1,
+      "worker_id": "W10",
+      "worker_name": "Dương Thị Hồng"
+    },
+    {
+      "id": "OP310",
+      "name": "Diễu túi phải",
+      "sam_sec": 26.0,
+      "planning_sam_sec": 26.0,
+      "machine_type": "SINGLE",
+      "skill_code": "SEWING",
+      "skill_required": 2,
+      "skill_grade": 2,
+      "skill_surplus": 0,
+      "is_quality_gate": false,
+      "station": 17,
+      "sequence_in_station": 2,
+      "worker_id": "W10",
+      "worker_name": "Dương Thị Hồng"
+    },
+    {
+      "id": "OP350",
+      "name": "Kiểm tra túi",
+      "sam_sec": 20.0,
+      "planning_sam_sec": 20.0,
+      "machine_type": null,
+      "skill_code": "INSPECTION",
+      "skill_required": 2,
+      "skill_grade": 2,
+      "skill_surplus": 0,
+      "is_quality_gate": true,
+      "station": 18,
+      "sequence_in_station": 1,
+      "worker_id": "W01",
+      "worker_name": "Nguyễn Thu Hà"
+    },
+    {
+      "id": "OP360",
+      "name": "Ủi túi",
+      "sam_sec": 18.0,
+      "planning_sam_sec": 18.0,
+      "machine_type": "IRON",
+      "skill_code": "FINISHING",
+      "skill_required": 2,
+      "skill_grade": 2,
+      "skill_surplus": 0,
+      "is_quality_gate": false,
+      "station": 18,
+      "sequence_in_station": 2,
+      "worker_id": "W01",
+      "worker_name": "Nguyễn Thu Hà"
+    },
+    {
+      "id": "OP140",
+      "name": "Diễu lai",
+      "sam_sec": 30.0,
+      "planning_sam_sec": 30.0,
+      "machine_type": "COVERSTITCH",
+      "skill_code": "SEWING",
+      "skill_required": 2,
+      "skill_grade": 3,
+      "skill_surplus": 1,
+      "is_quality_gate": false,
+      "station": 19,
+      "sequence_in_station": 1,
+      "worker_id": "W03",
+      "worker_name": "Lê Hoàng Yến"
+    },
+    {
+      "id": "OP170",
+      "name": "Diễu gấu tay trái",
+      "sam_sec": 20.0,
+      "planning_sam_sec": 20.0,
+      "machine_type": "COVERSTITCH",
+      "skill_code": "SEWING",
+      "skill_required": 2,
+      "skill_grade": 3,
+      "skill_surplus": 1,
+      "is_quality_gate": false,
+      "station": 19,
+      "sequence_in_station": 2,
+      "worker_id": "W03",
+      "worker_name": "Lê Hoàng Yến"
+    },
+    {
+      "id": "OP190",
+      "name": "Kiểm tra thân áo",
+      "sam_sec": 28.0,
+      "planning_sam_sec": 28.0,
+      "machine_type": null,
+      "skill_code": "INSPECTION",
+      "skill_required": 2,
+      "skill_grade": 3,
+      "skill_surplus": 1,
+      "is_quality_gate": true,
+      "station": 20,
+      "sequence_in_station": 1,
+      "worker_id": "W24",
+      "worker_name": "Hồ Văn Sơn"
+    },
+    {
+      "id": "OP200",
+      "name": "Cắt chỉ",
+      "sam_sec": 18.0,
+      "planning_sam_sec": 18.0,
+      "machine_type": null,
+      "skill_code": "FINISHING",
+      "skill_required": 1,
+      "skill_grade": 2,
+      "skill_surplus": 1,
+      "is_quality_gate": false,
+      "station": 20,
+      "sequence_in_station": 2,
+      "worker_id": "W24",
+      "worker_name": "Hồ Văn Sơn"
+    },
+    {
+      "id": "OP210",
+      "name": "Ủi thân",
+      "sam_sec": 26.0,
+      "planning_sam_sec": 26.0,
+      "machine_type": "IRON",
+      "skill_code": "FINISHING",
+      "skill_required": 2,
+      "skill_grade": 2,
+      "skill_surplus": 0,
+      "is_quality_gate": false,
+      "station": 21,
+      "sequence_in_station": 1,
+      "worker_id": "W19",
+      "worker_name": "Phạm Văn Hùng"
+    },
+    {
+      "id": "OP380",
+      "name": "Cắt chỉ tay",
+      "sam_sec": 15.0,
+      "planning_sam_sec": 15.0,
+      "machine_type": null,
+      "skill_code": "FINISHING",
+      "skill_required": 1,
+      "skill_grade": 2,
+      "skill_surplus": 1,
+      "is_quality_gate": false,
+      "station": 21,
+      "sequence_in_station": 2,
+      "worker_id": "W19",
+      "worker_name": "Phạm Văn Hùng"
+    },
+    {
+      "id": "OP220",
+      "name": "Ủi tay",
+      "sam_sec": 22.0,
+      "planning_sam_sec": 22.0,
+      "machine_type": "IRON",
+      "skill_code": "FINISHING",
+      "skill_required": 2,
+      "skill_grade": 2,
+      "skill_surplus": 0,
+      "is_quality_gate": false,
+      "station": 22,
+      "sequence_in_station": 1,
+      "worker_id": "W02",
+      "worker_name": "Trần Minh Anh"
+    },
+    {
+      "id": "OP230",
+      "name": "Gấp áo",
+      "sam_sec": 18.0,
+      "planning_sam_sec": 18.0,
+      "machine_type": null,
+      "skill_code": "FINISHING",
+      "skill_required": 1,
+      "skill_grade": 2,
+      "skill_surplus": 1,
+      "is_quality_gate": false,
+      "station": 22,
+      "sequence_in_station": 2,
+      "worker_id": "W02",
+      "worker_name": "Trần Minh Anh"
+    },
+    {
+      "id": "OP390",
+      "name": "Gấp tay áo",
+      "sam_sec": 14.0,
+      "planning_sam_sec": 14.0,
+      "machine_type": null,
+      "skill_code": "FINISHING",
+      "skill_required": 1,
+      "skill_grade": 2,
+      "skill_surplus": 1,
+      "is_quality_gate": false,
+      "station": 22,
+      "sequence_in_station": 3,
+      "worker_id": "W02",
+      "worker_name": "Trần Minh Anh"
+    },
+    {
+      "id": "OP240",
+      "name": "Đóng gói",
+      "sam_sec": 20.0,
+      "planning_sam_sec": 20.0,
+      "machine_type": null,
+      "skill_code": "FINISHING",
+      "skill_required": 1,
+      "skill_grade": 2,
+      "skill_surplus": 1,
+      "is_quality_gate": false,
+      "station": 23,
+      "sequence_in_station": 1,
+      "worker_id": "W21",
+      "worker_name": "Võ Thị Ánh"
+    },
+    {
+      "id": "OP250",
+      "name": "Dán nhãn",
+      "sam_sec": 14.0,
+      "planning_sam_sec": 14.0,
+      "machine_type": null,
+      "skill_code": "FINISHING",
+      "skill_required": 1,
+      "skill_grade": 1,
+      "skill_surplus": 0,
+      "is_quality_gate": false,
+      "station": 24,
+      "sequence_in_station": 1,
+      "worker_id": "W23",
+      "worker_name": "Đinh Thị Hòa"
+    },
+    {
+      "id": "OP260",
+      "name": "Kiểm tra cuối",
+      "sam_sec": 24.0,
+      "planning_sam_sec": 24.0,
+      "machine_type": null,
+      "skill_code": "INSPECTION",
+      "skill_required": 3,
+      "skill_grade": 3,
+      "skill_surplus": 0,
+      "is_quality_gate": true,
+      "station": 24,
+      "sequence_in_station": 2,
+      "worker_id": "W23",
+      "worker_name": "Đinh Thị Hòa"
+    },
+    {
+      "id": "OP270",
+      "name": "Nhập kho",
+      "sam_sec": 12.0,
+      "planning_sam_sec": 12.0,
+      "machine_type": null,
+      "skill_code": "FINISHING",
+      "skill_required": 1,
+      "skill_grade": 1,
+      "skill_surplus": 0,
+      "is_quality_gate": false,
+      "station": 25,
+      "sequence_in_station": 1,
+      "worker_id": "W17",
+      "worker_name": "Trần Văn Dũng"
+    },
+    {
+      "id": "OP400",
+      "name": "Đóng thùng",
+      "sam_sec": 25.0,
+      "planning_sam_sec": 25.0,
+      "machine_type": null,
+      "skill_code": "FINISHING",
+      "skill_required": 1,
+      "skill_grade": 1,
+      "skill_surplus": 0,
+      "is_quality_gate": false,
+      "station": 25,
+      "sequence_in_station": 2,
+      "worker_id": "W17",
+      "worker_name": "Trần Văn Dũng"
+    }
+  ],
+  "worker_summary": [
+    {
+      "worker_id": "W01",
+      "worker_name": "Nguyễn Thu Hà",
+      "used": true,
+      "station": 18,
+      "operation_ids": [
+        "OP350",
+        "OP360"
+      ],
+      "assigned_sam_sec": 38.0,
+      "assigned_planning_sam_sec": 38.0,
+      "skills": {
+        "OP010": 2,
+        "OP020": 2,
+        "OP030": 1,
+        "OP040": 1,
+        "OP050": 1,
+        "OP060": 1,
+        "OP070": 1,
+        "OP320": 1,
+        "OP330": 1,
+        "OP080": 1,
+        "OP090": 1,
+        "OP100": 1,
+        "OP110": 1,
+        "OP120": 1,
+        "OP130": 1,
+        "OP340": 1,
+        "OP140": 1,
+        "OP280": 1,
+        "OP290": 1,
+        "OP300": 1,
+        "OP310": 1,
+        "OP350": 2,
+        "OP360": 2,
+        "OP370": 2,
+        "OP150": 1,
+        "OP160": 1,
+        "OP170": 1,
+        "OP180": 1,
+        "OP190": 2,
+        "OP200": 2,
+        "OP210": 2,
+        "OP220": 2,
+        "OP380": 2,
+        "OP230": 2,
+        "OP390": 2,
+        "OP240": 2,
+        "OP250": 2,
+        "OP260": 2,
+        "OP270": 2,
+        "OP400": 2
+      },
+      "machine_types": [
+        "IRON"
+      ],
+      "qualified_operations": 16,
+      "versatility_pct": 40.0
+    },
+    {
+      "worker_id": "W02",
+      "worker_name": "Trần Minh Anh",
+      "used": true,
+      "station": 22,
+      "operation_ids": [
+        "OP220",
+        "OP230",
+        "OP390"
+      ],
+      "assigned_sam_sec": 54.0,
+      "assigned_planning_sam_sec": 54.0,
+      "skills": {
+        "OP010": 2,
+        "OP020": 2,
+        "OP030": 1,
+        "OP040": 1,
+        "OP050": 1,
+        "OP060": 1,
+        "OP070": 1,
+        "OP320": 1,
+        "OP330": 1,
+        "OP080": 1,
+        "OP090": 1,
+        "OP100": 1,
+        "OP110": 1,
+        "OP120": 1,
+        "OP130": 1,
+        "OP340": 1,
+        "OP140": 1,
+        "OP280": 1,
+        "OP290": 1,
+        "OP300": 1,
+        "OP310": 1,
+        "OP350": 2,
+        "OP360": 2,
+        "OP370": 2,
+        "OP150": 1,
+        "OP160": 1,
+        "OP170": 1,
+        "OP180": 1,
+        "OP190": 2,
+        "OP200": 2,
+        "OP210": 2,
+        "OP220": 2,
+        "OP380": 2,
+        "OP230": 2,
+        "OP390": 2,
+        "OP240": 2,
+        "OP250": 2,
+        "OP260": 2,
+        "OP270": 2,
+        "OP400": 2
+      },
+      "machine_types": [
+        "IRON"
+      ],
+      "qualified_operations": 16,
+      "versatility_pct": 40.0
+    },
+    {
+      "worker_id": "W03",
+      "worker_name": "Lê Hoàng Yến",
+      "used": true,
+      "station": 19,
+      "operation_ids": [
+        "OP140",
+        "OP170"
+      ],
+      "assigned_sam_sec": 50.0,
+      "assigned_planning_sam_sec": 50.0,
+      "skills": {
+        "OP030": 3,
+        "OP040": 3,
+        "OP050": 3,
+        "OP060": 3,
+        "OP070": 3,
+        "OP320": 3,
+        "OP330": 3,
+        "OP080": 3,
+        "OP090": 3,
+        "OP100": 3,
+        "OP110": 3,
+        "OP120": 3,
+        "OP130": 3,
+        "OP340": 3,
+        "OP140": 3,
+        "OP280": 3,
+        "OP290": 3,
+        "OP300": 3,
+        "OP310": 3,
+        "OP150": 3,
+        "OP160": 3,
+        "OP170": 3,
+        "OP180": 3
+      },
+      "machine_types": [
+        "OVERLOCK",
+        "COVERSTITCH",
+        "SINGLE"
+      ],
+      "qualified_operations": 23,
+      "versatility_pct": 57.5
+    },
+    {
+      "worker_id": "W04",
+      "worker_name": "Phạm Quốc Bảo",
+      "used": true,
+      "station": 5,
+      "operation_ids": [
+        "OP320",
+        "OP330"
+      ],
+      "assigned_sam_sec": 52.0,
+      "assigned_planning_sam_sec": 52.0,
+      "skills": {
+        "OP030": 3,
+        "OP040": 3,
+        "OP050": 3,
+        "OP060": 3,
+        "OP070": 3,
+        "OP320": 3,
+        "OP330": 3,
+        "OP080": 3,
+        "OP090": 3,
+        "OP100": 3,
+        "OP110": 3,
+        "OP120": 3,
+        "OP130": 3,
+        "OP340": 3,
+        "OP140": 3,
+        "OP280": 3,
+        "OP290": 3,
+        "OP300": 3,
+        "OP310": 3,
+        "OP150": 3,
+        "OP160": 3,
+        "OP170": 3,
+        "OP180": 3
+      },
+      "machine_types": [
+        "OVERLOCK",
+        "COVERSTITCH",
+        "SINGLE"
+      ],
+      "qualified_operations": 23,
+      "versatility_pct": 57.5
+    },
+    {
+      "worker_id": "W05",
+      "worker_name": "Võ Thanh Tùng",
+      "used": true,
+      "station": 4,
+      "operation_ids": [
+        "OP060"
+      ],
+      "assigned_sam_sec": 45.0,
+      "assigned_planning_sam_sec": 45.0,
+      "skills": {
+        "OP030": 3,
+        "OP040": 3,
+        "OP050": 3,
+        "OP060": 3,
+        "OP070": 3,
+        "OP320": 3,
+        "OP330": 3,
+        "OP080": 3,
+        "OP090": 3,
+        "OP100": 3,
+        "OP110": 3,
+        "OP120": 3,
+        "OP130": 3,
+        "OP340": 3,
+        "OP140": 3,
+        "OP280": 3,
+        "OP290": 3,
+        "OP300": 3,
+        "OP310": 3,
+        "OP150": 3,
+        "OP160": 3,
+        "OP170": 3,
+        "OP180": 3
+      },
+      "machine_types": [
+        "OVERLOCK",
+        "COVERSTITCH",
+        "SINGLE"
+      ],
+      "qualified_operations": 23,
+      "versatility_pct": 57.5
+    },
+    {
+      "worker_id": "W06",
+      "worker_name": "Đặng Thị Mai",
+      "used": true,
+      "station": 14,
+      "operation_ids": [
+        "OP150",
+        "OP160"
+      ],
+      "assigned_sam_sec": 48.0,
+      "assigned_planning_sam_sec": 48.0,
+      "skills": {
+        "OP030": 3,
+        "OP040": 3,
+        "OP050": 3,
+        "OP060": 3,
+        "OP070": 3,
+        "OP320": 3,
+        "OP330": 3,
+        "OP080": 3,
+        "OP090": 3,
+        "OP100": 3,
+        "OP110": 3,
+        "OP120": 3,
+        "OP130": 3,
+        "OP340": 3,
+        "OP140": 3,
+        "OP280": 3,
+        "OP290": 3,
+        "OP300": 3,
+        "OP310": 3,
+        "OP150": 3,
+        "OP160": 3,
+        "OP170": 3,
+        "OP180": 3
+      },
+      "machine_types": [
+        "OVERLOCK",
+        "COVERSTITCH",
+        "SINGLE"
+      ],
+      "qualified_operations": 23,
+      "versatility_pct": 57.5
+    },
+    {
+      "worker_id": "W07",
+      "worker_name": "Bùi Văn Nam",
+      "used": true,
+      "station": 16,
+      "operation_ids": [
+        "OP340",
+        "OP180"
+      ],
+      "assigned_sam_sec": 55.0,
+      "assigned_planning_sam_sec": 55.0,
+      "skills": {
+        "OP030": 2,
+        "OP040": 2,
+        "OP050": 2,
+        "OP060": 2,
+        "OP070": 2,
+        "OP320": 2,
+        "OP330": 2,
+        "OP080": 2,
+        "OP090": 2,
+        "OP100": 2,
+        "OP110": 2,
+        "OP120": 2,
+        "OP130": 2,
+        "OP340": 2,
+        "OP140": 2,
+        "OP280": 2,
+        "OP290": 2,
+        "OP300": 2,
+        "OP310": 2,
+        "OP150": 2,
+        "OP160": 2,
+        "OP170": 2,
+        "OP180": 2
+      },
+      "machine_types": [
+        "OVERLOCK",
+        "COVERSTITCH",
+        "SINGLE"
+      ],
+      "qualified_operations": 18,
+      "versatility_pct": 45.0
+    },
+    {
+      "worker_id": "W08",
+      "worker_name": "Hoàng Thị Lan",
+      "used": true,
+      "station": 13,
+      "operation_ids": [
+        "OP290"
+      ],
+      "assigned_sam_sec": 38.0,
+      "assigned_planning_sam_sec": 38.0,
+      "skills": {
+        "OP030": 2,
+        "OP040": 2,
+        "OP050": 2,
+        "OP060": 2,
+        "OP070": 2,
+        "OP320": 2,
+        "OP330": 2,
+        "OP080": 2,
+        "OP090": 2,
+        "OP100": 2,
+        "OP110": 2,
+        "OP120": 2,
+        "OP130": 2,
+        "OP340": 2,
+        "OP140": 2,
+        "OP280": 2,
+        "OP290": 2,
+        "OP300": 2,
+        "OP310": 2,
+        "OP150": 2,
+        "OP160": 2,
+        "OP170": 2,
+        "OP180": 2
+      },
+      "machine_types": [
+        "OVERLOCK",
+        "COVERSTITCH",
+        "SINGLE"
+      ],
+      "qualified_operations": 18,
+      "versatility_pct": 45.0
+    },
+    {
+      "worker_id": "W09",
+      "worker_name": "Ngô Quang Huy",
+      "used": true,
+      "station": 11,
+      "operation_ids": [
+        "OP120"
+      ],
+      "assigned_sam_sec": 28.0,
+      "assigned_planning_sam_sec": 28.0,
+      "skills": {
+        "OP030": 2,
+        "OP040": 2,
+        "OP050": 2,
+        "OP060": 2,
+        "OP070": 2,
+        "OP320": 2,
+        "OP330": 2,
+        "OP080": 2,
+        "OP090": 2,
+        "OP100": 2,
+        "OP110": 2,
+        "OP120": 2,
+        "OP130": 2,
+        "OP340": 2,
+        "OP140": 2,
+        "OP280": 2,
+        "OP290": 2,
+        "OP300": 2,
+        "OP310": 2,
+        "OP150": 2,
+        "OP160": 2,
+        "OP170": 2,
+        "OP180": 2
+      },
+      "machine_types": [
+        "OVERLOCK",
+        "COVERSTITCH",
+        "SINGLE"
+      ],
+      "qualified_operations": 18,
+      "versatility_pct": 45.0
+    },
+    {
+      "worker_id": "W10",
+      "worker_name": "Dương Thị Hồng",
+      "used": true,
+      "station": 17,
+      "operation_ids": [
+        "OP300",
+        "OP310"
+      ],
+      "assigned_sam_sec": 52.0,
+      "assigned_planning_sam_sec": 52.0,
+      "skills": {
+        "OP030": 2,
+        "OP040": 2,
+        "OP050": 2,
+        "OP060": 2,
+        "OP070": 2,
+        "OP320": 2,
+        "OP330": 2,
+        "OP080": 2,
+        "OP090": 2,
+        "OP100": 2,
+        "OP110": 2,
+        "OP120": 2,
+        "OP130": 2,
+        "OP340": 2,
+        "OP140": 2,
+        "OP280": 2,
+        "OP290": 2,
+        "OP300": 2,
+        "OP310": 2,
+        "OP150": 2,
+        "OP160": 2,
+        "OP170": 2,
+        "OP180": 2
+      },
+      "machine_types": [
+        "OVERLOCK",
+        "COVERSTITCH",
+        "SINGLE"
+      ],
+      "qualified_operations": 18,
+      "versatility_pct": 45.0
+    },
+    {
+      "worker_id": "W11",
+      "worker_name": "Trịnh Văn Long",
+      "used": true,
+      "station": 12,
+      "operation_ids": [
+        "OP130"
+      ],
+      "assigned_sam_sec": 46.0,
+      "assigned_planning_sam_sec": 46.0,
+      "skills": {
+        "OP030": 3,
+        "OP040": 3,
+        "OP050": 3,
+        "OP060": 3,
+        "OP070": 3,
+        "OP320": 3,
+        "OP330": 3,
+        "OP080": 3,
+        "OP090": 3,
+        "OP100": 3,
+        "OP110": 3,
+        "OP120": 3,
+        "OP130": 3,
+        "OP340": 3,
+        "OP140": 3,
+        "OP280": 3,
+        "OP290": 3,
+        "OP300": 3,
+        "OP310": 3,
+        "OP150": 3,
+        "OP160": 3,
+        "OP170": 3,
+        "OP180": 3
+      },
+      "machine_types": [
+        "OVERLOCK",
+        "COVERSTITCH",
+        "SINGLE"
+      ],
+      "qualified_operations": 23,
+      "versatility_pct": 57.5
+    },
+    {
+      "worker_id": "W12",
+      "worker_name": "Lý Thị Ngọc",
+      "used": true,
+      "station": 2,
+      "operation_ids": [
+        "OP030"
+      ],
+      "assigned_sam_sec": 30.0,
+      "assigned_planning_sam_sec": 30.0,
+      "skills": {
+        "OP030": 3,
+        "OP040": 3,
+        "OP050": 3,
+        "OP060": 3,
+        "OP070": 3,
+        "OP320": 3,
+        "OP330": 3,
+        "OP080": 3,
+        "OP090": 3,
+        "OP100": 3,
+        "OP110": 3,
+        "OP120": 3,
+        "OP130": 3,
+        "OP340": 3,
+        "OP140": 3,
+        "OP280": 3,
+        "OP290": 3,
+        "OP300": 3,
+        "OP310": 3,
+        "OP150": 3,
+        "OP160": 3,
+        "OP170": 3,
+        "OP180": 3
+      },
+      "machine_types": [
+        "OVERLOCK",
+        "COVERSTITCH",
+        "SINGLE"
+      ],
+      "qualified_operations": 23,
+      "versatility_pct": 57.5
+    },
+    {
+      "worker_id": "W13",
+      "worker_name": "Phan Anh Tuấn",
+      "used": true,
+      "station": 7,
+      "operation_ids": [
+        "OP090"
+      ],
+      "assigned_sam_sec": 40.0,
+      "assigned_planning_sam_sec": 40.0,
+      "skills": {
+        "OP030": 3,
+        "OP040": 3,
+        "OP050": 3,
+        "OP060": 3,
+        "OP070": 3,
+        "OP320": 3,
+        "OP330": 3,
+        "OP080": 3,
+        "OP090": 3,
+        "OP100": 3,
+        "OP110": 3,
+        "OP120": 3,
+        "OP130": 3,
+        "OP340": 3,
+        "OP140": 3,
+        "OP280": 3,
+        "OP290": 3,
+        "OP300": 3,
+        "OP310": 3,
+        "OP150": 3,
+        "OP160": 3,
+        "OP170": 3,
+        "OP180": 3
+      },
+      "machine_types": [
+        "OVERLOCK",
+        "COVERSTITCH",
+        "SINGLE"
+      ],
+      "qualified_operations": 23,
+      "versatility_pct": 57.5
+    },
+    {
+      "worker_id": "W14",
+      "worker_name": "Vũ Thị Hạnh",
+      "used": true,
+      "station": 15,
+      "operation_ids": [
+        "OP280"
+      ],
+      "assigned_sam_sec": 38.0,
+      "assigned_planning_sam_sec": 38.0,
+      "skills": {
+        "OP030": 2,
+        "OP040": 2,
+        "OP050": 2,
+        "OP060": 2,
+        "OP070": 2,
+        "OP320": 2,
+        "OP330": 2,
+        "OP080": 2,
+        "OP090": 2,
+        "OP100": 2,
+        "OP110": 2,
+        "OP120": 2,
+        "OP130": 2,
+        "OP340": 2,
+        "OP140": 2,
+        "OP280": 2,
+        "OP290": 2,
+        "OP300": 2,
+        "OP310": 2,
+        "OP150": 2,
+        "OP160": 2,
+        "OP170": 2,
+        "OP180": 2
+      },
+      "machine_types": [
+        "OVERLOCK",
+        "SINGLE"
+      ],
+      "qualified_operations": 12,
+      "versatility_pct": 30.0
+    },
+    {
+      "worker_id": "W15",
+      "worker_name": "Đỗ Văn Thắng",
+      "used": true,
+      "station": 3,
+      "operation_ids": [
+        "OP040",
+        "OP050"
+      ],
+      "assigned_sam_sec": 56.0,
+      "assigned_planning_sam_sec": 56.0,
+      "skills": {
+        "OP030": 2,
+        "OP040": 2,
+        "OP050": 2,
+        "OP060": 2,
+        "OP070": 2,
+        "OP320": 2,
+        "OP330": 2,
+        "OP080": 2,
+        "OP090": 2,
+        "OP100": 2,
+        "OP110": 2,
+        "OP120": 2,
+        "OP130": 2,
+        "OP340": 2,
+        "OP140": 2,
+        "OP280": 2,
+        "OP290": 2,
+        "OP300": 2,
+        "OP310": 2,
+        "OP150": 2,
+        "OP160": 2,
+        "OP170": 2,
+        "OP180": 2
+      },
+      "machine_types": [
+        "OVERLOCK",
+        "SINGLE"
+      ],
+      "qualified_operations": 12,
+      "versatility_pct": 30.0
+    },
+    {
+      "worker_id": "W16",
+      "worker_name": "Nguyễn Thị Kim",
+      "used": true,
+      "station": 10,
+      "operation_ids": [
+        "OP110"
+      ],
+      "assigned_sam_sec": 34.0,
+      "assigned_planning_sam_sec": 34.0,
+      "skills": {
+        "OP030": 2,
+        "OP040": 2,
+        "OP050": 2,
+        "OP060": 2,
+        "OP070": 2,
+        "OP320": 2,
+        "OP330": 2,
+        "OP080": 2,
+        "OP090": 2,
+        "OP100": 2,
+        "OP110": 2,
+        "OP120": 2,
+        "OP130": 2,
+        "OP340": 2,
+        "OP140": 2,
+        "OP280": 2,
+        "OP290": 2,
+        "OP300": 2,
+        "OP310": 2,
+        "OP150": 2,
+        "OP160": 2,
+        "OP170": 2,
+        "OP180": 2
+      },
+      "machine_types": [
+        "OVERLOCK",
+        "SINGLE"
+      ],
+      "qualified_operations": 12,
+      "versatility_pct": 30.0
+    },
+    {
+      "worker_id": "W17",
+      "worker_name": "Trần Văn Dũng",
+      "used": true,
+      "station": 25,
+      "operation_ids": [
+        "OP270",
+        "OP400"
+      ],
+      "assigned_sam_sec": 37.0,
+      "assigned_planning_sam_sec": 37.0,
+      "skills": {
+        "OP020": 1,
+        "OP030": 2,
+        "OP040": 2,
+        "OP050": 2,
+        "OP060": 2,
+        "OP070": 2,
+        "OP320": 2,
+        "OP330": 2,
+        "OP080": 2,
+        "OP090": 2,
+        "OP100": 2,
+        "OP110": 2,
+        "OP120": 2,
+        "OP130": 2,
+        "OP340": 2,
+        "OP140": 2,
+        "OP280": 2,
+        "OP290": 2,
+        "OP300": 2,
+        "OP310": 2,
+        "OP360": 1,
+        "OP370": 1,
+        "OP150": 2,
+        "OP160": 2,
+        "OP170": 2,
+        "OP180": 2,
+        "OP200": 1,
+        "OP210": 1,
+        "OP220": 1,
+        "OP380": 1,
+        "OP230": 1,
+        "OP390": 1,
+        "OP240": 1,
+        "OP250": 1,
+        "OP270": 1,
+        "OP400": 1
+      },
+      "machine_types": [
+        "OVERLOCK",
+        "COVERSTITCH",
+        "SINGLE"
+      ],
+      "qualified_operations": 27,
+      "versatility_pct": 67.5
+    },
+    {
+      "worker_id": "W18",
+      "worker_name": "Lê Thị Thu",
+      "used": true,
+      "station": 6,
+      "operation_ids": [
+        "OP070",
+        "OP370"
+      ],
+      "assigned_sam_sec": 51.0,
+      "assigned_planning_sam_sec": 51.0,
+      "skills": {
+        "OP020": 1,
+        "OP030": 2,
+        "OP040": 2,
+        "OP050": 2,
+        "OP060": 2,
+        "OP070": 2,
+        "OP320": 2,
+        "OP330": 2,
+        "OP080": 2,
+        "OP090": 2,
+        "OP100": 2,
+        "OP110": 2,
+        "OP120": 2,
+        "OP130": 2,
+        "OP340": 2,
+        "OP140": 2,
+        "OP280": 2,
+        "OP290": 2,
+        "OP300": 2,
+        "OP310": 2,
+        "OP360": 1,
+        "OP370": 1,
+        "OP150": 2,
+        "OP160": 2,
+        "OP170": 2,
+        "OP180": 2,
+        "OP200": 1,
+        "OP210": 1,
+        "OP220": 1,
+        "OP380": 1,
+        "OP230": 1,
+        "OP390": 1,
+        "OP240": 1,
+        "OP250": 1,
+        "OP270": 1,
+        "OP400": 1
+      },
+      "machine_types": [
+        "OVERLOCK",
+        "COVERSTITCH",
+        "SINGLE"
+      ],
+      "qualified_operations": 27,
+      "versatility_pct": 67.5
+    },
+    {
+      "worker_id": "W19",
+      "worker_name": "Phạm Văn Hùng",
+      "used": true,
+      "station": 21,
+      "operation_ids": [
+        "OP210",
+        "OP380"
+      ],
+      "assigned_sam_sec": 41.0,
+      "assigned_planning_sam_sec": 41.0,
+      "skills": {
+        "OP010": 2,
+        "OP020": 2,
+        "OP350": 2,
+        "OP360": 2,
+        "OP370": 2,
+        "OP190": 2,
+        "OP200": 2,
+        "OP210": 2,
+        "OP220": 2,
+        "OP380": 2,
+        "OP230": 2,
+        "OP390": 2,
+        "OP240": 2,
+        "OP250": 2,
+        "OP260": 2,
+        "OP270": 2,
+        "OP400": 2
+      },
+      "machine_types": [
+        "IRON"
+      ],
+      "qualified_operations": 16,
+      "versatility_pct": 40.0
+    },
+    {
+      "worker_id": "W20",
+      "worker_name": "Nguyễn Thị Bích",
+      "used": true,
+      "station": 1,
+      "operation_ids": [
+        "OP010",
+        "OP020"
+      ],
+      "assigned_sam_sec": 48.0,
+      "assigned_planning_sam_sec": 48.0,
+      "skills": {
+        "OP010": 2,
+        "OP020": 2,
+        "OP350": 2,
+        "OP360": 2,
+        "OP370": 2,
+        "OP190": 2,
+        "OP200": 2,
+        "OP210": 2,
+        "OP220": 2,
+        "OP380": 2,
+        "OP230": 2,
+        "OP390": 2,
+        "OP240": 2,
+        "OP250": 2,
+        "OP260": 2,
+        "OP270": 2,
+        "OP400": 2
+      },
+      "machine_types": [
+        "IRON"
+      ],
+      "qualified_operations": 16,
+      "versatility_pct": 40.0
+    },
+    {
+      "worker_id": "W21",
+      "worker_name": "Võ Thị Ánh",
+      "used": true,
+      "station": 23,
+      "operation_ids": [
+        "OP240"
+      ],
+      "assigned_sam_sec": 20.0,
+      "assigned_planning_sam_sec": 20.0,
+      "skills": {
+        "OP010": 1,
+        "OP020": 2,
+        "OP350": 1,
+        "OP360": 2,
+        "OP370": 2,
+        "OP190": 1,
+        "OP200": 2,
+        "OP210": 2,
+        "OP220": 2,
+        "OP380": 2,
+        "OP230": 2,
+        "OP390": 2,
+        "OP240": 2,
+        "OP250": 2,
+        "OP260": 1,
+        "OP270": 2,
+        "OP400": 2
+      },
+      "machine_types": [
+        "IRON"
+      ],
+      "qualified_operations": 14,
+      "versatility_pct": 35.0
+    },
+    {
+      "worker_id": "W22",
+      "worker_name": "Bùi Quốc Cường",
+      "used": false,
+      "station": null,
+      "operation_ids": [],
+      "assigned_sam_sec": 0.0,
+      "assigned_planning_sam_sec": 0.0,
+      "skills": {
+        "OP010": 1,
+        "OP020": 2,
+        "OP350": 1,
+        "OP360": 2,
+        "OP370": 2,
+        "OP190": 1,
+        "OP200": 2,
+        "OP210": 2,
+        "OP220": 2,
+        "OP380": 2,
+        "OP230": 2,
+        "OP390": 2,
+        "OP240": 2,
+        "OP250": 2,
+        "OP260": 1,
+        "OP270": 2,
+        "OP400": 2
+      },
+      "machine_types": [
+        "IRON"
+      ],
+      "qualified_operations": 14,
+      "versatility_pct": 35.0
+    },
+    {
+      "worker_id": "W23",
+      "worker_name": "Đinh Thị Hòa",
+      "used": true,
+      "station": 24,
+      "operation_ids": [
+        "OP250",
+        "OP260"
+      ],
+      "assigned_sam_sec": 38.0,
+      "assigned_planning_sam_sec": 38.0,
+      "skills": {
+        "OP010": 3,
+        "OP020": 1,
+        "OP350": 3,
+        "OP360": 1,
+        "OP370": 1,
+        "OP190": 3,
+        "OP200": 1,
+        "OP210": 1,
+        "OP220": 1,
+        "OP380": 1,
+        "OP230": 1,
+        "OP390": 1,
+        "OP240": 1,
+        "OP250": 1,
+        "OP260": 3,
+        "OP270": 1,
+        "OP400": 1
+      },
+      "machine_types": [],
+      "qualified_operations": 13,
+      "versatility_pct": 32.5
+    },
+    {
+      "worker_id": "W24",
+      "worker_name": "Hồ Văn Sơn",
+      "used": true,
+      "station": 20,
+      "operation_ids": [
+        "OP190",
+        "OP200"
+      ],
+      "assigned_sam_sec": 46.0,
+      "assigned_planning_sam_sec": 46.0,
+      "skills": {
+        "OP010": 3,
+        "OP020": 2,
+        "OP350": 3,
+        "OP360": 2,
+        "OP370": 2,
+        "OP190": 3,
+        "OP200": 2,
+        "OP210": 2,
+        "OP220": 2,
+        "OP380": 2,
+        "OP230": 2,
+        "OP390": 2,
+        "OP240": 2,
+        "OP250": 2,
+        "OP260": 3,
+        "OP270": 2,
+        "OP400": 2
+      },
+      "machine_types": [
+        "IRON"
+      ],
+      "qualified_operations": 17,
+      "versatility_pct": 42.5
+    },
+    {
+      "worker_id": "W25",
+      "worker_name": "Nguyễn Hải Đăng",
+      "used": true,
+      "station": 8,
+      "operation_ids": [
+        "OP080"
+      ],
+      "assigned_sam_sec": 40.0,
+      "assigned_planning_sam_sec": 40.0,
+      "skills": {
+        "OP030": 3,
+        "OP040": 3,
+        "OP050": 3,
+        "OP060": 3,
+        "OP070": 3,
+        "OP320": 3,
+        "OP330": 3,
+        "OP080": 3,
+        "OP090": 3,
+        "OP100": 3,
+        "OP110": 3,
+        "OP120": 3,
+        "OP130": 3,
+        "OP340": 3,
+        "OP140": 3,
+        "OP280": 3,
+        "OP290": 3,
+        "OP300": 3,
+        "OP310": 3,
+        "OP150": 3,
+        "OP160": 3,
+        "OP170": 3,
+        "OP180": 3
+      },
+      "machine_types": [
+        "OVERLOCK",
+        "COVERSTITCH",
+        "SINGLE"
+      ],
+      "qualified_operations": 23,
+      "versatility_pct": 57.5
+    },
+    {
+      "worker_id": "W26",
+      "worker_name": "Trần Thị Quỳnh",
+      "used": true,
+      "station": 9,
+      "operation_ids": [
+        "OP100"
+      ],
+      "assigned_sam_sec": 34.0,
+      "assigned_planning_sam_sec": 34.0,
+      "skills": {
+        "OP030": 3,
+        "OP040": 3,
+        "OP050": 3,
+        "OP060": 3,
+        "OP070": 3,
+        "OP320": 3,
+        "OP330": 3,
+        "OP080": 3,
+        "OP090": 3,
+        "OP100": 3,
+        "OP110": 3,
+        "OP120": 3,
+        "OP130": 3,
+        "OP340": 3,
+        "OP140": 3,
+        "OP280": 3,
+        "OP290": 3,
+        "OP300": 3,
+        "OP310": 3,
+        "OP150": 3,
+        "OP160": 3,
+        "OP170": 3,
+        "OP180": 3
+      },
+      "machine_types": [
+        "OVERLOCK",
+        "COVERSTITCH",
+        "SINGLE"
+      ],
+      "qualified_operations": 23,
+      "versatility_pct": 57.5
+    }
+  ],
+  "kpis": {
+    "takt_time_sec": 67.5,
+    "effective_takt_time_sec": 57.375,
+    "available_seconds": 27000.0,
+    "total_sam_sec": 1059.0,
+    "total_planning_sam_sec": 1059.0,
+    "workers_used": 25,
+    "bottleneck_station": 3,
+    "bottleneck_load_sec": 56.0,
+    "planned_labor_utilization_pct": 62.76,
+    "balance_efficiency_pct": 75.64,
+    "balance_delay_pct": 24.36,
+    "smoothness_index": 81.64,
+    "capacity_per_shift": 409.8,
+    "target_qty": 400,
+    "target_achievement_pct": 102.46,
+    "meets_target": true,
+    "output_per_operator": 16.4,
+    "total_idle_sec": 375.375,
+    "total_overload_sec": 0.0,
+    "planned_efficiency": 0.85
+  },
+  "planning": {
+    "capacity": {
+      "garment_sam_min": 17.65,
+      "garment_planning_sam_min": 17.65,
+      "net_shift_minutes": 450.0,
+      "working_days": 5,
+      "planned_efficiency": 0.85,
+      "sam_basis": "INCLUDES_ALLOWANCE",
+      "allowance_applied_pct": 0.0,
+      "target_qty_per_day": 400,
+      "period_target_qty": 2000,
+      "required_hc": 18.46,
+      "available_hc": 26,
+      "hc_gap": -7.54,
+      "theoretical_capacity_per_shift": 563.5,
+      "bottleneck_capacity_per_shift": 409.8,
+      "daily_capacity": 409.8,
+      "period_capacity": 2049.0,
+      "capacity_gap": 49.0,
+      "capacity_achievement_pct": 102.45,
+      "theoretical_capacity_achievement_pct": 140.86,
+      "machine_requirements": [
+        {
+          "machine_type": "COVERSTITCH",
+          "required_stations": 5,
+          "available_capacity": 6,
+          "gap": -1,
+          "coverage_pct": 100.0,
+          "demand_ratio_pct": 83.33,
+          "basis": "optimized_stations"
+        },
+        {
+          "machine_type": "IRON",
+          "required_stations": 4,
+          "available_capacity": 4,
+          "gap": 0,
+          "coverage_pct": 100.0,
+          "demand_ratio_pct": 100.0,
+          "basis": "optimized_stations"
+        },
+        {
+          "machine_type": "OVERLOCK",
+          "required_stations": 8,
+          "available_capacity": 8,
+          "gap": 0,
+          "coverage_pct": 100.0,
+          "demand_ratio_pct": 100.0,
+          "basis": "optimized_stations"
+        },
+        {
+          "machine_type": "SINGLE",
+          "required_stations": 4,
+          "available_capacity": 5,
+          "gap": -1,
+          "coverage_pct": 100.0,
+          "demand_ratio_pct": 80.0,
+          "basis": "optimized_stations"
+        }
+      ],
+      "notes": [
+        "Net available time = (shift minutes - break minutes) x 60. Allowance is applied once inside planning SAM, never again here.",
+        "Theoretical capacity = available HC x net shift minutes x planned efficiency / planning garment SAM. It ignores precedence, machine and line-balance constraints, so it is not a promise of output.",
+        "Daily/period capacity and target achievement use the optimizer's bottleneck-constrained capacity, not the theoretical capacity.",
+        "Required HC is a theoretical estimate. Skill, machine, precedence and bottleneck constraints can require more people than this estimate."
+      ]
+    },
+    "headcount": {
+      "line_id": "LINE_01",
+      "work_center": "SEWING",
+      "standard_hc": 24,
+      "planned_hc": 26,
+      "actual_hc": 24,
+      "attendance_hc": 22,
+      "optimized_hc": 25,
+      "hc_gap": 0,
+      "adherence_pct": 100.0,
+      "attendance_pct": 91.67,
+      "skill_coverage": [
+        {
+          "operation_id": "OP260",
+          "operation_name": "Kiểm tra cuối",
+          "required_grade": 3,
+          "eligible_workers": 2,
+          "worker_ids": [
+            "W23",
+            "W24"
+          ],
+          "status": "ok"
+        },
+        {
+          "operation_id": "OP190",
+          "operation_name": "Kiểm tra thân áo",
+          "required_grade": 2,
+          "eligible_workers": 6,
+          "worker_ids": [
+            "W01",
+            "W02",
+            "W19",
+            "W20",
+            "W23",
+            "W24"
+          ],
+          "status": "ok"
+        },
+        {
+          "operation_id": "OP350",
+          "operation_name": "Kiểm tra túi",
+          "required_grade": 2,
+          "eligible_workers": 6,
+          "worker_ids": [
+            "W01",
+            "W02",
+            "W19",
+            "W20",
+            "W23",
+            "W24"
+          ],
+          "status": "ok"
+        },
+        {
+          "operation_id": "OP020",
+          "operation_name": "Ép mex cổ",
+          "required_grade": 2,
+          "eligible_workers": 7,
+          "worker_ids": [
+            "W01",
+            "W02",
+            "W19",
+            "W20",
+            "W21",
+            "W22",
+            "W24"
+          ],
+          "status": "ok"
+        },
+        {
+          "operation_id": "OP210",
+          "operation_name": "Ủi thân",
+          "required_grade": 2,
+          "eligible_workers": 7,
+          "worker_ids": [
+            "W01",
+            "W02",
+            "W19",
+            "W20",
+            "W21",
+            "W22",
+            "W24"
+          ],
+          "status": "ok"
+        },
+        {
+          "operation_id": "OP220",
+          "operation_name": "Ủi tay",
+          "required_grade": 2,
+          "eligible_workers": 7,
+          "worker_ids": [
+            "W01",
+            "W02",
+            "W19",
+            "W20",
+            "W21",
+            "W22",
+            "W24"
+          ],
+          "status": "ok"
+        },
+        {
+          "operation_id": "OP360",
+          "operation_name": "Ủi túi",
+          "required_grade": 2,
+          "eligible_workers": 7,
+          "worker_ids": [
+            "W01",
+            "W02",
+            "W19",
+            "W20",
+            "W21",
+            "W22",
+            "W24"
+          ],
+          "status": "ok"
+        },
+        {
+          "operation_id": "OP010",
+          "operation_name": "Kiểm tra nguyên phụ liệu",
+          "required_grade": 1,
+          "eligible_workers": 8,
+          "worker_ids": [
+            "W01",
+            "W02",
+            "W19",
+            "W20",
+            "W21",
+            "W22",
+            "W23",
+            "W24"
+          ],
+          "status": "ok"
+        },
+        {
+          "operation_id": "OP060",
+          "operation_name": "May cổ",
+          "required_grade": 3,
+          "eligible_workers": 9,
+          "worker_ids": [
+            "W03",
+            "W04",
+            "W05",
+            "W06",
+            "W11",
+            "W12",
+            "W13",
+            "W25",
+            "W26"
+          ],
+          "status": "ok"
+        },
+        {
+          "operation_id": "OP080",
+          "operation_name": "Tra tay trái",
+          "required_grade": 3,
+          "eligible_workers": 9,
+          "worker_ids": [
+            "W03",
+            "W04",
+            "W05",
+            "W06",
+            "W11",
+            "W12",
+            "W13",
+            "W25",
+            "W26"
+          ],
+          "status": "ok"
+        },
+        {
+          "operation_id": "OP090",
+          "operation_name": "Tra tay phải",
+          "required_grade": 3,
+          "eligible_workers": 9,
+          "worker_ids": [
+            "W03",
+            "W04",
+            "W05",
+            "W06",
+            "W11",
+            "W12",
+            "W13",
+            "W25",
+            "W26"
+          ],
+          "status": "ok"
+        },
+        {
+          "operation_id": "OP130",
+          "operation_name": "May lai",
+          "required_grade": 3,
+          "eligible_workers": 9,
+          "worker_ids": [
+            "W03",
+            "W04",
+            "W05",
+            "W06",
+            "W11",
+            "W12",
+            "W13",
+            "W25",
+            "W26"
+          ],
+          "status": "ok"
+        },
+        {
+          "operation_id": "OP320",
+          "operation_name": "May nẹp cổ",
+          "required_grade": 3,
+          "eligible_workers": 9,
+          "worker_ids": [
+            "W03",
+            "W04",
+            "W05",
+            "W06",
+            "W11",
+            "W12",
+            "W13",
+            "W25",
+            "W26"
+          ],
+          "status": "ok"
+        },
+        {
+          "operation_id": "OP200",
+          "operation_name": "Cắt chỉ",
+          "required_grade": 1,
+          "eligible_workers": 10,
+          "worker_ids": [
+            "W01",
+            "W02",
+            "W17",
+            "W18",
+            "W19",
+            "W20",
+            "W21",
+            "W22",
+            "W23",
+            "W24"
+          ],
+          "status": "ok"
+        },
+        {
+          "operation_id": "OP230",
+          "operation_name": "Gấp áo",
+          "required_grade": 1,
+          "eligible_workers": 10,
+          "worker_ids": [
+            "W01",
+            "W02",
+            "W17",
+            "W18",
+            "W19",
+            "W20",
+            "W21",
+            "W22",
+            "W23",
+            "W24"
+          ],
+          "status": "ok"
+        },
+        {
+          "operation_id": "OP240",
+          "operation_name": "Đóng gói",
+          "required_grade": 1,
+          "eligible_workers": 10,
+          "worker_ids": [
+            "W01",
+            "W02",
+            "W17",
+            "W18",
+            "W19",
+            "W20",
+            "W21",
+            "W22",
+            "W23",
+            "W24"
+          ],
+          "status": "ok"
+        },
+        {
+          "operation_id": "OP250",
+          "operation_name": "Dán nhãn",
+          "required_grade": 1,
+          "eligible_workers": 10,
+          "worker_ids": [
+            "W01",
+            "W02",
+            "W17",
+            "W18",
+            "W19",
+            "W20",
+            "W21",
+            "W22",
+            "W23",
+            "W24"
+          ],
+          "status": "ok"
+        },
+        {
+          "operation_id": "OP270",
+          "operation_name": "Nhập kho",
+          "required_grade": 1,
+          "eligible_workers": 10,
+          "worker_ids": [
+            "W01",
+            "W02",
+            "W17",
+            "W18",
+            "W19",
+            "W20",
+            "W21",
+            "W22",
+            "W23",
+            "W24"
+          ],
+          "status": "ok"
+        },
+        {
+          "operation_id": "OP370",
+          "operation_name": "May tag",
+          "required_grade": 1,
+          "eligible_workers": 10,
+          "worker_ids": [
+            "W01",
+            "W02",
+            "W17",
+            "W18",
+            "W19",
+            "W20",
+            "W21",
+            "W22",
+            "W23",
+            "W24"
+          ],
+          "status": "ok"
+        },
+        {
+          "operation_id": "OP380",
+          "operation_name": "Cắt chỉ tay",
+          "required_grade": 1,
+          "eligible_workers": 10,
+          "worker_ids": [
+            "W01",
+            "W02",
+            "W17",
+            "W18",
+            "W19",
+            "W20",
+            "W21",
+            "W22",
+            "W23",
+            "W24"
+          ],
+          "status": "ok"
+        },
+        {
+          "operation_id": "OP390",
+          "operation_name": "Gấp tay áo",
+          "required_grade": 1,
+          "eligible_workers": 10,
+          "worker_ids": [
+            "W01",
+            "W02",
+            "W17",
+            "W18",
+            "W19",
+            "W20",
+            "W21",
+            "W22",
+            "W23",
+            "W24"
+          ],
+          "status": "ok"
+        },
+        {
+          "operation_id": "OP400",
+          "operation_name": "Đóng thùng",
+          "required_grade": 1,
+          "eligible_workers": 10,
+          "worker_ids": [
+            "W01",
+            "W02",
+            "W17",
+            "W18",
+            "W19",
+            "W20",
+            "W21",
+            "W22",
+            "W23",
+            "W24"
+          ],
+          "status": "ok"
+        },
+        {
+          "operation_id": "OP070",
+          "operation_name": "Diễu cổ",
+          "required_grade": 2,
+          "eligible_workers": 15,
+          "worker_ids": [
+            "W03",
+            "W04",
+            "W05",
+            "W06",
+            "W07",
+            "W08",
+            "W09",
+            "W10",
+            "W11",
+            "W12",
+            "W13",
+            "W17",
+            "W18",
+            "W25",
+            "W26"
+          ],
+          "status": "ok"
+        },
+        {
+          "operation_id": "OP120",
+          "operation_name": "Diễu sườn",
+          "required_grade": 2,
+          "eligible_workers": 15,
+          "worker_ids": [
+            "W03",
+            "W04",
+            "W05",
+            "W06",
+            "W07",
+            "W08",
+            "W09",
+            "W10",
+            "W11",
+            "W12",
+            "W13",
+            "W17",
+            "W18",
+            "W25",
+            "W26"
+          ],
+          "status": "ok"
+        },
+        {
+          "operation_id": "OP140",
+          "operation_name": "Diễu lai",
+          "required_grade": 2,
+          "eligible_workers": 15,
+          "worker_ids": [
+            "W03",
+            "W04",
+            "W05",
+            "W06",
+            "W07",
+            "W08",
+            "W09",
+            "W10",
+            "W11",
+            "W12",
+            "W13",
+            "W17",
+            "W18",
+            "W25",
+            "W26"
+          ],
+          "status": "ok"
+        },
+        {
+          "operation_id": "OP170",
+          "operation_name": "Diễu gấu tay trái",
+          "required_grade": 2,
+          "eligible_workers": 15,
+          "worker_ids": [
+            "W03",
+            "W04",
+            "W05",
+            "W06",
+            "W07",
+            "W08",
+            "W09",
+            "W10",
+            "W11",
+            "W12",
+            "W13",
+            "W17",
+            "W18",
+            "W25",
+            "W26"
+          ],
+          "status": "ok"
+        },
+        {
+          "operation_id": "OP180",
+          "operation_name": "Diễu gấu tay phải",
+          "required_grade": 2,
+          "eligible_workers": 15,
+          "worker_ids": [
+            "W03",
+            "W04",
+            "W05",
+            "W06",
+            "W07",
+            "W08",
+            "W09",
+            "W10",
+            "W11",
+            "W12",
+            "W13",
+            "W17",
+            "W18",
+            "W25",
+            "W26"
+          ],
+          "status": "ok"
+        },
+        {
+          "operation_id": "OP340",
+          "operation_name": "May bèo lai",
+          "required_grade": 2,
+          "eligible_workers": 15,
+          "worker_ids": [
+            "W03",
+            "W04",
+            "W05",
+            "W06",
+            "W07",
+            "W08",
+            "W09",
+            "W10",
+            "W11",
+            "W12",
+            "W13",
+            "W17",
+            "W18",
+            "W25",
+            "W26"
+          ],
+          "status": "ok"
+        },
+        {
+          "operation_id": "OP030",
+          "operation_name": "May vai trái",
+          "required_grade": 2,
+          "eligible_workers": 18,
+          "worker_ids": [
+            "W03",
+            "W04",
+            "W05",
+            "W06",
+            "W07",
+            "W08",
+            "W09",
+            "W10",
+            "W11",
+            "W12",
+            "W13",
+            "W14",
+            "W15",
+            "W16",
+            "W17",
+            "W18",
+            "W25",
+            "W26"
+          ],
+          "status": "ok"
+        },
+        {
+          "operation_id": "OP040",
+          "operation_name": "May vai phải",
+          "required_grade": 2,
+          "eligible_workers": 18,
+          "worker_ids": [
+            "W03",
+            "W04",
+            "W05",
+            "W06",
+            "W07",
+            "W08",
+            "W09",
+            "W10",
+            "W11",
+            "W12",
+            "W13",
+            "W14",
+            "W15",
+            "W16",
+            "W17",
+            "W18",
+            "W25",
+            "W26"
+          ],
+          "status": "ok"
+        },
+        {
+          "operation_id": "OP050",
+          "operation_name": "Nối vai",
+          "required_grade": 2,
+          "eligible_workers": 18,
+          "worker_ids": [
+            "W03",
+            "W04",
+            "W05",
+            "W06",
+            "W07",
+            "W08",
+            "W09",
+            "W10",
+            "W11",
+            "W12",
+            "W13",
+            "W14",
+            "W15",
+            "W16",
+            "W17",
+            "W18",
+            "W25",
+            "W26"
+          ],
+          "status": "ok"
+        },
+        {
+          "operation_id": "OP100",
+          "operation_name": "May sườn trái",
+          "required_grade": 2,
+          "eligible_workers": 18,
+          "worker_ids": [
+            "W03",
+            "W04",
+            "W05",
+            "W06",
+            "W07",
+            "W08",
+            "W09",
+            "W10",
+            "W11",
+            "W12",
+            "W13",
+            "W14",
+            "W15",
+            "W16",
+            "W17",
+            "W18",
+            "W25",
+            "W26"
+          ],
+          "status": "ok"
+        },
+        {
+          "operation_id": "OP110",
+          "operation_name": "May sườn phải",
+          "required_grade": 2,
+          "eligible_workers": 18,
+          "worker_ids": [
+            "W03",
+            "W04",
+            "W05",
+            "W06",
+            "W07",
+            "W08",
+            "W09",
+            "W10",
+            "W11",
+            "W12",
+            "W13",
+            "W14",
+            "W15",
+            "W16",
+            "W17",
+            "W18",
+            "W25",
+            "W26"
+          ],
+          "status": "ok"
+        },
+        {
+          "operation_id": "OP150",
+          "operation_name": "May gấu tay trái",
+          "required_grade": 2,
+          "eligible_workers": 18,
+          "worker_ids": [
+            "W03",
+            "W04",
+            "W05",
+            "W06",
+            "W07",
+            "W08",
+            "W09",
+            "W10",
+            "W11",
+            "W12",
+            "W13",
+            "W14",
+            "W15",
+            "W16",
+            "W17",
+            "W18",
+            "W25",
+            "W26"
+          ],
+          "status": "ok"
+        },
+        {
+          "operation_id": "OP160",
+          "operation_name": "May gấu tay phải",
+          "required_grade": 2,
+          "eligible_workers": 18,
+          "worker_ids": [
+            "W03",
+            "W04",
+            "W05",
+            "W06",
+            "W07",
+            "W08",
+            "W09",
+            "W10",
+            "W11",
+            "W12",
+            "W13",
+            "W14",
+            "W15",
+            "W16",
+            "W17",
+            "W18",
+            "W25",
+            "W26"
+          ],
+          "status": "ok"
+        },
+        {
+          "operation_id": "OP280",
+          "operation_name": "May túi trái",
+          "required_grade": 2,
+          "eligible_workers": 18,
+          "worker_ids": [
+            "W03",
+            "W04",
+            "W05",
+            "W06",
+            "W07",
+            "W08",
+            "W09",
+            "W10",
+            "W11",
+            "W12",
+            "W13",
+            "W14",
+            "W15",
+            "W16",
+            "W17",
+            "W18",
+            "W25",
+            "W26"
+          ],
+          "status": "ok"
+        },
+        {
+          "operation_id": "OP290",
+          "operation_name": "May túi phải",
+          "required_grade": 2,
+          "eligible_workers": 18,
+          "worker_ids": [
+            "W03",
+            "W04",
+            "W05",
+            "W06",
+            "W07",
+            "W08",
+            "W09",
+            "W10",
+            "W11",
+            "W12",
+            "W13",
+            "W14",
+            "W15",
+            "W16",
+            "W17",
+            "W18",
+            "W25",
+            "W26"
+          ],
+          "status": "ok"
+        },
+        {
+          "operation_id": "OP300",
+          "operation_name": "Diễu túi trái",
+          "required_grade": 2,
+          "eligible_workers": 18,
+          "worker_ids": [
+            "W03",
+            "W04",
+            "W05",
+            "W06",
+            "W07",
+            "W08",
+            "W09",
+            "W10",
+            "W11",
+            "W12",
+            "W13",
+            "W14",
+            "W15",
+            "W16",
+            "W17",
+            "W18",
+            "W25",
+            "W26"
+          ],
+          "status": "ok"
+        },
+        {
+          "operation_id": "OP310",
+          "operation_name": "Diễu túi phải",
+          "required_grade": 2,
+          "eligible_workers": 18,
+          "worker_ids": [
+            "W03",
+            "W04",
+            "W05",
+            "W06",
+            "W07",
+            "W08",
+            "W09",
+            "W10",
+            "W11",
+            "W12",
+            "W13",
+            "W14",
+            "W15",
+            "W16",
+            "W17",
+            "W18",
+            "W25",
+            "W26"
+          ],
+          "status": "ok"
+        },
+        {
+          "operation_id": "OP330",
+          "operation_name": "Diễu nẹp cổ",
+          "required_grade": 2,
+          "eligible_workers": 18,
+          "worker_ids": [
+            "W03",
+            "W04",
+            "W05",
+            "W06",
+            "W07",
+            "W08",
+            "W09",
+            "W10",
+            "W11",
+            "W12",
+            "W13",
+            "W14",
+            "W15",
+            "W16",
+            "W17",
+            "W18",
+            "W25",
+            "W26"
+          ],
+          "status": "ok"
+        }
+      ],
+      "transfer_suggestions": [],
+      "notes": [
+        "HC gap = actual HC - standard HC; positive means excess, negative means shortage.",
+        "Attendance is a manual input in the MVP; there is no HR/MES integration.",
+        "Optimized HC is the number of stations used by the MILP solution.",
+        "Transfer suggestions only include unused workers who are eligible for the bottleneck operation."
+      ]
+    }
+  },
+  "baseline_comparison": {
+    "before": {
+      "stations_used": 24,
+      "workers_used": 24,
+      "bottleneck_station": "ST24",
+      "bottleneck_load_sec": 61.0,
+      "balance_efficiency_pct": 72.34,
+      "capacity_per_shift": 376.2,
+      "target_achievement_pct": 94.06,
+      "smoothness_index": 98.02,
+      "total_idle_sec": 325.5,
+      "total_overload_sec": 7.5
+    },
+    "after": {
+      "stations_used": 25,
+      "workers_used": 25,
+      "bottleneck_station": "3",
+      "bottleneck_load_sec": 56.0,
+      "balance_efficiency_pct": 75.64,
+      "capacity_per_shift": 409.8,
+      "target_achievement_pct": 102.46,
+      "smoothness_index": 81.64,
+      "total_idle_sec": 375.375,
+      "total_overload_sec": 0.0
+    },
+    "station_delta": 1,
+    "worker_delta": 1,
+    "bottleneck_delta_sec": 5.0,
+    "balance_efficiency_delta_pct": 3.3,
+    "capacity_delta_pcs": 33.6,
+    "target_achievement_delta_pct": 8.4,
+    "violations": [],
+    "notes": [
+      "Synthetic current-state baseline: first-fit 60s station target, one worker per station, respects skill/machine/precedence. Not an optimizer output.",
+      "Bottleneck delta is reported as before - after, so a positive value is an improvement.",
+      "Baseline violations are listed but do not block the comparison; a real current-state layout may violate the assumptions of the optimized model."
+    ]
+  },
+  "actuals_analysis": {
+    "period_days": 5,
+    "target_output": 2100,
+    "actual_output": 1820,
+    "production_achievement_pct": 86.67,
+    "actual_direct_labor_minutes": 47700.0,
+    "actual_labor_efficiency_pct": 67.34,
+    "downtime_minutes": 300.0,
+    "downtime_pct_of_planned_time": 12.5,
+    "downtime_by_category": {
+      "MACHINE": 25.0,
+      "MATERIAL": 15.0,
+      "MANPOWER": 10.0,
+      "QUALITY": 10.0,
+      "UNSPECIFIED": 240.0
+    },
+    "notes": [
+      "Downtime events and the summary downtime differ; the summary value is used for total downtime, and the category table shows event-level detail.",
+      "Production achievement uses the reported target for the same period. Actual labor efficiency uses planning SAM (allowance applied once), not raw SAM. Downtime percentage uses planned shift minutes, not net available minutes."
+    ]
+  },
+  "warnings": [
+    {
+      "severity": "info",
+      "code": "machine_capacity_shared",
+      "message": "7 operations need COVERSTITCH, but only 6 machine(s) are available. Some operations must share a station.",
+      "station": null,
+      "operation_id": null,
+      "worker_id": null
+    },
+    {
+      "severity": "info",
+      "code": "machine_capacity_shared",
+      "message": "10 operations need OVERLOCK, but only 8 machine(s) are available. Some operations must share a station.",
+      "station": null,
+      "operation_id": null,
+      "worker_id": null
+    },
+    {
+      "severity": "info",
+      "code": "machine_capacity_shared",
+      "message": "6 operations need SINGLE, but only 5 machine(s) are available. Some operations must share a station.",
+      "station": null,
+      "operation_id": null,
+      "worker_id": null
+    },
+    {
+      "severity": "info",
+      "code": "station_underutilized",
+      "message": "Station 2 (Lý Thị Ngọc) is underutilized (52.3%). Consider combining tasks.",
+      "station": 2,
+      "operation_id": null,
+      "worker_id": "W12"
+    },
+    {
+      "severity": "warning",
+      "code": "station_near_effective_takt",
+      "message": "Station 3 (Đỗ Văn Thắng) is near effective takt (97.6%). Monitor this station.",
+      "station": 3,
+      "operation_id": null,
+      "worker_id": "W15"
+    },
+    {
+      "severity": "warning",
+      "code": "station_near_effective_takt",
+      "message": "Station 5 (Phạm Quốc Bảo) is near effective takt (90.6%). Monitor this station.",
+      "station": 5,
+      "operation_id": null,
+      "worker_id": "W04"
+    },
+    {
+      "severity": "info",
+      "code": "station_underutilized",
+      "message": "Station 9 (Trần Thị Quỳnh) is underutilized (59.3%). Consider combining tasks.",
+      "station": 9,
+      "operation_id": null,
+      "worker_id": "W26"
+    },
+    {
+      "severity": "info",
+      "code": "station_underutilized",
+      "message": "Station 10 (Nguyễn Thị Kim) is underutilized (59.3%). Consider combining tasks.",
+      "station": 10,
+      "operation_id": null,
+      "worker_id": "W16"
+    },
+    {
+      "severity": "info",
+      "code": "station_underutilized",
+      "message": "Station 11 (Ngô Quang Huy) is underutilized (48.8%). Consider combining tasks.",
+      "station": 11,
+      "operation_id": null,
+      "worker_id": "W09"
+    },
+    {
+      "severity": "warning",
+      "code": "station_near_effective_takt",
+      "message": "Station 16 (Bùi Văn Nam) is near effective takt (95.9%). Monitor this station.",
+      "station": 16,
+      "operation_id": null,
+      "worker_id": "W07"
+    },
+    {
+      "severity": "warning",
+      "code": "station_near_effective_takt",
+      "message": "Station 17 (Dương Thị Hồng) is near effective takt (90.6%). Monitor this station.",
+      "station": 17,
+      "operation_id": null,
+      "worker_id": "W10"
+    },
+    {
+      "severity": "warning",
+      "code": "station_near_effective_takt",
+      "message": "Station 22 (Trần Minh Anh) is near effective takt (94.1%). Monitor this station.",
+      "station": 22,
+      "operation_id": null,
+      "worker_id": "W02"
+    },
+    {
+      "severity": "info",
+      "code": "station_underutilized",
+      "message": "Station 23 (Võ Thị Ánh) is underutilized (34.9%). Consider combining tasks.",
+      "station": 23,
+      "operation_id": null,
+      "worker_id": "W21"
+    },
+    {
+      "severity": "info",
+      "code": "unused_workers",
+      "message": "1 available worker(s) are not used: Bùi Quốc Cường",
+      "station": null,
+      "operation_id": null,
+      "worker_id": null
+    }
+  ],
+  "diagnostics": {
+    "feasible": true,
+    "error_type": "NONE",
+    "issues": [],
+    "suggestions": [
+      "Use unused qualified workers for bottleneck relief or reduce max_workers.",
+      "Check machine allocation and add capacity for shared machine types.",
+      "Run a second scenario with min_workers to compare headcount against bottleneck time."
+    ]
+  },
+  "metadata": {
+    "run_id": "1c492998-2f18-4a11-8ef3-adab20e293e1",
+    "app_version": "0.2.0",
+    "data_version": "b7d778ca9a85",
+    "model_version": "MILP-SAM-v2.0",
+    "solver_version": "PuLP 4.2.0 / HiGHS 1.15.1",
+    "objective": "min_bottleneck",
+    "input_hash": "b7d778ca9a85069bbd5fcfbbef7426b68dd843575cf300076a7450cff8e93d3e",
+    "solver_status": "OPTIMAL",
+    "solve_time_sec": 27.001,
+    "created_at": "2026-11-02T00:23:17.933058+00:00",
+    "lexicographic_proven": true,
+    "stage1_objective": 56.0,
+    "stage2_objective": 56.0
+  }
+}

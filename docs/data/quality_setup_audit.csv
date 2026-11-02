@@ -1,0 +1,11 @@
+phase,changeover_date,line_id,station_id,guide_present,first_piece_check,misalignment_next_2h,data_policy,note
+BEFORE,2026-10-26,LINE_01,ST05,0,0,4,SYNTHETIC,Guide missing; setup by operator memory
+BEFORE,2026-10-27,LINE_01,ST05,1,1,3,SYNTHETIC,Guide present; first piece checked
+BEFORE,2026-10-28,LINE_01,ST05,0,0,3,SYNTHETIC,Guide missing after style change
+BEFORE,2026-10-29,LINE_01,ST05,0,0,2,SYNTHETIC,Guide missing; no first-piece record
+BEFORE,2026-10-30,LINE_01,ST05,0,1,2,SYNTHETIC,Guide missing; first piece checked visually
+AFTER,2026-11-02,LINE_01,ST05,1,1,1,SYNTHETIC,Guide restored; checklist used
+AFTER,2026-11-03,LINE_01,ST05,1,1,0,SYNTHETIC,Guide present; first piece approved
+AFTER,2026-11-04,LINE_01,ST05,1,1,1,SYNTHETIC,Guide present; first piece approved
+AFTER,2026-11-05,LINE_01,ST05,1,1,0,SYNTHETIC,Guide present; first piece approved
+AFTER,2026-11-06,LINE_01,ST05,1,1,0,SYNTHETIC,Guide present; first piece approved

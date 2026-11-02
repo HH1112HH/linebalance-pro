@@ -1,0 +1,9 @@
+date,line_id,station_id,waste_type,measurement_basis,frequency_per_shift,time_per_occurrence_min,time_loss_min,loss_qty,wip_cap,evidence,root_cause,countermeasure,owner,status
+2026-10-27,LINE_01,ST01,TRANSPORT,OPERATOR_MINUTES,3,6.0,18.0,,,"Spaghetti observation","No point-of-use bin; material route crosses line","Point-of-use bin","IE","OPEN"
+2026-10-27,LINE_01,ST05-IN,INVENTORY,PIECES,1,,,13,25,"WIP count at 12:00","No pull signal; batch feeding before bottleneck","WIP cap and kanban","Planning","OPEN"
+2026-10-27,LINE_01,ST08,MOTION,OPERATOR_MINUTES,45,0.27,12.15,,,"Video observation","Collar bin placed behind operator","Move bin within reach","IE","OPEN"
+2026-10-27,LINE_01,ST05,WAITING,MACHINE_MINUTES,1,25.0,25.0,,,"Downtime log","Thread path/tension issue; no TPM check","TPM and thread path","Maintenance","OPEN"
+2026-10-27,LINE_01,ST12-OUT,OVERPRODUCTION,PIECES,1,,,15,,"WIP at ST12","No pull signal; line runs ahead of downstream","Pull and stop feeding","Production","OPEN"
+2026-10-27,LINE_01,ST03,OVERPROCESSING,OPERATOR_MINUTES,20,0.4,8.0,,,"Standard work audit","Duplicate inspection not required by quality plan","Remove duplicate check","Quality","OPEN"
+2026-10-27,LINE_01,ST12,DEFECTS,OPERATOR_MINUTES,10,3.0,30.0,,,"Rework log","Collar fixture/method not controlled","Poka-yoke fixture","Quality","OPEN"
+2026-10-27,LINE_01,ST18,SKILLS,OPERATOR_MINUTES,30,0.67,20.1,,,"Skill matrix","Inspector redeployed to folding during absence","Redeploy to inspection","Production/HR","OPEN"

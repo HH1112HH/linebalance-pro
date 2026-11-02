@@ -1,0 +1,1949 @@
+{
+  "line_name": "Line A — Basic Tee (feasible 400 plan)",
+  "style_code": "BASIC-TEE-001",
+  "config": {
+    "shift_id": "SHIFT_01",
+    "shift_name": "Ca 1",
+    "shift_minutes": 480.0,
+    "break_minutes": 30.0,
+    "target_qty": 400,
+    "working_days": 5,
+    "sam_basis": "INCLUDES_ALLOWANCE",
+    "allowance_pct": 0.0,
+    "planned_efficiency": 0.85,
+    "max_workers": 26,
+    "solver_time_limit_sec": 60,
+    "objective": "min_bottleneck"
+  },
+  "operations": [
+    {
+      "id": "OP010",
+      "name": "Kiểm tra nguyên phụ liệu",
+      "sam_sec": 20.0,
+      "predecessors": [],
+      "machine_type": null,
+      "skill_code": "INSPECTION",
+      "skill_required": 1,
+      "is_quality_gate": true,
+      "sequence": 10
+    },
+    {
+      "id": "OP020",
+      "name": "Ép mex cổ",
+      "sam_sec": 28.0,
+      "predecessors": [
+        "OP010"
+      ],
+      "machine_type": "IRON",
+      "skill_code": "FINISHING",
+      "skill_required": 2,
+      "is_quality_gate": false,
+      "sequence": 20
+    },
+    {
+      "id": "OP030",
+      "name": "May vai trái",
+      "sam_sec": 30.0,
+      "predecessors": [
+        "OP020"
+      ],
+      "machine_type": "OVERLOCK",
+      "skill_code": "SEWING",
+      "skill_required": 2,
+      "is_quality_gate": false,
+      "sequence": 30
+    },
+    {
+      "id": "OP040",
+      "name": "May vai phải",
+      "sam_sec": 30.0,
+      "predecessors": [
+        "OP020"
+      ],
+      "machine_type": "OVERLOCK",
+      "skill_code": "SEWING",
+      "skill_required": 2,
+      "is_quality_gate": false,
+      "sequence": 40
+    },
+    {
+      "id": "OP050",
+      "name": "Nối vai",
+      "sam_sec": 26.0,
+      "predecessors": [
+        "OP030",
+        "OP040"
+      ],
+      "machine_type": "OVERLOCK",
+      "skill_code": "SEWING",
+      "skill_required": 2,
+      "is_quality_gate": false,
+      "sequence": 50
+    },
+    {
+      "id": "OP060",
+      "name": "May cổ",
+      "sam_sec": 45.0,
+      "predecessors": [
+        "OP050"
+      ],
+      "machine_type": "OVERLOCK",
+      "skill_code": "SEWING",
+      "skill_required": 3,
+      "is_quality_gate": false,
+      "sequence": 60
+    },
+    {
+      "id": "OP070",
+      "name": "Diễu cổ",
+      "sam_sec": 35.0,
+      "predecessors": [
+        "OP060"
+      ],
+      "machine_type": "COVERSTITCH",
+      "skill_code": "SEWING",
+      "skill_required": 2,
+      "is_quality_gate": false,
+      "sequence": 70
+    },
+    {
+      "id": "OP320",
+      "name": "May nẹp cổ",
+      "sam_sec": 30.0,
+      "predecessors": [
+        "OP060"
+      ],
+      "machine_type": "SINGLE",
+      "skill_code": "SEWING",
+      "skill_required": 3,
+      "is_quality_gate": false,
+      "sequence": 80
+    },
+    {
+      "id": "OP330",
+      "name": "Diễu nẹp cổ",
+      "sam_sec": 22.0,
+      "predecessors": [
+        "OP320"
+      ],
+      "machine_type": "SINGLE",
+      "skill_code": "SEWING",
+      "skill_required": 2,
+      "is_quality_gate": false,
+      "sequence": 90
+    },
+    {
+      "id": "OP080",
+      "name": "Tra tay trái",
+      "sam_sec": 40.0,
+      "predecessors": [
+        "OP070",
+        "OP330"
+      ],
+      "machine_type": "OVERLOCK",
+      "skill_code": "SEWING",
+      "skill_required": 3,
+      "is_quality_gate": false,
+      "sequence": 100
+    },
+    {
+      "id": "OP090",
+      "name": "Tra tay phải",
+      "sam_sec": 40.0,
+      "predecessors": [
+        "OP070"
+      ],
+      "machine_type": "OVERLOCK",
+      "skill_code": "SEWING",
+      "skill_required": 3,
+      "is_quality_gate": false,
+      "sequence": 110
+    },
+    {
+      "id": "OP100",
+      "name": "May sườn trái",
+      "sam_sec": 34.0,
+      "predecessors": [
+        "OP080",
+        "OP090"
+      ],
+      "machine_type": "OVERLOCK",
+      "skill_code": "SEWING",
+      "skill_required": 2,
+      "is_quality_gate": false,
+      "sequence": 120
+    },
+    {
+      "id": "OP110",
+      "name": "May sườn phải",
+      "sam_sec": 34.0,
+      "predecessors": [
+        "OP080",
+        "OP090"
+      ],
+      "machine_type": "OVERLOCK",
+      "skill_code": "SEWING",
+      "skill_required": 2,
+      "is_quality_gate": false,
+      "sequence": 130
+    },
+    {
+      "id": "OP120",
+      "name": "Diễu sườn",
+      "sam_sec": 28.0,
+      "predecessors": [
+        "OP100",
+        "OP110"
+      ],
+      "machine_type": "COVERSTITCH",
+      "skill_code": "SEWING",
+      "skill_required": 2,
+      "is_quality_gate": false,
+      "sequence": 140
+    },
+    {
+      "id": "OP130",
+      "name": "May lai",
+      "sam_sec": 46.0,
+      "predecessors": [
+        "OP120"
+      ],
+      "machine_type": "COVERSTITCH",
+      "skill_code": "SEWING",
+      "skill_required": 3,
+      "is_quality_gate": false,
+      "sequence": 150
+    },
+    {
+      "id": "OP340",
+      "name": "May bèo lai",
+      "sam_sec": 35.0,
+      "predecessors": [
+        "OP130"
+      ],
+      "machine_type": "COVERSTITCH",
+      "skill_code": "SEWING",
+      "skill_required": 2,
+      "is_quality_gate": false,
+      "sequence": 160
+    },
+    {
+      "id": "OP140",
+      "name": "Diễu lai",
+      "sam_sec": 30.0,
+      "predecessors": [
+        "OP340"
+      ],
+      "machine_type": "COVERSTITCH",
+      "skill_code": "SEWING",
+      "skill_required": 2,
+      "is_quality_gate": false,
+      "sequence": 170
+    },
+    {
+      "id": "OP280",
+      "name": "May túi trái",
+      "sam_sec": 38.0,
+      "predecessors": [
+        "OP120"
+      ],
+      "machine_type": "SINGLE",
+      "skill_code": "SEWING",
+      "skill_required": 2,
+      "is_quality_gate": false,
+      "sequence": 180
+    },
+    {
+      "id": "OP290",
+      "name": "May túi phải",
+      "sam_sec": 38.0,
+      "predecessors": [
+        "OP120"
+      ],
+      "machine_type": "SINGLE",
+      "skill_code": "SEWING",
+      "skill_required": 2,
+      "is_quality_gate": false,
+      "sequence": 190
+    },
+    {
+      "id": "OP300",
+      "name": "Diễu túi trái",
+      "sam_sec": 26.0,
+      "predecessors": [
+        "OP280"
+      ],
+      "machine_type": "SINGLE",
+      "skill_code": "SEWING",
+      "skill_required": 2,
+      "is_quality_gate": false,
+      "sequence": 200
+    },
+    {
+      "id": "OP310",
+      "name": "Diễu túi phải",
+      "sam_sec": 26.0,
+      "predecessors": [
+        "OP290"
+      ],
+      "machine_type": "SINGLE",
+      "skill_code": "SEWING",
+      "skill_required": 2,
+      "is_quality_gate": false,
+      "sequence": 210
+    },
+    {
+      "id": "OP350",
+      "name": "Kiểm tra túi",
+      "sam_sec": 20.0,
+      "predecessors": [
+        "OP300",
+        "OP310"
+      ],
+      "machine_type": null,
+      "skill_code": "INSPECTION",
+      "skill_required": 2,
+      "is_quality_gate": true,
+      "sequence": 220
+    },
+    {
+      "id": "OP360",
+      "name": "Ủi túi",
+      "sam_sec": 18.0,
+      "predecessors": [
+        "OP350"
+      ],
+      "machine_type": "IRON",
+      "skill_code": "FINISHING",
+      "skill_required": 2,
+      "is_quality_gate": false,
+      "sequence": 230
+    },
+    {
+      "id": "OP370",
+      "name": "May tag",
+      "sam_sec": 16.0,
+      "predecessors": [
+        "OP070"
+      ],
+      "machine_type": null,
+      "skill_code": "FINISHING",
+      "skill_required": 1,
+      "is_quality_gate": false,
+      "sequence": 240
+    },
+    {
+      "id": "OP150",
+      "name": "May gấu tay trái",
+      "sam_sec": 24.0,
+      "predecessors": [
+        "OP080"
+      ],
+      "machine_type": "OVERLOCK",
+      "skill_code": "SEWING",
+      "skill_required": 2,
+      "is_quality_gate": false,
+      "sequence": 250
+    },
+    {
+      "id": "OP160",
+      "name": "May gấu tay phải",
+      "sam_sec": 24.0,
+      "predecessors": [
+        "OP090"
+      ],
+      "machine_type": "OVERLOCK",
+      "skill_code": "SEWING",
+      "skill_required": 2,
+      "is_quality_gate": false,
+      "sequence": 260
+    },
+    {
+      "id": "OP170",
+      "name": "Diễu gấu tay trái",
+      "sam_sec": 20.0,
+      "predecessors": [
+        "OP150"
+      ],
+      "machine_type": "COVERSTITCH",
+      "skill_code": "SEWING",
+      "skill_required": 2,
+      "is_quality_gate": false,
+      "sequence": 270
+    },
+    {
+      "id": "OP180",
+      "name": "Diễu gấu tay phải",
+      "sam_sec": 20.0,
+      "predecessors": [
+        "OP160"
+      ],
+      "machine_type": "COVERSTITCH",
+      "skill_code": "SEWING",
+      "skill_required": 2,
+      "is_quality_gate": false,
+      "sequence": 280
+    },
+    {
+      "id": "OP190",
+      "name": "Kiểm tra thân áo",
+      "sam_sec": 28.0,
+      "predecessors": [
+        "OP140",
+        "OP170",
+        "OP180",
+        "OP360",
+        "OP370"
+      ],
+      "machine_type": null,
+      "skill_code": "INSPECTION",
+      "skill_required": 2,
+      "is_quality_gate": true,
+      "sequence": 290
+    },
+    {
+      "id": "OP200",
+      "name": "Cắt chỉ",
+      "sam_sec": 18.0,
+      "predecessors": [
+        "OP190"
+      ],
+      "machine_type": null,
+      "skill_code": "FINISHING",
+      "skill_required": 1,
+      "is_quality_gate": false,
+      "sequence": 300
+    },
+    {
+      "id": "OP210",
+      "name": "Ủi thân",
+      "sam_sec": 26.0,
+      "predecessors": [
+        "OP200"
+      ],
+      "machine_type": "IRON",
+      "skill_code": "FINISHING",
+      "skill_required": 2,
+      "is_quality_gate": false,
+      "sequence": 310
+    },
+    {
+      "id": "OP220",
+      "name": "Ủi tay",
+      "sam_sec": 22.0,
+      "predecessors": [
+        "OP200"
+      ],
+      "machine_type": "IRON",
+      "skill_code": "FINISHING",
+      "skill_required": 2,
+      "is_quality_gate": false,
+      "sequence": 320
+    },
+    {
+      "id": "OP380",
+      "name": "Cắt chỉ tay",
+      "sam_sec": 15.0,
+      "predecessors": [
+        "OP200"
+      ],
+      "machine_type": null,
+      "skill_code": "FINISHING",
+      "skill_required": 1,
+      "is_quality_gate": false,
+      "sequence": 330
+    },
+    {
+      "id": "OP230",
+      "name": "Gấp áo",
+      "sam_sec": 18.0,
+      "predecessors": [
+        "OP210",
+        "OP220"
+      ],
+      "machine_type": null,
+      "skill_code": "FINISHING",
+      "skill_required": 1,
+      "is_quality_gate": false,
+      "sequence": 340
+    },
+    {
+      "id": "OP390",
+      "name": "Gấp tay áo",
+      "sam_sec": 14.0,
+      "predecessors": [
+        "OP380"
+      ],
+      "machine_type": null,
+      "skill_code": "FINISHING",
+      "skill_required": 1,
+      "is_quality_gate": false,
+      "sequence": 350
+    },
+    {
+      "id": "OP240",
+      "name": "Đóng gói",
+      "sam_sec": 20.0,
+      "predecessors": [
+        "OP230",
+        "OP390"
+      ],
+      "machine_type": null,
+      "skill_code": "FINISHING",
+      "skill_required": 1,
+      "is_quality_gate": false,
+      "sequence": 360
+    },
+    {
+      "id": "OP250",
+      "name": "Dán nhãn",
+      "sam_sec": 14.0,
+      "predecessors": [
+        "OP240"
+      ],
+      "machine_type": null,
+      "skill_code": "FINISHING",
+      "skill_required": 1,
+      "is_quality_gate": false,
+      "sequence": 370
+    },
+    {
+      "id": "OP260",
+      "name": "Kiểm tra cuối",
+      "sam_sec": 24.0,
+      "predecessors": [
+        "OP250"
+      ],
+      "machine_type": null,
+      "skill_code": "INSPECTION",
+      "skill_required": 3,
+      "is_quality_gate": true,
+      "sequence": 380
+    },
+    {
+      "id": "OP270",
+      "name": "Nhập kho",
+      "sam_sec": 12.0,
+      "predecessors": [
+        "OP260"
+      ],
+      "machine_type": null,
+      "skill_code": "FINISHING",
+      "skill_required": 1,
+      "is_quality_gate": false,
+      "sequence": 390
+    },
+    {
+      "id": "OP400",
+      "name": "Đóng thùng",
+      "sam_sec": 25.0,
+      "predecessors": [
+        "OP270"
+      ],
+      "machine_type": null,
+      "skill_code": "FINISHING",
+      "skill_required": 1,
+      "is_quality_gate": false,
+      "sequence": 400
+    }
+  ],
+  "workers": [
+    {
+      "id": "W01",
+      "name": "Nguyễn Thu Hà",
+      "skills": {
+        "OP010": 2,
+        "OP020": 2,
+        "OP030": 1,
+        "OP040": 1,
+        "OP050": 1,
+        "OP060": 1,
+        "OP070": 1,
+        "OP320": 1,
+        "OP330": 1,
+        "OP080": 1,
+        "OP090": 1,
+        "OP100": 1,
+        "OP110": 1,
+        "OP120": 1,
+        "OP130": 1,
+        "OP340": 1,
+        "OP140": 1,
+        "OP280": 1,
+        "OP290": 1,
+        "OP300": 1,
+        "OP310": 1,
+        "OP350": 2,
+        "OP360": 2,
+        "OP370": 2,
+        "OP150": 1,
+        "OP160": 1,
+        "OP170": 1,
+        "OP180": 1,
+        "OP190": 2,
+        "OP200": 2,
+        "OP210": 2,
+        "OP220": 2,
+        "OP380": 2,
+        "OP230": 2,
+        "OP390": 2,
+        "OP240": 2,
+        "OP250": 2,
+        "OP260": 2,
+        "OP270": 2,
+        "OP400": 2
+      },
+      "machine_types": [
+        "IRON"
+      ],
+      "available": true,
+      "worker_status": "ACTIVE"
+    },
+    {
+      "id": "W02",
+      "name": "Trần Minh Anh",
+      "skills": {
+        "OP010": 2,
+        "OP020": 2,
+        "OP030": 1,
+        "OP040": 1,
+        "OP050": 1,
+        "OP060": 1,
+        "OP070": 1,
+        "OP320": 1,
+        "OP330": 1,
+        "OP080": 1,
+        "OP090": 1,
+        "OP100": 1,
+        "OP110": 1,
+        "OP120": 1,
+        "OP130": 1,
+        "OP340": 1,
+        "OP140": 1,
+        "OP280": 1,
+        "OP290": 1,
+        "OP300": 1,
+        "OP310": 1,
+        "OP350": 2,
+        "OP360": 2,
+        "OP370": 2,
+        "OP150": 1,
+        "OP160": 1,
+        "OP170": 1,
+        "OP180": 1,
+        "OP190": 2,
+        "OP200": 2,
+        "OP210": 2,
+        "OP220": 2,
+        "OP380": 2,
+        "OP230": 2,
+        "OP390": 2,
+        "OP240": 2,
+        "OP250": 2,
+        "OP260": 2,
+        "OP270": 2,
+        "OP400": 2
+      },
+      "machine_types": [
+        "IRON"
+      ],
+      "available": true,
+      "worker_status": "ACTIVE"
+    },
+    {
+      "id": "W03",
+      "name": "Lê Hoàng Yến",
+      "skills": {
+        "OP030": 3,
+        "OP040": 3,
+        "OP050": 3,
+        "OP060": 3,
+        "OP070": 3,
+        "OP320": 3,
+        "OP330": 3,
+        "OP080": 3,
+        "OP090": 3,
+        "OP100": 3,
+        "OP110": 3,
+        "OP120": 3,
+        "OP130": 3,
+        "OP340": 3,
+        "OP140": 3,
+        "OP280": 3,
+        "OP290": 3,
+        "OP300": 3,
+        "OP310": 3,
+        "OP150": 3,
+        "OP160": 3,
+        "OP170": 3,
+        "OP180": 3
+      },
+      "machine_types": [
+        "OVERLOCK",
+        "COVERSTITCH",
+        "SINGLE"
+      ],
+      "available": true,
+      "worker_status": "ACTIVE"
+    },
+    {
+      "id": "W04",
+      "name": "Phạm Quốc Bảo",
+      "skills": {
+        "OP030": 3,
+        "OP040": 3,
+        "OP050": 3,
+        "OP060": 3,
+        "OP070": 3,
+        "OP320": 3,
+        "OP330": 3,
+        "OP080": 3,
+        "OP090": 3,
+        "OP100": 3,
+        "OP110": 3,
+        "OP120": 3,
+        "OP130": 3,
+        "OP340": 3,
+        "OP140": 3,
+        "OP280": 3,
+        "OP290": 3,
+        "OP300": 3,
+        "OP310": 3,
+        "OP150": 3,
+        "OP160": 3,
+        "OP170": 3,
+        "OP180": 3
+      },
+      "machine_types": [
+        "OVERLOCK",
+        "COVERSTITCH",
+        "SINGLE"
+      ],
+      "available": true,
+      "worker_status": "ACTIVE"
+    },
+    {
+      "id": "W05",
+      "name": "Võ Thanh Tùng",
+      "skills": {
+        "OP030": 3,
+        "OP040": 3,
+        "OP050": 3,
+        "OP060": 3,
+        "OP070": 3,
+        "OP320": 3,
+        "OP330": 3,
+        "OP080": 3,
+        "OP090": 3,
+        "OP100": 3,
+        "OP110": 3,
+        "OP120": 3,
+        "OP130": 3,
+        "OP340": 3,
+        "OP140": 3,
+        "OP280": 3,
+        "OP290": 3,
+        "OP300": 3,
+        "OP310": 3,
+        "OP150": 3,
+        "OP160": 3,
+        "OP170": 3,
+        "OP180": 3
+      },
+      "machine_types": [
+        "OVERLOCK",
+        "COVERSTITCH",
+        "SINGLE"
+      ],
+      "available": true,
+      "worker_status": "ACTIVE"
+    },
+    {
+      "id": "W06",
+      "name": "Đặng Thị Mai",
+      "skills": {
+        "OP030": 3,
+        "OP040": 3,
+        "OP050": 3,
+        "OP060": 3,
+        "OP070": 3,
+        "OP320": 3,
+        "OP330": 3,
+        "OP080": 3,
+        "OP090": 3,
+        "OP100": 3,
+        "OP110": 3,
+        "OP120": 3,
+        "OP130": 3,
+        "OP340": 3,
+        "OP140": 3,
+        "OP280": 3,
+        "OP290": 3,
+        "OP300": 3,
+        "OP310": 3,
+        "OP150": 3,
+        "OP160": 3,
+        "OP170": 3,
+        "OP180": 3
+      },
+      "machine_types": [
+        "OVERLOCK",
+        "COVERSTITCH",
+        "SINGLE"
+      ],
+      "available": true,
+      "worker_status": "ACTIVE"
+    },
+    {
+      "id": "W07",
+      "name": "Bùi Văn Nam",
+      "skills": {
+        "OP030": 2,
+        "OP040": 2,
+        "OP050": 2,
+        "OP060": 2,
+        "OP070": 2,
+        "OP320": 2,
+        "OP330": 2,
+        "OP080": 2,
+        "OP090": 2,
+        "OP100": 2,
+        "OP110": 2,
+        "OP120": 2,
+        "OP130": 2,
+        "OP340": 2,
+        "OP140": 2,
+        "OP280": 2,
+        "OP290": 2,
+        "OP300": 2,
+        "OP310": 2,
+        "OP150": 2,
+        "OP160": 2,
+        "OP170": 2,
+        "OP180": 2
+      },
+      "machine_types": [
+        "OVERLOCK",
+        "COVERSTITCH",
+        "SINGLE"
+      ],
+      "available": true,
+      "worker_status": "ACTIVE"
+    },
+    {
+      "id": "W08",
+      "name": "Hoàng Thị Lan",
+      "skills": {
+        "OP030": 2,
+        "OP040": 2,
+        "OP050": 2,
+        "OP060": 2,
+        "OP070": 2,
+        "OP320": 2,
+        "OP330": 2,
+        "OP080": 2,
+        "OP090": 2,
+        "OP100": 2,
+        "OP110": 2,
+        "OP120": 2,
+        "OP130": 2,
+        "OP340": 2,
+        "OP140": 2,
+        "OP280": 2,
+        "OP290": 2,
+        "OP300": 2,
+        "OP310": 2,
+        "OP150": 2,
+        "OP160": 2,
+        "OP170": 2,
+        "OP180": 2
+      },
+      "machine_types": [
+        "OVERLOCK",
+        "COVERSTITCH",
+        "SINGLE"
+      ],
+      "available": true,
+      "worker_status": "ACTIVE"
+    },
+    {
+      "id": "W09",
+      "name": "Ngô Quang Huy",
+      "skills": {
+        "OP030": 2,
+        "OP040": 2,
+        "OP050": 2,
+        "OP060": 2,
+        "OP070": 2,
+        "OP320": 2,
+        "OP330": 2,
+        "OP080": 2,
+        "OP090": 2,
+        "OP100": 2,
+        "OP110": 2,
+        "OP120": 2,
+        "OP130": 2,
+        "OP340": 2,
+        "OP140": 2,
+        "OP280": 2,
+        "OP290": 2,
+        "OP300": 2,
+        "OP310": 2,
+        "OP150": 2,
+        "OP160": 2,
+        "OP170": 2,
+        "OP180": 2
+      },
+      "machine_types": [
+        "OVERLOCK",
+        "COVERSTITCH",
+        "SINGLE"
+      ],
+      "available": true,
+      "worker_status": "ACTIVE"
+    },
+    {
+      "id": "W10",
+      "name": "Dương Thị Hồng",
+      "skills": {
+        "OP030": 2,
+        "OP040": 2,
+        "OP050": 2,
+        "OP060": 2,
+        "OP070": 2,
+        "OP320": 2,
+        "OP330": 2,
+        "OP080": 2,
+        "OP090": 2,
+        "OP100": 2,
+        "OP110": 2,
+        "OP120": 2,
+        "OP130": 2,
+        "OP340": 2,
+        "OP140": 2,
+        "OP280": 2,
+        "OP290": 2,
+        "OP300": 2,
+        "OP310": 2,
+        "OP150": 2,
+        "OP160": 2,
+        "OP170": 2,
+        "OP180": 2
+      },
+      "machine_types": [
+        "OVERLOCK",
+        "COVERSTITCH",
+        "SINGLE"
+      ],
+      "available": true,
+      "worker_status": "ACTIVE"
+    },
+    {
+      "id": "W11",
+      "name": "Trịnh Văn Long",
+      "skills": {
+        "OP030": 3,
+        "OP040": 3,
+        "OP050": 3,
+        "OP060": 3,
+        "OP070": 3,
+        "OP320": 3,
+        "OP330": 3,
+        "OP080": 3,
+        "OP090": 3,
+        "OP100": 3,
+        "OP110": 3,
+        "OP120": 3,
+        "OP130": 3,
+        "OP340": 3,
+        "OP140": 3,
+        "OP280": 3,
+        "OP290": 3,
+        "OP300": 3,
+        "OP310": 3,
+        "OP150": 3,
+        "OP160": 3,
+        "OP170": 3,
+        "OP180": 3
+      },
+      "machine_types": [
+        "OVERLOCK",
+        "COVERSTITCH",
+        "SINGLE"
+      ],
+      "available": true,
+      "worker_status": "ACTIVE"
+    },
+    {
+      "id": "W12",
+      "name": "Lý Thị Ngọc",
+      "skills": {
+        "OP030": 3,
+        "OP040": 3,
+        "OP050": 3,
+        "OP060": 3,
+        "OP070": 3,
+        "OP320": 3,
+        "OP330": 3,
+        "OP080": 3,
+        "OP090": 3,
+        "OP100": 3,
+        "OP110": 3,
+        "OP120": 3,
+        "OP130": 3,
+        "OP340": 3,
+        "OP140": 3,
+        "OP280": 3,
+        "OP290": 3,
+        "OP300": 3,
+        "OP310": 3,
+        "OP150": 3,
+        "OP160": 3,
+        "OP170": 3,
+        "OP180": 3
+      },
+      "machine_types": [
+        "OVERLOCK",
+        "COVERSTITCH",
+        "SINGLE"
+      ],
+      "available": true,
+      "worker_status": "ACTIVE"
+    },
+    {
+      "id": "W13",
+      "name": "Phan Anh Tuấn",
+      "skills": {
+        "OP030": 3,
+        "OP040": 3,
+        "OP050": 3,
+        "OP060": 3,
+        "OP070": 3,
+        "OP320": 3,
+        "OP330": 3,
+        "OP080": 3,
+        "OP090": 3,
+        "OP100": 3,
+        "OP110": 3,
+        "OP120": 3,
+        "OP130": 3,
+        "OP340": 3,
+        "OP140": 3,
+        "OP280": 3,
+        "OP290": 3,
+        "OP300": 3,
+        "OP310": 3,
+        "OP150": 3,
+        "OP160": 3,
+        "OP170": 3,
+        "OP180": 3
+      },
+      "machine_types": [
+        "OVERLOCK",
+        "COVERSTITCH",
+        "SINGLE"
+      ],
+      "available": true,
+      "worker_status": "ACTIVE"
+    },
+    {
+      "id": "W14",
+      "name": "Vũ Thị Hạnh",
+      "skills": {
+        "OP030": 2,
+        "OP040": 2,
+        "OP050": 2,
+        "OP060": 2,
+        "OP070": 2,
+        "OP320": 2,
+        "OP330": 2,
+        "OP080": 2,
+        "OP090": 2,
+        "OP100": 2,
+        "OP110": 2,
+        "OP120": 2,
+        "OP130": 2,
+        "OP340": 2,
+        "OP140": 2,
+        "OP280": 2,
+        "OP290": 2,
+        "OP300": 2,
+        "OP310": 2,
+        "OP150": 2,
+        "OP160": 2,
+        "OP170": 2,
+        "OP180": 2
+      },
+      "machine_types": [
+        "OVERLOCK",
+        "SINGLE"
+      ],
+      "available": true,
+      "worker_status": "ACTIVE"
+    },
+    {
+      "id": "W15",
+      "name": "Đỗ Văn Thắng",
+      "skills": {
+        "OP030": 2,
+        "OP040": 2,
+        "OP050": 2,
+        "OP060": 2,
+        "OP070": 2,
+        "OP320": 2,
+        "OP330": 2,
+        "OP080": 2,
+        "OP090": 2,
+        "OP100": 2,
+        "OP110": 2,
+        "OP120": 2,
+        "OP130": 2,
+        "OP340": 2,
+        "OP140": 2,
+        "OP280": 2,
+        "OP290": 2,
+        "OP300": 2,
+        "OP310": 2,
+        "OP150": 2,
+        "OP160": 2,
+        "OP170": 2,
+        "OP180": 2
+      },
+      "machine_types": [
+        "OVERLOCK",
+        "SINGLE"
+      ],
+      "available": true,
+      "worker_status": "ACTIVE"
+    },
+    {
+      "id": "W16",
+      "name": "Nguyễn Thị Kim",
+      "skills": {
+        "OP030": 2,
+        "OP040": 2,
+        "OP050": 2,
+        "OP060": 2,
+        "OP070": 2,
+        "OP320": 2,
+        "OP330": 2,
+        "OP080": 2,
+        "OP090": 2,
+        "OP100": 2,
+        "OP110": 2,
+        "OP120": 2,
+        "OP130": 2,
+        "OP340": 2,
+        "OP140": 2,
+        "OP280": 2,
+        "OP290": 2,
+        "OP300": 2,
+        "OP310": 2,
+        "OP150": 2,
+        "OP160": 2,
+        "OP170": 2,
+        "OP180": 2
+      },
+      "machine_types": [
+        "OVERLOCK",
+        "SINGLE"
+      ],
+      "available": true,
+      "worker_status": "ACTIVE"
+    },
+    {
+      "id": "W17",
+      "name": "Trần Văn Dũng",
+      "skills": {
+        "OP020": 1,
+        "OP030": 2,
+        "OP040": 2,
+        "OP050": 2,
+        "OP060": 2,
+        "OP070": 2,
+        "OP320": 2,
+        "OP330": 2,
+        "OP080": 2,
+        "OP090": 2,
+        "OP100": 2,
+        "OP110": 2,
+        "OP120": 2,
+        "OP130": 2,
+        "OP340": 2,
+        "OP140": 2,
+        "OP280": 2,
+        "OP290": 2,
+        "OP300": 2,
+        "OP310": 2,
+        "OP360": 1,
+        "OP370": 1,
+        "OP150": 2,
+        "OP160": 2,
+        "OP170": 2,
+        "OP180": 2,
+        "OP200": 1,
+        "OP210": 1,
+        "OP220": 1,
+        "OP380": 1,
+        "OP230": 1,
+        "OP390": 1,
+        "OP240": 1,
+        "OP250": 1,
+        "OP270": 1,
+        "OP400": 1
+      },
+      "machine_types": [
+        "OVERLOCK",
+        "COVERSTITCH",
+        "SINGLE"
+      ],
+      "available": true,
+      "worker_status": "ACTIVE"
+    },
+    {
+      "id": "W18",
+      "name": "Lê Thị Thu",
+      "skills": {
+        "OP020": 1,
+        "OP030": 2,
+        "OP040": 2,
+        "OP050": 2,
+        "OP060": 2,
+        "OP070": 2,
+        "OP320": 2,
+        "OP330": 2,
+        "OP080": 2,
+        "OP090": 2,
+        "OP100": 2,
+        "OP110": 2,
+        "OP120": 2,
+        "OP130": 2,
+        "OP340": 2,
+        "OP140": 2,
+        "OP280": 2,
+        "OP290": 2,
+        "OP300": 2,
+        "OP310": 2,
+        "OP360": 1,
+        "OP370": 1,
+        "OP150": 2,
+        "OP160": 2,
+        "OP170": 2,
+        "OP180": 2,
+        "OP200": 1,
+        "OP210": 1,
+        "OP220": 1,
+        "OP380": 1,
+        "OP230": 1,
+        "OP390": 1,
+        "OP240": 1,
+        "OP250": 1,
+        "OP270": 1,
+        "OP400": 1
+      },
+      "machine_types": [
+        "OVERLOCK",
+        "COVERSTITCH",
+        "SINGLE"
+      ],
+      "available": true,
+      "worker_status": "ACTIVE"
+    },
+    {
+      "id": "W19",
+      "name": "Phạm Văn Hùng",
+      "skills": {
+        "OP010": 2,
+        "OP020": 2,
+        "OP350": 2,
+        "OP360": 2,
+        "OP370": 2,
+        "OP190": 2,
+        "OP200": 2,
+        "OP210": 2,
+        "OP220": 2,
+        "OP380": 2,
+        "OP230": 2,
+        "OP390": 2,
+        "OP240": 2,
+        "OP250": 2,
+        "OP260": 2,
+        "OP270": 2,
+        "OP400": 2
+      },
+      "machine_types": [
+        "IRON"
+      ],
+      "available": true,
+      "worker_status": "ACTIVE"
+    },
+    {
+      "id": "W20",
+      "name": "Nguyễn Thị Bích",
+      "skills": {
+        "OP010": 2,
+        "OP020": 2,
+        "OP350": 2,
+        "OP360": 2,
+        "OP370": 2,
+        "OP190": 2,
+        "OP200": 2,
+        "OP210": 2,
+        "OP220": 2,
+        "OP380": 2,
+        "OP230": 2,
+        "OP390": 2,
+        "OP240": 2,
+        "OP250": 2,
+        "OP260": 2,
+        "OP270": 2,
+        "OP400": 2
+      },
+      "machine_types": [
+        "IRON"
+      ],
+      "available": true,
+      "worker_status": "ACTIVE"
+    },
+    {
+      "id": "W21",
+      "name": "Võ Thị Ánh",
+      "skills": {
+        "OP010": 1,
+        "OP020": 2,
+        "OP350": 1,
+        "OP360": 2,
+        "OP370": 2,
+        "OP190": 1,
+        "OP200": 2,
+        "OP210": 2,
+        "OP220": 2,
+        "OP380": 2,
+        "OP230": 2,
+        "OP390": 2,
+        "OP240": 2,
+        "OP250": 2,
+        "OP260": 1,
+        "OP270": 2,
+        "OP400": 2
+      },
+      "machine_types": [
+        "IRON"
+      ],
+      "available": true,
+      "worker_status": "ACTIVE"
+    },
+    {
+      "id": "W22",
+      "name": "Bùi Quốc Cường",
+      "skills": {
+        "OP010": 1,
+        "OP020": 2,
+        "OP350": 1,
+        "OP360": 2,
+        "OP370": 2,
+        "OP190": 1,
+        "OP200": 2,
+        "OP210": 2,
+        "OP220": 2,
+        "OP380": 2,
+        "OP230": 2,
+        "OP390": 2,
+        "OP240": 2,
+        "OP250": 2,
+        "OP260": 1,
+        "OP270": 2,
+        "OP400": 2
+      },
+      "machine_types": [
+        "IRON"
+      ],
+      "available": true,
+      "worker_status": "ACTIVE"
+    },
+    {
+      "id": "W23",
+      "name": "Đinh Thị Hòa",
+      "skills": {
+        "OP010": 3,
+        "OP020": 1,
+        "OP350": 3,
+        "OP360": 1,
+        "OP370": 1,
+        "OP190": 3,
+        "OP200": 1,
+        "OP210": 1,
+        "OP220": 1,
+        "OP380": 1,
+        "OP230": 1,
+        "OP390": 1,
+        "OP240": 1,
+        "OP250": 1,
+        "OP260": 3,
+        "OP270": 1,
+        "OP400": 1
+      },
+      "machine_types": [],
+      "available": true,
+      "worker_status": "ACTIVE"
+    },
+    {
+      "id": "W24",
+      "name": "Hồ Văn Sơn",
+      "skills": {
+        "OP010": 3,
+        "OP020": 2,
+        "OP350": 3,
+        "OP360": 2,
+        "OP370": 2,
+        "OP190": 3,
+        "OP200": 2,
+        "OP210": 2,
+        "OP220": 2,
+        "OP380": 2,
+        "OP230": 2,
+        "OP390": 2,
+        "OP240": 2,
+        "OP250": 2,
+        "OP260": 3,
+        "OP270": 2,
+        "OP400": 2
+      },
+      "machine_types": [
+        "IRON"
+      ],
+      "available": true,
+      "worker_status": "ACTIVE"
+    },
+    {
+      "id": "W25",
+      "name": "Nguyễn Hải Đăng",
+      "skills": {
+        "OP030": 3,
+        "OP040": 3,
+        "OP050": 3,
+        "OP060": 3,
+        "OP070": 3,
+        "OP320": 3,
+        "OP330": 3,
+        "OP080": 3,
+        "OP090": 3,
+        "OP100": 3,
+        "OP110": 3,
+        "OP120": 3,
+        "OP130": 3,
+        "OP340": 3,
+        "OP140": 3,
+        "OP280": 3,
+        "OP290": 3,
+        "OP300": 3,
+        "OP310": 3,
+        "OP150": 3,
+        "OP160": 3,
+        "OP170": 3,
+        "OP180": 3
+      },
+      "machine_types": [
+        "OVERLOCK",
+        "COVERSTITCH",
+        "SINGLE"
+      ],
+      "available": true,
+      "worker_status": "ACTIVE"
+    },
+    {
+      "id": "W26",
+      "name": "Trần Thị Quỳnh",
+      "skills": {
+        "OP030": 3,
+        "OP040": 3,
+        "OP050": 3,
+        "OP060": 3,
+        "OP070": 3,
+        "OP320": 3,
+        "OP330": 3,
+        "OP080": 3,
+        "OP090": 3,
+        "OP100": 3,
+        "OP110": 3,
+        "OP120": 3,
+        "OP130": 3,
+        "OP340": 3,
+        "OP140": 3,
+        "OP280": 3,
+        "OP290": 3,
+        "OP300": 3,
+        "OP310": 3,
+        "OP150": 3,
+        "OP160": 3,
+        "OP170": 3,
+        "OP180": 3
+      },
+      "machine_types": [
+        "OVERLOCK",
+        "COVERSTITCH",
+        "SINGLE"
+      ],
+      "available": true,
+      "worker_status": "ACTIVE"
+    }
+  ],
+  "machines": [
+    {
+      "id": "OL-01",
+      "machine_type": "OVERLOCK",
+      "available": true,
+      "capacity": 1
+    },
+    {
+      "id": "OL-02",
+      "machine_type": "OVERLOCK",
+      "available": true,
+      "capacity": 1
+    },
+    {
+      "id": "OL-03",
+      "machine_type": "OVERLOCK",
+      "available": true,
+      "capacity": 1
+    },
+    {
+      "id": "OL-04",
+      "machine_type": "OVERLOCK",
+      "available": true,
+      "capacity": 1
+    },
+    {
+      "id": "OL-05",
+      "machine_type": "OVERLOCK",
+      "available": true,
+      "capacity": 1
+    },
+    {
+      "id": "OL-06",
+      "machine_type": "OVERLOCK",
+      "available": true,
+      "capacity": 1
+    },
+    {
+      "id": "OL-07",
+      "machine_type": "OVERLOCK",
+      "available": true,
+      "capacity": 1
+    },
+    {
+      "id": "OL-08",
+      "machine_type": "OVERLOCK",
+      "available": true,
+      "capacity": 1
+    },
+    {
+      "id": "CS-01",
+      "machine_type": "COVERSTITCH",
+      "available": true,
+      "capacity": 1
+    },
+    {
+      "id": "CS-02",
+      "machine_type": "COVERSTITCH",
+      "available": true,
+      "capacity": 1
+    },
+    {
+      "id": "CS-03",
+      "machine_type": "COVERSTITCH",
+      "available": true,
+      "capacity": 1
+    },
+    {
+      "id": "CS-04",
+      "machine_type": "COVERSTITCH",
+      "available": true,
+      "capacity": 1
+    },
+    {
+      "id": "CS-05",
+      "machine_type": "COVERSTITCH",
+      "available": true,
+      "capacity": 1
+    },
+    {
+      "id": "CS-06",
+      "machine_type": "COVERSTITCH",
+      "available": true,
+      "capacity": 1
+    },
+    {
+      "id": "SN-01",
+      "machine_type": "SINGLE",
+      "available": true,
+      "capacity": 1
+    },
+    {
+      "id": "SN-02",
+      "machine_type": "SINGLE",
+      "available": true,
+      "capacity": 1
+    },
+    {
+      "id": "SN-03",
+      "machine_type": "SINGLE",
+      "available": true,
+      "capacity": 1
+    },
+    {
+      "id": "SN-04",
+      "machine_type": "SINGLE",
+      "available": true,
+      "capacity": 1
+    },
+    {
+      "id": "SN-05",
+      "machine_type": "SINGLE",
+      "available": true,
+      "capacity": 1
+    },
+    {
+      "id": "IR-01",
+      "machine_type": "IRON",
+      "available": true,
+      "capacity": 1
+    },
+    {
+      "id": "IR-02",
+      "machine_type": "IRON",
+      "available": true,
+      "capacity": 1
+    },
+    {
+      "id": "IR-03",
+      "machine_type": "IRON",
+      "available": true,
+      "capacity": 1
+    },
+    {
+      "id": "IR-04",
+      "machine_type": "IRON",
+      "available": true,
+      "capacity": 1
+    }
+  ],
+  "actuals": {
+    "actual_output": 360,
+    "actual_direct_labor_minutes": 9000.0,
+    "downtime_minutes": 60.0,
+    "attendance_hc": 22
+  },
+  "headcount_standard": {
+    "line_id": "LINE_01",
+    "work_center": "SEWING",
+    "standard_hc": 24,
+    "planned_hc": 26,
+    "actual_hc": 24
+  },
+  "baseline_assignment": {
+    "items": [
+      {
+        "operation_id": "OP010",
+        "station_id": "ST01",
+        "worker_id": "W23"
+      },
+      {
+        "operation_id": "OP020",
+        "station_id": "ST02",
+        "worker_id": "W21"
+      },
+      {
+        "operation_id": "OP030",
+        "station_id": "ST03",
+        "worker_id": "W14"
+      },
+      {
+        "operation_id": "OP040",
+        "station_id": "ST03",
+        "worker_id": "W14"
+      },
+      {
+        "operation_id": "OP050",
+        "station_id": "ST04",
+        "worker_id": "W15"
+      },
+      {
+        "operation_id": "OP060",
+        "station_id": "ST05",
+        "worker_id": "W03"
+      },
+      {
+        "operation_id": "OP070",
+        "station_id": "ST06",
+        "worker_id": "W07"
+      },
+      {
+        "operation_id": "OP320",
+        "station_id": "ST07",
+        "worker_id": "W04"
+      },
+      {
+        "operation_id": "OP330",
+        "station_id": "ST07",
+        "worker_id": "W04"
+      },
+      {
+        "operation_id": "OP080",
+        "station_id": "ST08",
+        "worker_id": "W05"
+      },
+      {
+        "operation_id": "OP090",
+        "station_id": "ST09",
+        "worker_id": "W06"
+      },
+      {
+        "operation_id": "OP100",
+        "station_id": "ST10",
+        "worker_id": "W16"
+      },
+      {
+        "operation_id": "OP150",
+        "station_id": "ST10",
+        "worker_id": "W16"
+      },
+      {
+        "operation_id": "OP110",
+        "station_id": "ST11",
+        "worker_id": "W08"
+      },
+      {
+        "operation_id": "OP160",
+        "station_id": "ST11",
+        "worker_id": "W08"
+      },
+      {
+        "operation_id": "OP120",
+        "station_id": "ST12",
+        "worker_id": "W09"
+      },
+      {
+        "operation_id": "OP170",
+        "station_id": "ST12",
+        "worker_id": "W09"
+      },
+      {
+        "operation_id": "OP130",
+        "station_id": "ST13",
+        "worker_id": "W11"
+      },
+      {
+        "operation_id": "OP340",
+        "station_id": "ST14",
+        "worker_id": "W10"
+      },
+      {
+        "operation_id": "OP140",
+        "station_id": "ST15",
+        "worker_id": "W12"
+      },
+      {
+        "operation_id": "OP180",
+        "station_id": "ST15",
+        "worker_id": "W12"
+      },
+      {
+        "operation_id": "OP280",
+        "station_id": "ST16",
+        "worker_id": "W13"
+      },
+      {
+        "operation_id": "OP290",
+        "station_id": "ST17",
+        "worker_id": "W17"
+      },
+      {
+        "operation_id": "OP370",
+        "station_id": "ST17",
+        "worker_id": "W17"
+      },
+      {
+        "operation_id": "OP300",
+        "station_id": "ST18",
+        "worker_id": "W18"
+      },
+      {
+        "operation_id": "OP310",
+        "station_id": "ST18",
+        "worker_id": "W18"
+      },
+      {
+        "operation_id": "OP350",
+        "station_id": "ST19",
+        "worker_id": "W01"
+      },
+      {
+        "operation_id": "OP360",
+        "station_id": "ST19",
+        "worker_id": "W01"
+      },
+      {
+        "operation_id": "OP190",
+        "station_id": "ST20",
+        "worker_id": "W02"
+      },
+      {
+        "operation_id": "OP200",
+        "station_id": "ST20",
+        "worker_id": "W02"
+      },
+      {
+        "operation_id": "OP210",
+        "station_id": "ST21",
+        "worker_id": "W22"
+      },
+      {
+        "operation_id": "OP220",
+        "station_id": "ST21",
+        "worker_id": "W22"
+      },
+      {
+        "operation_id": "OP230",
+        "station_id": "ST22",
+        "worker_id": "W19"
+      },
+      {
+        "operation_id": "OP380",
+        "station_id": "ST22",
+        "worker_id": "W19"
+      },
+      {
+        "operation_id": "OP390",
+        "station_id": "ST22",
+        "worker_id": "W19"
+      },
+      {
+        "operation_id": "OP240",
+        "station_id": "ST23",
+        "worker_id": "W20"
+      },
+      {
+        "operation_id": "OP250",
+        "station_id": "ST23",
+        "worker_id": "W20"
+      },
+      {
+        "operation_id": "OP260",
+        "station_id": "ST24",
+        "worker_id": "W24"
+      },
+      {
+        "operation_id": "OP270",
+        "station_id": "ST24",
+        "worker_id": "W24"
+      },
+      {
+        "operation_id": "OP400",
+        "station_id": "ST24",
+        "worker_id": "W24"
+      }
+    ],
+    "source_note": "Synthetic current-state baseline: first-fit 60s station target, one worker per station, respects skill/machine/precedence. Not an optimizer output."
+  },
+  "daily_actuals": [
+    {
+      "date": "2026-10-26",
+      "shift_id": "SHIFT_01",
+      "line_id": "LINE_01",
+      "style_code": "BASIC-TEE-001",
+      "target_output": 420,
+      "actual_output": 380,
+      "actual_direct_labor_minutes": 9000.0,
+      "downtime_minutes": 50.0,
+      "attendance_hc": 22,
+      "note": ""
+    },
+    {
+      "date": "2026-10-27",
+      "shift_id": "SHIFT_01",
+      "line_id": "LINE_01",
+      "style_code": "BASIC-TEE-001",
+      "target_output": 420,
+      "actual_output": 360,
+      "actual_direct_labor_minutes": 9450.0,
+      "downtime_minutes": 60.0,
+      "attendance_hc": 21,
+      "note": ""
+    },
+    {
+      "date": "2026-10-28",
+      "shift_id": "SHIFT_01",
+      "line_id": "LINE_01",
+      "style_code": "BASIC-TEE-001",
+      "target_output": 420,
+      "actual_output": 350,
+      "actual_direct_labor_minutes": 9900.0,
+      "downtime_minutes": 70.0,
+      "attendance_hc": 22,
+      "note": ""
+    },
+    {
+      "date": "2026-10-29",
+      "shift_id": "SHIFT_01",
+      "line_id": "LINE_01",
+      "style_code": "BASIC-TEE-001",
+      "target_output": 420,
+      "actual_output": 370,
+      "actual_direct_labor_minutes": 9900.0,
+      "downtime_minutes": 55.0,
+      "attendance_hc": 23,
+      "note": ""
+    },
+    {
+      "date": "2026-10-30",
+      "shift_id": "SHIFT_01",
+      "line_id": "LINE_01",
+      "style_code": "BASIC-TEE-001",
+      "target_output": 420,
+      "actual_output": 360,
+      "actual_direct_labor_minutes": 9450.0,
+      "downtime_minutes": 65.0,
+      "attendance_hc": 22,
+      "note": ""
+    }
+  ],
+  "downtime_events": [
+    {
+      "start_time": "2026-10-27T08:15:00",
+      "end_time": "2026-10-27T08:40:00",
+      "line_id": "LINE_01",
+      "station_id": "ST05",
+      "loss_category": "MACHINE",
+      "duration_minutes": 25.0,
+      "note": "Overlock thread break and adjustment."
+    },
+    {
+      "start_time": "2026-10-27T10:05:00",
+      "end_time": "2026-10-27T10:20:00",
+      "line_id": "LINE_01",
+      "station_id": "ST03",
+      "loss_category": "MATERIAL",
+      "duration_minutes": 15.0,
+      "note": "Waited for collar interlining."
+    },
+    {
+      "start_time": "2026-10-27T13:10:00",
+      "end_time": "2026-10-27T13:20:00",
+      "line_id": "LINE_01",
+      "station_id": "ST08",
+      "loss_category": "MANPOWER",
+      "duration_minutes": 10.0,
+      "note": "Operator moved to cover an absent workstation."
+    },
+    {
+      "start_time": "2026-10-27T15:30:00",
+      "end_time": "2026-10-27T15:40:00",
+      "line_id": "LINE_01",
+      "station_id": "ST12",
+      "loss_category": "QUALITY",
+      "duration_minutes": 10.0,
+      "note": "Rework on collar alignment."
+    }
+  ]
+}

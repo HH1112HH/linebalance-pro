@@ -1,0 +1,186 @@
+[
+  {
+    "station": "ST01",
+    "load_sec": 20.0,
+    "operation_ids": [
+      "OP010"
+    ]
+  },
+  {
+    "station": "ST02",
+    "load_sec": 28.0,
+    "operation_ids": [
+      "OP020"
+    ]
+  },
+  {
+    "station": "ST03",
+    "load_sec": 60.0,
+    "operation_ids": [
+      "OP030",
+      "OP040"
+    ]
+  },
+  {
+    "station": "ST04",
+    "load_sec": 26.0,
+    "operation_ids": [
+      "OP050"
+    ]
+  },
+  {
+    "station": "ST05",
+    "load_sec": 45.0,
+    "operation_ids": [
+      "OP060"
+    ]
+  },
+  {
+    "station": "ST06",
+    "load_sec": 35.0,
+    "operation_ids": [
+      "OP070"
+    ]
+  },
+  {
+    "station": "ST07",
+    "load_sec": 52.0,
+    "operation_ids": [
+      "OP320",
+      "OP330"
+    ]
+  },
+  {
+    "station": "ST08",
+    "load_sec": 40.0,
+    "operation_ids": [
+      "OP080"
+    ]
+  },
+  {
+    "station": "ST09",
+    "load_sec": 40.0,
+    "operation_ids": [
+      "OP090"
+    ]
+  },
+  {
+    "station": "ST10",
+    "load_sec": 58.0,
+    "operation_ids": [
+      "OP100",
+      "OP150"
+    ]
+  },
+  {
+    "station": "ST11",
+    "load_sec": 58.0,
+    "operation_ids": [
+      "OP110",
+      "OP160"
+    ]
+  },
+  {
+    "station": "ST12",
+    "load_sec": 48.0,
+    "operation_ids": [
+      "OP120",
+      "OP170"
+    ]
+  },
+  {
+    "station": "ST13",
+    "load_sec": 46.0,
+    "operation_ids": [
+      "OP130"
+    ]
+  },
+  {
+    "station": "ST14",
+    "load_sec": 35.0,
+    "operation_ids": [
+      "OP340"
+    ]
+  },
+  {
+    "station": "ST15",
+    "load_sec": 50.0,
+    "operation_ids": [
+      "OP140",
+      "OP180"
+    ]
+  },
+  {
+    "station": "ST16",
+    "load_sec": 38.0,
+    "operation_ids": [
+      "OP280"
+    ]
+  },
+  {
+    "station": "ST17",
+    "load_sec": 54.0,
+    "operation_ids": [
+      "OP290",
+      "OP370"
+    ]
+  },
+  {
+    "station": "ST18",
+    "load_sec": 52.0,
+    "operation_ids": [
+      "OP300",
+      "OP310"
+    ]
+  },
+  {
+    "station": "ST19",
+    "load_sec": 38.0,
+    "operation_ids": [
+      "OP350",
+      "OP360"
+    ]
+  },
+  {
+    "station": "ST20",
+    "load_sec": 46.0,
+    "operation_ids": [
+      "OP190",
+      "OP200"
+    ]
+  },
+  {
+    "station": "ST21",
+    "load_sec": 48.0,
+    "operation_ids": [
+      "OP210",
+      "OP220"
+    ]
+  },
+  {
+    "station": "ST22",
+    "load_sec": 47.0,
+    "operation_ids": [
+      "OP230",
+      "OP380",
+      "OP390"
+    ]
+  },
+  {
+    "station": "ST23",
+    "load_sec": 34.0,
+    "operation_ids": [
+      "OP240",
+      "OP250"
+    ]
+  },
+  {
+    "station": "ST24",
+    "load_sec": 61.0,
+    "operation_ids": [
+      "OP260",
+      "OP270",
+      "OP400"
+    ]
+  }
+]

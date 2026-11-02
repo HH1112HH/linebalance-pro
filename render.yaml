@@ -1,0 +1,22 @@
+services:
+  - type: web
+    name: linebalance-api
+    runtime: python
+    plan: free
+    buildCommand: pip install -r requirements.txt
+    startCommand: uvicorn app.main:app --host 0.0.0.0 --port $PORT
+    rootDir: backend
+    healthCheckPath: /api/health
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.12.8
+      - key: SOLVER_BACKEND
+        value: highs
+      - key: SOLVER_THREADS
+        value: "2"
+      - key: MAX_CONCURRENT_SOLVES
+        value: "2"
+      - key: SCENARIO_PERSISTENCE
+        value: localStorage
+      - key: FRONTEND_ORIGINS
+        value: http://localhost:5173,http://127.0.0.1:5173
