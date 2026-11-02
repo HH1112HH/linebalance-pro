@@ -679,6 +679,25 @@ Không suy ra OEE từ machine allocation, số máy available hoặc tổng dow
 - Chỉ áp dụng cho máy là pacer; station do người quyết định nhịp → `N/A`.
 - Không thêm field OEE vào API nếu chưa có quyết định trong `CHECKLIST.md`, test và cập nhật `frontend/src/types.ts`.
 
+### 12.2. Changeover time — docs-only
+
+> Không có KPI API. Changeover chỉ là một loss trong Availability của OEE (§12). Dữ liệu: `docs/data/smed_changeover_study.csv` (SYNTHETIC). Chi tiết: playbook §10.
+
+| Khái niệm | Định nghĩa / công thức | Ví dụ PRESS-01 |
+|---|---|---|
+| Changeover time | Từ last good piece của size cũ đến first good piece của size mới | BEFORE trung bình 25.00 phút |
+| Stop time (internal) | Tổng element phải làm khi máy dừng | BEFORE 1500 s; AFTER 505 s |
+| External time | Tổng element làm khi máy chạy, không tính vào stop time | AFTER 510 s |
+| Stop reduction | (stop_before − stop_after) / stop_before | (1500 − 505) / 1500 = 66.3% |
+
+**Quy tắc:**
+
+- Element chỉ được gọi là **external** khi máy có thể tiếp tục chạy trong lúc làm việc đó. Nếu phải dừng máy để làm, đó là internal.
+- Việc external làm khi máy đang dừng (ví dụ mang form trong lúc máy tắt) là **waste về thời gian dừng**, không phải external hợp lệ.
+- External work vẫn tính vào công lao động; không gọi là miễn phí.
+- Không đưa changeover vào OEE nếu chưa đo theo mốc last good → first good.
+- Thời gian tiết kiệm không tự chuyển thành sản lượng cần thiết; kiểm tra nhu cầu trước (Module 3, overproduction).
+
 ---
 
 ## 12A. Quality case-study metrics — docs-only

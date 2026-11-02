@@ -690,3 +690,14 @@ Mỗi lần chạy phải có `RunMetadata`:
 - Quyết định: OEE chỉ áp dụng cho máy là pacer. Station thủ công (ví dụ OP060 trong Module 1: máy 20 s, station 45 s, tỉ lệ 44.44%) bị đánh dấu `N/A`, không tính OEE.
 - Ghi rõ giới hạn: giả định máy là pacer chưa được time study xác nhận; chưa có API OEE (vẫn `N/A` trong phần mềm).
 - Phạm vi: chỉ docs/CSV; không thay đổi backend, API, `types.ts` hay KPI đã triển khai. `KPI_SPEC.md` §12.1 ghi công thức docs-only.
+
+### 2026-11-02 — Chạy Module 8 / SMED & Changeover (docs-only, synthetic)
+
+- Thêm `docs/data/smed_changeover_study.csv`: 5 lần changeover BEFORE (2026-10-19 → 10-23) và 5 lần AFTER pilot (2026-11-02 → 11-06) cho `PRESS-01`, ghi rõ `SYNTHETIC`.
+- Kết quả tính lại từ CSV: thời gian dừng/lần từ **1500 s (25.00 phút)** xuống **505 s (8.42 phút)**, giảm 995 s (**66.3%**); việc external làm khi máy dừng 270 s → 0; external khi máy chạy 510 s; tổng công lao động 1500 s → 1015 s (−32.3%).
+- Waterfall: 1500 → 1230 (tách I/E) → 1000 (chuyển I → E) → 505 (tối ưu I); khớp tổng từng element.
+- Tác động OEE giả định (P và Q giữ nguyên): Availability **85.56% → 89.24%**, OEE **73.04% → 76.18%** (+3.1 pp); downtime còn lại breakdown 51.6%, changeover 48.4%.
+- Quyết định: external work vẫn tính vào công lao động; không gọi là miễn phí. Thời gian tiết kiệm không tự thành sản lượng; kiểm tra nhu cầu trước (Module 3). Không quy đổi tiền (Module 5).
+- Quyết định: changeover chỉ đưa vào OEE khi đo theo mốc last good → first good. Changeover 08:00 (15 phút) là ứng viên SMED tiếp theo.
+- Giới hạn: 5 lần mỗi giai đoạn, chưa có video thật; giảm E02/E07 phụ thuộc bệ làm nóng phụ chưa được EHS/Maintenance xác nhận.
+- Phạm vi: chỉ docs/CSV; không thêm changeover API, backend hay `types.ts`. `KPI_SPEC.md` §12.2 ghi định nghĩa docs-only.

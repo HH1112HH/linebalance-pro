@@ -66,15 +66,15 @@
 | 5 | Kaizen A3 & Control Plan | A3, T08 case study, estimated/verified saving, Control Plan | §7.1–7.7; `docs/CASE_STUDY_KAIZEN.md` | `[x]` |
 | 6 | OEE & Downtime | A/P/Q, 6 big losses, điều kiện áp dụng và bẫy station thủ công, ví dụ PRESS-01 synthetic, Pareto downtime | §8.1–8.12; `docs/data/oee_machine_log.csv`; `KPI_SPEC.md` §12 | `[x]` knowledge + synthetic; `[~]` software: chưa có OEE API (`N/A`) |
 | 7 | Layout & Ergonomics | Spaghetti, material flow, U-shape, ergonomics checklist (outline) | §9.1–9.2 | `[~]` outline; chưa có case study |
-| 8 | SMED & Changeover | Internal/external setup, changeover study, target (outline) | §10.1–10.2 | `[~]` outline; chưa có case study |
+| 8 | SMED & Changeover | Internal/external, 4 giai đoạn SMED, changeover study synthetic 5+5 lần, waterfall, tác động OEE | §10.1–10.14; `docs/data/smed_changeover_study.csv` | `[x]` knowledge + synthetic; `[~]` software: không có changeover API |
 | 9 | Cross-functional Management | Vai trò Production/Quality/Maintenance/Planning/Warehouse/HR/EHS (outline) | §11.1–11.3 | `[~]` outline; chưa có case study |
 | 10 | Interview Preparation | 5 case, STAR, English terms, 2-minute answers (outline) | §12.1–12.2; `CHECKLIST.md` §7 | `[~]` outline; `docs/INTERVIEW_PREP.md` chưa có |
 
 **Đọc nhanh:**
 
 - **P0 đã đủ nội dung:** Module 1–5.
-- **P1 có ví dụ synthetic:** Module 6 (OEE); time study xác nhận máy là pacer vẫn cần đo thật.
-- **P1 còn outline:** Module 7–10.
+- **P1 có ví dụ synthetic:** Module 6 (OEE) và Module 8 (SMED); time study xác nhận pacer và video changeover vẫn cần đo thật.
+- **P1 còn outline:** Module 7, 9–10.
 - **Phần mềm:** optimizer + dashboard + 3 form đã có; Time Study là aggregate; Hourly và 8 Wastes là docs/CSV; OEE để `N/A`.
 - **Case study:** T07/T08 đã xong; không mở rộng software chỉ để biến chúng thành feature.
 
@@ -1499,7 +1499,7 @@ Performance loss 47.00 phút gồm **minor stop đo được 23 phút** (2+4+3+6
 
 | Loss | Phút | Hành động | Owner | KPI |
 |---|---:|---|---|---|
-| Changeover | 40 | Chuẩn bị form size kế tiếp trước khi dừng (external setup); cố định vị trí và nhiệt độ; checklist đổi size | Line Engineer + Maintenance | Changeover min; mục tiêu do SMED (Module 8) quyết định |
+| Changeover | 40 | Chuẩn bị form size kế tiếp trước khi dừng (external setup); cố định vị trí và nhiệt độ; checklist đổi size | Line Engineer + Maintenance | Changeover min; mục tiêu ≤ 8.5 phút theo §10.9 (Module 8) |
 | Breakdown (heater, van hơi) | 25 | PM heater và van hơi; kiểm tra đầu ca; ghi log theo nguyên nhân | Maintenance | Breakdown min/ca; số lần trip |
 | Minor stop | 23 | Quay video form jam; xác định nguyên nhân; cải tiến guide | IE | Số lần minor stop/ca |
 | Speed / hesitation | 24 (chưa tách) | Đo cycle thực tế bằng video hoặc time study trên nhiều cycle | IE | Cycle thực tế so với 40 s |
@@ -1599,16 +1599,194 @@ Mapping từ `loss_category` của Module 2 (`docs/data/hourly_actuals.csv`):
 
 ## 10. Module 8 — SMED & Changeover <a id="module-8"></a>
 
-### 10.1. Nội dung
+### 10.1. Mục tiêu
 
-- Internal vs external setup.
-- Quay phim/bấm giờ changeover.
-- Tách external, giảm internal, chuẩn hóa.
-- Target changeover time và đo lại.
+Changeover là thời gian máy không sản xuất khi đổi size, style hoặc form. SMED (Single-Minute Exchange of Die) giảm thời gian này bằng cách tách việc làm khi máy dừng và việc làm khi máy chạy. Sau module này phải:
 
-### 10.2. Trạng thái
+- đo changeover đúng định nghĩa (pcs đạt cuối → pcs đạt đầu);
+- phân loại từng element là **internal** (phải dừng máy) hay **external** (làm khi máy chạy);
+- áp 4 giai đoạn SMED và đo lại bằng số liệu trước/sau;
+- tính tác động lên OEE Availability và nêu rõ điều kiện để tác động đó có giá trị.
 
-`[~]` Mới có outline; chưa có changeover time study, internal/external split và case study synthetic.
+### 10.2. Khái niệm
+
+| Khái niệm | Ý nghĩa | Ví dụ PRESS-01 |
+|---|---|---|
+| Changeover | Từ pcs đạt cuối của size cũ đến pcs đạt đầu tiên của size mới | Changeover 14:30–15:30 trong OEE log (25 phút) |
+| Internal setup | Chỉ làm được khi máy đã dừng | Tháo form cũ, lắp form mới, điều chỉnh áp lực |
+| External setup | Có thể làm khi máy đang chạy | Mang form size mới ra xe đẩy, chuẩn bị nhãn, làm nóng sẵn form |
+| Changeover loss | Phút máy dừng do changeover; là Availability loss trong OEE | Module 6, §8.2 |
+
+**Lưu ý:** external setup **không miễn phí**. Việc đó chuyển từ thời gian dừng sang thời gian chạy, nhưng vẫn cần người có sẵn trong ca (xem §10.7).
+
+### 10.3. Bốn giai đoạn SMED
+
+| Giai đoạn | Việc làm | Kết quả cần có | Ví dụ PRESS-01 |
+|---|---|---|---|
+| 0. Đo | Quay video hoặc bấm giờ từng element, chia theo mốc last good → first good | Baseline changeover | 5 lần trước: trung bình 25.00 phút |
+| 1. Tách I/E | Hỏi từng element: máy có bắt buộc dừng không? | Danh sách việc làm được khi máy chạy | Mang form size mới và chuẩn bị nhãn không cần dừng máy |
+| 2. Chuyển I → E | Làm trước, chuẩn bị sẵn, làm nóng sẵn | Giảm thời gian internal | Làm nóng form mới trên bệ phụ; giảm chờ nguội và chờ nhiệt |
+| 3. Tối ưu I | Kẹp nhanh, pin định vị, preset theo thẻ size, checklist, làm song song | Giảm thời gian internal còn lại | Kẹp nhanh thay bulông; preset áp lực; checklist first-piece |
+
+Giai đoạn 4 (chuẩn hóa và duy trì) đưa vào Control Plan (§10.9).
+
+### 10.4. Ví dụ synthetic — changeover PRESS-01
+
+> **Synthetic.** Dữ liệu: `docs/data/smed_changeover_study.csv`, máy `PRESS-01` (cùng máy §8.5). 5 lần **BEFORE** (2026-10-19 → 10-23) và 5 lần **AFTER pilot** (2026-11-02 → 11-06). Trung bình BEFORE 25.00 phút khớp changeover 14:30–15:30 trong OEE log, nhưng đây là dữ liệu quan sát riêng, không phải cùng một sự kiện. Không liên kết với dữ liệu HBI.
+
+**Trung bình theo element (giây):**
+
+| Element | Loại | BEFORE: trong dừng | AFTER: trong dừng | AFTER: khi máy chạy |
+|---|:-:|---:|---:|---:|
+| E01 Dừng máy, tắt gia nhiệt | I | 30 | 25 | — |
+| E02 Chờ form cũ nguội | I | 200 | 90 | — |
+| E03 Tìm và mang form size mới | E | 180 | 0 | 180 |
+| E04 Tháo form cũ | I | 150 | 60 | — |
+| E05 Lắp form mới | I | 170 | 70 | — |
+| E06 Điều chỉnh áp lực, timer | I | 200 | 40 | — |
+| E07 Chờ nhiệt ổn định | I | 180 | 60 | — |
+| E08 Chuẩn bị nhãn, dụng cụ, giấy | E | 90 | 0 | 90 |
+| E09 Vệ sinh bệ ép | I | 60 | 40 | — |
+| E10 Kiểm tra piece đầu | I | 180 | 90 | — |
+| E11 Khởi động lại, chỉnh lần cuối | I | 60 | 30 | — |
+| E12 Làm nóng sẵn form mới trên bệ phụ | E | 0 (không làm) | 0 | 240 |
+| **Tổng trong dừng máy** | | **1500** | **505** | |
+| **Tổng khi máy chạy** | | | | **510** |
+
+Tóm tắt:
+
+| Chỉ số | BEFORE | AFTER pilot | Thay đổi |
+|---|---:|---:|---:|
+| Thời gian dừng máy / lần | 1500 s = 25.00 phút | 505 s = 8.42 phút | −995 s = −16.58 phút (−66.3%) |
+| Việc external làm khi máy dừng | 270 s | 0 | −270 s |
+| Việc external làm khi máy chạy | 0 | 510 s = 8.50 phút | +510 s (cần người sẵn có) |
+| Tổng công lao động / lần | 1500 s | 1015 s | −485 s (−32.3%) |
+
+### 10.5. Waterfall 4 giai đoạn
+
+| Bước | Việc làm | Thời gian dừng sau bước | Giảm |
+|---|---|---:|---:|
+| BEFORE | — | 1500 s | — |
+| Giai đoạn 1: tách I/E | E03, E08 chuyển ra khi máy chạy | 1230 s | −270 s |
+| Giai đoạn 2: chuyển I → E | E12 làm nóng sẵn form mới; nhờ đó E02 và E07 giảm | 1000 s | −230 s |
+| Giai đoạn 3: tối ưu I | E01, E04, E05, E06, E09, E10, E11 giảm | 505 s | −495 s |
+
+**Đọc:**
+
+- **Giai đoạn 1 không cần đầu tư:** 270 s (4.5 phút) là việc làm khi máy dừng mà không cần dừng. Chỉ cần staging trước giờ đổi.
+- **Giai đoạn 2 phụ thuộc bệ làm nóng:** E02 và E07 chỉ giảm khi form mới đã nóng sẵn. Nếu bệ phụ không đạt nhiệt, phần giảm này không được tính.
+- **Giai đoạn 3 chiếm 495 s:** E06 (điều chỉnh áp lực, 200 → 40 s) có tỉ lệ giảm lớn nhất, 80%. Kẹp nhanh, preset và checklist làm giảm E04, E05, E10 nhiều tiếp theo.
+
+### 10.6. Tác động lên OEE (Module 6)
+
+Giả định: chỉ đổi changeover size change (14:30) từ 25 phút xuống 8.42 phút. Changeover 08:00 (15 phút) giữ nguyên. **P và Q giữ nguyên** (số pcs trên mỗi phút chạy không đổi).
+
+| Chỉ số | Trước (OEE log 27/10) | Sau SMED (giả định) | Thay đổi |
+|---|---:|---:|---:|
+| Changeover | 40.00 phút | 23.42 phút | −16.58 phút |
+| Downtime | 65.00 phút | 48.42 phút | −16.58 phút |
+| Run time | 385.00 phút | 401.58 phút | +16.58 phút |
+| Availability | 85.56% | 89.24% | +3.7 pp |
+| Performance | 87.79% | 87.79% | — |
+| Quality | 97.24% | 97.24% | — |
+| **OEE** | **73.04%** | **76.18%** | **+3.1 pp** |
+
+Sau SMED, downtime còn lại là breakdown 25 phút (**51.6%**) và changeover 23.42 phút (48.4%). Breakdown trở thành loss lớn nhất, nên ưu tiên tiếp theo là heater và van hơi (Module 6, §8.6), không phải tiếp tục SMED.
+
+**Cảnh báo khi đọc OEE tăng:**
+
+- 16.58 phút chạy thêm chỉ có giá trị nếu nhu cầu cần pcs đó. Nếu không, đó là năng lực dư và có thể thành **overproduction** (Module 3). Không chạy thêm để "ăn" OEE.
+- Chưa có số liệu chi phí. Không quy đổi thời gian tiết kiệm thành tiền (quy tắc Module 5).
+- Đây là dự báo với giả định P và Q không đổi; cần pilot thật để xác nhận.
+
+### 10.7. Rủi ro và điều kiện
+
+| Rủi ro | Biện pháp |
+|---|---|
+| Bệ làm nóng phụ không kiểm soát nhiệt, gây cháy hoặc nhiệt độ không đều | Ghi nhận nhiệt độ; EHS đánh giá trước khi dùng |
+| Việc external làm trong lúc chuyền thiếu người | Owner cụ thể (Supervisor); xác nhận người làm việc trước giờ đổi |
+| Bỏ first-piece để đạt số đẹp | E10 vẫn bắt buộc; quality gate của Module 4 không giảm |
+| Đo start/stop khác định nghĩa giữa các ca | Dùng đúng mốc last good → first good; ghi đủ timestamp |
+| Kết luận từ 5 lần quan sát | Chỉ là pilot ban đầu; cần ít nhất 10 lần mỗi giai đoạn trên nhiều size |
+
+### 10.8. Quy tắc đo changeover
+
+- **Start:** pcs đạt cuối cùng của size cũ (last good piece).
+- **End:** pcs đạt đầu tiên của size mới (first good piece).
+- Ghi timestamp start/end; quay video ít nhất 5 lần mỗi giai đoạn để tách element.
+- Chỉ đưa changeover vào OEE Availability khi đo theo mốc này; không ước lượng từ ghi chú ca.
+
+### 10.9. Countermeasure và Control Plan
+
+| Hạng mục | Hành động | Owner | KPI |
+|---|---|---|---|
+| Changeover | Setup card cho từng size; checklist đổi size; video chuẩn | IE + Line leader | Thời gian dừng/lần |
+| External prep | Staging xe đẩy trước giờ đổi; kiểm tra vật tư trước khi dừng | Supervisor | % việc external làm trước khi dừng |
+| Bệ làm nóng phụ | Có kiểm soát nhiệt; ghi nhiệt độ trước khi đổi | Maintenance + EHS | Nhiệt độ đạt trước khi dừng |
+| First-piece | Reference card; QC ký trước khi chạy | QC | First-piece pass rate |
+
+| KPI | Target | Tần suất | Owner | Reaction |
+|---|---:|---|---|---|
+| Thời gian dừng changeover/lần | ≤ 8.5 phút | Mỗi lần đổi | IE | >10 phút 2 lần liên tiếp → review element trên video |
+| Việc external làm khi máy dừng | 0 | Mỗi lần đổi | Supervisor | Có việc external trong dừng → ghi nguyên nhân |
+| First-piece approval | 100% | Mỗi lần đổi | QC | Không sign-off → không chạy |
+
+Ứng viên SMED tiếp theo: changeover 08:00 (15 phút, warm-up và set-up form đầu ca).
+
+### 10.10. Câu hỏi phỏng vấn
+
+1. SMED là gì và khác gì với việc giảm changeover thông thường?
+2. Internal và external setup khác nhau thế nào? Cho ví dụ trong may.
+3. Vì sao external setup vẫn có giá trị dù không dừng máy?
+4. Vì sao không nên chạy thêm để "ăn" thời gian vừa tiết kiệm?
+5. Changeover bắt đầu và kết thúc đo ở đâu?
+6. Làm sao biết SMED không làm tăng lỗi đầu ca?
+7. Nếu external làm trong lúc máy chạy nhưng chuyền thiếu người thì sao?
+
+### 10.11. Model answers
+
+**Câu 1 — SMED là gì?**
+
+> SMED là phương pháp tách việc làm khi máy dừng (internal) và việc làm khi máy chạy (external), sau đó chuyển internal thành external và làm gọn phần internal còn lại. Khác với việc chỉ làm nhanh hơn, SMED bắt đầu bằng câu hỏi từng bước có thật sự cần dừng máy không. Ví dụ PRESS-01: 270 giây mang form mới và chuẩn bị nhãn đang làm khi máy dừng, trong khi không cần dừng.
+
+**Câu 3 — External có giá trị dù không dừng máy?**
+
+> Vì máy không phải chờ. Nhưng em không coi nó là miễn phí: việc đó tốn 510 giây công lao động, nên em phải chắc người làm có sẵn trong ca và không lấy từ vị trí đang cần. Giá trị nằm ở việc thời gian dừng giảm từ 25 phút xuống 8.42 phút.
+
+**Câu 4 — Không chạy thêm để ăn OEE**
+
+> OEE tăng vì máy có thêm thời gian chạy, nhưng pcs thêm chỉ có giá trị nếu có nhu cầu. Nếu chạy thêm không có nhu cầu, đó là tồn kho dư và là lãng phí overproduction theo Module 3. Em sẽ dùng thời gian tiết kiệm để giảm tăng ca, làm buffer có kiểm soát hoặc chuẩn bị các đợt đổi sau, không để sản xuất dư.
+
+**Câu 6 — SMED không làm tăng lỗi đầu ca?**
+
+> Em giữ first-piece là bắt buộc, không bỏ để đạt thời gian đẹp. Sau mỗi lần đổi em đo defect trong vài pcs đầu và so với baseline. Nếu E10 bị rút ngắn quá mức mà lỗi tăng, em khôi phục bước đó. Quality là điều kiện của SMED, không phải thứ đánh đổi.
+
+### 10.12. Giới hạn
+
+- Dữ liệu synthetic, một máy, 5 lần mỗi giai đoạn; chưa đủ để kết luận thống kê.
+- Không có video thật; số element là trung bình giả định.
+- Chưa kiểm chứng bệ làm nóng phụ, EHS và thời gian làm nóng thực tế.
+- Không tính chi phí và không quy đổi thành tiền.
+- Tác động OEE là dự báo với P và Q giữ nguyên.
+
+### 10.13. Checklist hoàn thành
+
+- [x] Có định nghĩa changeover (last good → first good), internal và external.
+- [x] Có 4 giai đoạn SMED với ví dụ PRESS-01.
+- [x] Có log synthetic before/after 5 + 5 lần (`docs/data/smed_changeover_study.csv`), ghi rõ SYNTHETIC.
+- [x] Waterfall 1500 → 1230 → 1000 → 505 s khớp tổng từng element.
+- [x] Tách việc external làm trong dừng (270 s) và khi máy chạy (510 s); tổng công lao động giảm 32.3%.
+- [x] Tác động OEE: Availability 85.56% → 89.24%; OEE 73.04% → 76.18%; ghi rõ giả định P/Q.
+- [x] Chỉ ra downtime tiếp theo là breakdown 51.6%.
+- [x] Cảnh báo overproduction; không quy đổi thành tiền.
+- [x] Có ≥ 3 câu trả lời phỏng vấn mẫu.
+- [ ] Đo bằng video thật ≥ 10 lần mỗi giai đoạn.
+- [ ] EHS và Maintenance xác nhận bệ làm nóng phụ.
+- [ ] Pilot trên sản xuất thật, xác nhận OEE thực tế.
+
+### 10.14. Trạng thái
+
+`[x]` knowledge và ví dụ synthetic đầy đủ. `[~]` software: không có changeover API; OEE trong phần mềm vẫn `N/A`. Các mục chưa tick ở §10.13 cần dữ liệu thật.
 
 ---
 
