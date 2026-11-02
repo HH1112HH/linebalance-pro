@@ -9,6 +9,7 @@ LineBalance Pro turns a garment style's operation routing, SAM, skill matrix, an
 ![React 19](https://img.shields.io/badge/react-19-61DAFB?logo=react&logoColor=black)
 ![Solver](https://img.shields.io/badge/solver-PuLP%20%2B%20HiGHS-0B6E4F)
 ![Data](https://img.shields.io/badge/data-synthetic%20demo%20only-B42318)
+![License: MIT](https://img.shields.io/badge/license-MIT-2EA44F)
 
 ![LineBalance Pro dashboard](frontend_screenshot.png)
 
@@ -210,6 +211,8 @@ DEPLOYMENT.md         Render / Netlify deployment and env vars
 | [`ROADMAP.md`](ROADMAP.md) | Scope, architecture, task breakdown, Definition of Done |
 | [`CHECKLIST.md`](CHECKLIST.md) | Audit results, technical decisions, current status |
 | [`DEPLOYMENT.md`](DEPLOYMENT.md) | Deployment steps, environment variables, security limits |
+| [`CONTRIBUTING.md`](CONTRIBUTING.md) | Local setup, quality gates, commit style, PR checklist |
+| [`SECURITY.md`](SECURITY.md) | Reporting policy, scope, existing controls |
 | [`docs/IE_OPERATIONS_PLAYBOOK.md`](docs/IE_OPERATIONS_PLAYBOOK.md) | IE / Lean operating playbook |
 | [`docs/CASE_STUDY_QUALITY_RCA.md`](docs/CASE_STUDY_QUALITY_RCA.md) | Quality RCA case study |
 | [`docs/CASE_STUDY_KAIZEN.md`](docs/CASE_STUDY_KAIZEN.md) | Kaizen / cost-saving case study |
@@ -244,6 +247,12 @@ Environment variables, CORS, rate limits, and body limits are documented in [`DE
 - **Machine coverage is not utilization**; runtime, OEE, and breakdown data are out of scope.
 - **The solver is time-limited.** Large instances may return `FEASIBLE_LIMIT` instead of a proof.
 - **Time study aggregation applies to human work only**; automatic machine time is not performance-rated.
+
+---
+
+## License
+
+MIT — see [`LICENSE`](LICENSE). The synthetic demo data is included for evaluation only.
 
 ---
 

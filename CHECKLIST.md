@@ -651,3 +651,15 @@ Mỗi lần chạy phải có `RunMetadata`:
 ---
 
 > **Kết luận:** Các điểm review đã được ghi lại đầy đủ, kèm kết quả đo solver mới nhất. API đã dùng HiGHS, warm start đã có, baseline đã rebuild 24/24/61.0s, A/B đã rerun, `KPI_SPEC.md` đã tạo và 25 pytest đã pass; frontend tối thiểu đã build. Ưu tiên tiếp theo: deploy public + acceptance. Không được claim `OPTIMAL` nếu chưa chứng minh cả hai stage lexicographic.
+
+---
+
+## 12. Nhật ký quyết định
+
+### 2026-11-02 — Đóng gói repo công khai
+
+- Chọn giấy phép **MIT** (`LICENSE`); copyright ghi theo tài khoản GitHub `HH1112HH`.
+- Thêm `SECURITY.md`: kênh báo lỗi qua GitHub private advisory, scope, control hiện có và data policy synthetic.
+- Thêm `CONTRIBUTING.md`: setup local, quality gate `scripts/verify.ps1`, quy ước commit và checklist PR.
+- Giữ nguyên phạm vi demo: không thêm auth, database, multi-plant hoặc dữ liệu thật.
+- Không đổi semantics KPI/MILP; `v0.2.0` vẫn là release tính năng, các tài liệu mới nằm trên `main`.
