@@ -3,7 +3,7 @@
     Runs the project verification gates.
 
 .DESCRIPTION
-    Backend: pytest + Ruff lint/format check
+    Backend: pytest + Ruff lint/format check + mypy
     Frontend: ESLint + Prettier check + TypeScript typecheck + Vite production build
     Run from anywhere; paths are resolved from the repo root.
 
@@ -53,6 +53,13 @@ try {
     & $python -m ruff format --check backend tests
     if ($LASTEXITCODE -ne 0) {
         throw "Ruff format check failed (exit $LASTEXITCODE). Run: .venv\Scripts\python.exe -m ruff format backend tests"
+    }
+
+    Write-Host ""
+    Write-Host "==> Backend typecheck" -ForegroundColor Cyan
+    & $python -m mypy backend/app
+    if ($LASTEXITCODE -ne 0) {
+        throw "Mypy failed (exit $LASTEXITCODE)."
     }
 
     if (-not $SkipFrontend) {

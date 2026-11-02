@@ -29,7 +29,9 @@ def _metrics_from_loads(
 ) -> BaselineMetrics:
     total_planning_sam = sum(loads.values())
     workers_used = len({worker for worker in station_worker.values() if worker})
-    bottleneck_station = max(loads, key=loads.get) if loads else ""
+    bottleneck_station = (
+        max(loads, key=lambda station_id: loads[station_id]) if loads else ""
+    )
     bottleneck_load = loads.get(bottleneck_station, 0.0)
     balance_efficiency = pct(total_planning_sam, workers_used * bottleneck_load)
     capacity = safe_div(
@@ -130,11 +132,11 @@ def build_baseline_comparison(
 
     # Machine consistency inside one station (MVP: at most one machine type).
     for station_id, op_ids in station_ops.items():
-        machine_types = {
-            validation.operation_by_id[op_id].machine_type
-            for op_id in op_ids
-            if validation.operation_by_id[op_id].machine_type is not None
-        }
+        machine_types: set[str] = set()
+        for op_id in op_ids:
+            machine_type = validation.operation_by_id[op_id].machine_type
+            if machine_type is not None:
+                machine_types.add(machine_type)
         if len(machine_types) > 1:
             violations.append(
                 f"Baseline station {station_id} mixes machine types: "

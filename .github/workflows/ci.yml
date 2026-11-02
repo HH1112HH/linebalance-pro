@@ -45,6 +45,9 @@ jobs:
           python -m ruff check backend tests
           python -m ruff format --check backend tests
 
+      - name: Typecheck
+        run: python -m mypy backend/app
+
       - name: Run tests
         run: python -m pytest
 

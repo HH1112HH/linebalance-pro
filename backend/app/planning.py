@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Literal
+
 from .models import (
     CapacityPlan,
     HeadcountControl,
@@ -15,6 +17,8 @@ from .models import (
 )
 from .utils import pct, safe_div
 from .validation import ValidationResult
+
+SkillStatus = Literal["ok", "tight", "critical"]
 
 
 def _headcount_standard(
@@ -74,7 +78,9 @@ def _skill_coverage(validation: ValidationResult) -> list[SkillCoverageItem]:
             if (operation.id, worker.id) in validation.eligible
         )
         eligible = len(worker_ids)
-        status = "critical" if eligible == 0 else "tight" if eligible == 1 else "ok"
+        status: SkillStatus = (
+            "critical" if eligible == 0 else "tight" if eligible == 1 else "ok"
+        )
         items.append(
             SkillCoverageItem(
                 operation_id=operation.id,

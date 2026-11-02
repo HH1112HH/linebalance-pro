@@ -1,12 +1,15 @@
 from __future__ import annotations
 
 import math
+from typing import Literal
 
 from .models import Kpis, Operation, Station, Worker
 from .utils import pct, safe_div
 
+StationStatus = Literal["bottleneck", "watch", "normal", "underutilized"]
 
-def station_status(utilization_pct: float, is_bottleneck: bool) -> str:
+
+def station_status(utilization_pct: float, is_bottleneck: bool) -> StationStatus:
     if is_bottleneck or utilization_pct > 100.5:
         return "bottleneck"
     if utilization_pct >= 90.0:

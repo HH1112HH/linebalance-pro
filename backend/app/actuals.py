@@ -5,7 +5,8 @@ from .utils import pct, planning_sam_sec
 
 
 def analyze_actuals(req: OptimizeRequest) -> ActualsAnalysis | None:
-    if req.actuals is None and not req.daily_actuals:
+    actuals = req.actuals
+    if actuals is None and not req.daily_actuals:
         return None
 
     notes: list[str] = []
@@ -27,12 +28,14 @@ def analyze_actuals(req: OptimizeRequest) -> ActualsAnalysis | None:
                 f"Direct labor minutes are missing for {period_days - len(labor_values)} "
                 "day(s); actual labor efficiency uses only the reported days."
             )
-    else:
+    elif actuals is not None:
         period_days = 1
         target_output = req.config.target_qty
-        actual_output = req.actuals.actual_output or 0
-        actual_direct_labor_minutes = req.actuals.actual_direct_labor_minutes
-        downtime_minutes = req.actuals.downtime_minutes or 0
+        actual_output = actuals.actual_output or 0
+        actual_direct_labor_minutes = actuals.actual_direct_labor_minutes
+        downtime_minutes = actuals.downtime_minutes or 0
+    else:  # pragma: no cover - guarded by the early return
+        return None
 
     # Earned standard minutes must use the same SAM basis as planning:
     # allowance is applied once when sam_basis = EXCLUDES_ALLOWANCE.

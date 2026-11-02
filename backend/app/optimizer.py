@@ -9,7 +9,7 @@ import time
 import uuid
 from dataclasses import dataclass
 from datetime import UTC, datetime
-from typing import Any
+from typing import Any, Literal
 
 import pulp
 
@@ -36,6 +36,8 @@ from .version import APP_VERSION, DATA_POLICY, MODEL_VERSION
 
 SOLVER_BACKEND = os.getenv("SOLVER_BACKEND", "highs").strip().lower()
 SOLVER_THREADS = max(1, int(os.getenv("SOLVER_THREADS", "2")))
+
+ResponseStatus = Literal["OPTIMAL", "FEASIBLE_LIMIT", "INFEASIBLE", "ERROR"]
 
 
 @dataclass
@@ -83,6 +85,7 @@ def solver_status_name(status: pulp.LpSolveStatus) -> str:
 
 
 def check_solver() -> tuple[bool, str | None]:
+    solver: pulp.LpSolver
     try:
         if SOLVER_BACKEND == "cbc":
             solver = pulp.COIN_CMD(msg=False)
@@ -522,6 +525,7 @@ def _solve(
     problem: pulp.LpProblem, time_limit: float, *, warm_start: bool = False
 ) -> Any:
     limit = max(1, math.ceil(time_limit))
+    solver: pulp.LpSolver
     if SOLVER_BACKEND == "cbc":
         solver = pulp.COIN_CMD(
             msg=False,
@@ -539,7 +543,7 @@ def _solve(
     return problem.solve(solver)
 
 
-def _classify_status(status_name: str, has_solution: bool) -> str:
+def _classify_status(status_name: str, has_solution: bool) -> ResponseStatus:
     if status_name == "OPTIMAL":
         return "OPTIMAL"
     if status_name == "INFEASIBLE":
@@ -878,7 +882,7 @@ def _extract_solution(
     model: ModelVars,
     started_at: float,
     *,
-    response_status: str,
+    response_status: ResponseStatus,
     solver_status: str,
     solver_available: bool,
     solver_message: str | None,
@@ -1257,6 +1261,7 @@ def solve_line_balancing(req: OptimizeRequest) -> OptimizeResponse:
             )
             lexicographic_proven = False
 
+        response_status: ResponseStatus
         if first_status == "OPTIMAL" and lexicographic_proven:
             response_status = "OPTIMAL"
         elif final_model is not None:

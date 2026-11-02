@@ -105,6 +105,7 @@ Or run each step:
 python -m pytest
 python -m ruff check backend tests
 python -m ruff format --check backend tests
+python -m mypy backend/app
 
 npm --prefix frontend run lint
 npm --prefix frontend run format:check
@@ -114,14 +115,15 @@ npm --prefix frontend run build
 
 CI (`.github/workflows/ci.yml`) runs two parallel jobs on every push to `main` and every pull request:
 
-- **Backend:** Python 3.12 → install `backend/requirements-dev.txt` → Ruff lint/format → `pytest`
+- **Backend:** Python 3.12 → install `backend/requirements-dev.txt` → Ruff lint/format → mypy → `pytest`
 - **Frontend:** Node 22 → `npm ci` → ESLint → Prettier check → `typecheck` → `build`
 
 ### Code quality
 
 | Layer | Tool | Config |
 |---|---|---|
-| Python | Ruff (lint + format) | [`ruff.toml`](ruff.toml) |
+| Python lint / format | Ruff | [`ruff.toml`](ruff.toml) |
+| Python types | mypy | [`mypy.ini`](mypy.ini) |
 | TypeScript / React | ESLint 10 + typescript-eslint | [`frontend/eslint.config.js`](frontend/eslint.config.js) |
 | Frontend formatting | Prettier | [`frontend/.prettierrc.json`](frontend/.prettierrc.json) |
 | Tests | pytest + FastAPI TestClient | [`pytest.ini`](pytest.ini) |
@@ -175,6 +177,7 @@ docs/                 IE playbook and case studies
 scripts/verify.ps1    Local quality gate
 .github/workflows/    GitHub Actions CI
 ruff.toml             Python lint/format config
+mypy.ini              Python type-check config
 frontend/eslint.config.js  ESLint flat config
 frontend/.prettierrc.json  Prettier config
 KPI_SPEC.md           KPI formula and naming contract
