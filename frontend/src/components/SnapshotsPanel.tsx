@@ -1,5 +1,6 @@
 import { useState } from "react";
 import type { Snapshot } from "../types";
+import { optimizationStatusLabel, useLanguage } from "../i18n";
 import { cx } from "../utils";
 
 interface Props {
@@ -17,13 +18,14 @@ export default function SnapshotsPanel({
   onLoad,
   onDelete,
 }: Props) {
+  const { t } = useLanguage();
   const [name, setName] = useState("");
   const [error, setError] = useState<string | null>(null);
 
   function save() {
     const trimmed = name.trim();
     if (!trimmed) {
-      setError("Give the snapshot a name first.");
+      setError(t("snapshots.error.name"));
       return;
     }
     const message = onSave(trimmed);
@@ -39,35 +41,33 @@ export default function SnapshotsPanel({
     <section className="panel snapshots-panel" aria-labelledby="snapshots-title">
       <div className="panel-head">
         <div>
-          <span className="eyebrow">Local persistence</span>
-          <h2 id="snapshots-title">Saved snapshots</h2>
+          <span className="eyebrow">{t("snapshots.eyebrow")}</span>
+          <h2 id="snapshots-title">{t("snapshots.title")}</h2>
         </div>
-        <span className="panel-chip chip-muted">localStorage only</span>
+        <span className="panel-chip chip-muted">{t("snapshots.chip")}</span>
       </div>
 
-      <p className="panel-intro">
-        Save the current request and result in this browser. There is no server-side
-        scenario write API on the public demo.
-      </p>
+      <p className="panel-intro">{t("snapshots.intro")}</p>
 
       <div className="snapshot-form">
         <input
           value={name}
           maxLength={80}
-          placeholder="e.g. A — after rebalance"
+          placeholder={t("snapshots.placeholder")}
+          aria-label={t("snapshots.nameAria")}
           onChange={(event) => setName(event.target.value)}
           onKeyDown={(event) => {
             if (event.key === "Enter") save();
           }}
         />
         <button type="button" className="secondary-button" onClick={save}>
-          Save snapshot
+          {t("snapshots.save")}
         </button>
       </div>
       {error ? <p className="form-error">{error}</p> : null}
 
       {snapshots.length === 0 ? (
-        <p className="muted-text">No snapshots yet. Save one after a re-run.</p>
+        <p className="muted-text">{t("snapshots.empty")}</p>
       ) : (
         <ul className="snapshot-list">
           {snapshots.map((snapshot) => (
@@ -78,8 +78,11 @@ export default function SnapshotsPanel({
               <div className="snapshot-main">
                 <strong>{snapshot.name}</strong>
                 <span>
-                  {snapshot.savedAt} · {snapshot.result.status} ·{" "}
-                  {snapshot.result.kpis?.workers_used ?? "—"} workers
+                  {t("snapshots.meta", {
+                    savedAt: snapshot.savedAt,
+                    status: optimizationStatusLabel(snapshot.result.status, t),
+                    workers: snapshot.result.kpis?.workers_used ?? "—",
+                  })}
                 </span>
               </div>
               <div className="snapshot-actions">
@@ -87,15 +90,17 @@ export default function SnapshotsPanel({
                   type="button"
                   className="text-button"
                   onClick={() => onLoad(snapshot)}
+                  aria-label={t("snapshots.loadAria", { name: snapshot.name })}
                 >
-                  Load
+                  {t("snapshots.load")}
                 </button>
                 <button
                   type="button"
                   className="text-button danger"
                   onClick={() => onDelete(snapshot.id)}
+                  aria-label={t("snapshots.deleteAria", { name: snapshot.name })}
                 >
-                  Delete
+                  {t("snapshots.delete")}
                 </button>
               </div>
             </li>

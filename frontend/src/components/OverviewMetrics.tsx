@@ -1,4 +1,5 @@
 import type { OptimizeResult } from "../types";
+import { useLanguage } from "../i18n";
 import { cx, formatNumber, formatPct, formatSigned } from "../utils";
 
 interface Props {
@@ -8,15 +9,12 @@ interface Props {
 type MetricIconName = "bottleneck" | "balance" | "workers" | "capacity";
 
 export default function OverviewMetrics({ result }: Props) {
+  const { t } = useLanguage();
   const kpis = result.kpis;
   const before = result.baseline_comparison?.before;
 
   if (!kpis) {
-    return (
-      <div className="empty-state">
-        No KPI output. The solver did not return a feasible line.
-      </div>
-    );
+    return <div className="empty-state">{t("metrics.empty")}</div>;
   }
 
   const overTakt = kpis.bottleneck_load_sec - kpis.effective_takt_time_sec;
@@ -38,70 +36,123 @@ export default function OverviewMetrics({ result }: Props) {
     icon: MetricIconName;
   }> = [
     {
-      label: "Bottleneck",
-      value: `${formatNumber(kpis.bottleneck_load_sec, 1)}s`,
+      label: t("metric.bottleneck.label"),
+      value: `${formatNumber(kpis.bottleneck_load_sec, 1)}${t("unit.secondsSuffix")}`,
       note:
         overTakt > 0
-          ? `${formatNumber(overTakt, 2)}s above effective takt`
-          : `${formatNumber(Math.abs(overTakt), 2)}s inside effective takt`,
-      foot: `Station ${kpis.bottleneck_station} sets the pace`,
+          ? t("metric.bottleneck.over", { value: formatNumber(overTakt, 2) })
+          : t("metric.bottleneck.inside", {
+              value: formatNumber(Math.abs(overTakt), 2),
+            }),
+      foot: t("metric.bottleneck.foot", {
+        station: kpis.bottleneck_station.toString().padStart(2, "0"),
+      }),
       tone: overTakt > 0 ? "warn" : "good",
       icon: "bottleneck",
     },
     {
-      label: "Line balance efficiency",
+      label: t("metric.lbe.label"),
       value: formatPct(kpis.balance_efficiency_pct, 2),
       note:
         lbeDelta === null
-          ? "No synthetic baseline"
-          : `${formatSigned(lbeDelta, 2, " pp")} vs baseline`,
-      foot: "Planning SAM / (workers × bottleneck)",
+          ? t("metric.noBaseline")
+          : t("metric.lbe.delta", {
+              value: formatSigned(lbeDelta, 2, t("unit.percentagePointsSuffix")),
+            }),
+      foot: t("metric.lbe.foot"),
       tone: "good",
       icon: "balance",
     },
     {
-      label: "Workers on line",
+      label: t("metric.workers.label"),
       value: `${kpis.workers_used}`,
       note:
         workerDelta === null
-          ? "No synthetic baseline"
-          : `${formatSigned(workerDelta, 0)} vs baseline ${before?.workers_used ?? "—"}`,
-      foot: "One worker per station",
+          ? t("metric.noBaseline")
+          : t("metric.workers.delta", {
+              value: formatSigned(workerDelta, 0),
+              base: before?.workers_used ?? "—",
+            }),
+      foot: t("metric.workers.foot"),
       tone: workerDelta !== null && workerDelta < 0 ? "good" : "neutral",
       icon: "workers",
     },
     {
-      label: "Capacity / shift",
-      value: formatNumber(kpis.capacity_per_shift, 1),
+      label: t("metric.capacity.label"),
+      value: `${formatNumber(kpis.capacity_per_shift, 1)}${t("unit.piecesSuffix")}`,
       note:
         targetGap > 0
-          ? `${formatNumber(targetGap, 1)} pcs short of target`
-          : `${formatNumber(Math.abs(targetGap), 1)} pcs above target`,
+          ? t("metric.capacity.short", { value: formatNumber(targetGap, 1) })
+          : t("metric.capacity.above", {
+              value: formatNumber(Math.abs(targetGap), 1),
+            }),
       foot:
         capacityDelta === null
-          ? `Bottleneck-constrained · target ${kpis.target_qty}`
-          : `${formatSigned(capacityDelta, 1, " pcs")} vs baseline · bottleneck-limited`,
+          ? t("metric.capacity.foot", { target: kpis.target_qty })
+          : t("metric.capacity.delta", {
+              value: formatSigned(capacityDelta, 1, t("unit.piecesSuffix")),
+            }),
       tone: kpis.meets_target ? "good" : "bad",
       icon: "capacity",
     },
   ];
 
   return (
-    <section className="overview-metrics" aria-label="Key performance indicators">
-      {cards.map((card) => (
-        <article key={card.label} className={cx("metric-card", `tone-${card.tone}`)}>
-          <div className="metric-head">
-            <span className="metric-label">{card.label}</span>
-            <span className="metric-icon" aria-hidden="true">
-              <MetricIcon name={card.icon} />
-            </span>
-          </div>
-          <strong className="metric-value">{card.value}</strong>
-          <p className="metric-note">{card.note}</p>
-          <span className="metric-foot">{card.foot}</span>
+    <div className="overview-metrics-stack">
+      <section className="overview-metrics" aria-label={t("metrics.aria")}>
+        {cards.map((card) => (
+          <article key={card.label} className={cx("metric-card", `tone-${card.tone}`)}>
+            <div className="metric-head">
+              <span className="metric-label" title={card.foot}>
+                {card.label}
+              </span>
+              <span className="metric-icon" aria-hidden="true">
+                <MetricIcon name={card.icon} />
+              </span>
+            </div>
+            <strong className="metric-value">{card.value}</strong>
+            <p className="metric-note">{card.note}</p>
+            <span className="metric-foot">{card.foot}</span>
+          </article>
+        ))}
+      </section>
+
+      <section className="overview-summary" aria-label={t("metrics.secondaryAria")}>
+        <article className="overview-summary-card" title={t("metric.utilization.foot")}>
+          <span>{t("metric.utilization.label")}</span>
+          <strong>{formatPct(kpis.planned_labor_utilization_pct, 2)}</strong>
+          <small>{t("metric.utilization.foot")}</small>
         </article>
-      ))}
-    </section>
+        <article className="overview-summary-card" title={t("metric.idle.note")}>
+          <span>{t("metric.idle.label")}</span>
+          <strong>
+            {formatNumber(kpis.total_idle_sec, 1)}
+            {t("unit.secondsSuffix")}
+          </strong>
+          <small>{t("metric.idle.note")}</small>
+        </article>
+        <article className="overview-summary-card">
+          <span>{t("metric.workstations.label")}</span>
+          <strong>{result.stations.length}</strong>
+          <small>{t("metric.workstations.foot")}</small>
+        </article>
+        <article className="overview-summary-card">
+          <span>{t("metric.actualOutput.label")}</span>
+          <strong>
+            {result.actuals_analysis
+              ? `${formatNumber(result.actuals_analysis.actual_output, 0)}${t("unit.piecesSuffix")}`
+              : "—"}
+          </strong>
+          <small>
+            {result.actuals_analysis
+              ? t("metric.actualOutput.period", {
+                  days: result.actuals_analysis.period_days,
+                })
+              : t("metric.actualOutput.missing")}
+          </small>
+        </article>
+      </section>
+    </div>
   );
 }
 

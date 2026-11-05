@@ -732,3 +732,32 @@ Mỗi lần chạy phải có `RunMetadata`:
 - `scripts/verify.ps1` pass: 26 pytest, coverage 85.74%, ruff/mypy/eslint/prettier/tsc/Vite build. Ảnh: `frontend_screenshot.png`, `frontend_mobile.png`.
 - Lighthouse snapshot desktop: Accessibility **100**, Best Practices **100**, SEO **100**; sửa contrast của muted text/nav accessible name và thêm `frontend/public/robots.txt`.
 - Còn chờ: public deploy Render/Netlify, benchmark 50 ops / 25 workers, xác nhận site cho Module 6–9. Snapshot vẫn chỉ lưu trong browser.
+
+### 2026-11-06 — Bilingual industrial analysis dashboard (UI-only)
+
+- Thêm nút EN/VI có lưu lựa chọn trong browser; dịch navigation, topbar, KPI, workload, planning, actuals, time study, solver và snapshot.
+- Nâng Overview thành cockpit phân tích: KPI từ response hiện có, actual output chỉ khi có `actuals_analysis`, takt/target health, Yamazumi top stations và bottleneck review.
+- Line balance giữ tabs hiện tại; assignment table có tìm kiếm, lọc status và sắp xếp theo cột. Workload chart hiển thị trục giây, effective/demand takt, tooltip và legend.
+- Bổ sung run-input summary; XLSX tiếp tục dùng endpoint hiện có. Không thêm chart/UI library, API field hoặc KPI công thức mới.
+- Giao diện dùng primary blue cùng màu trạng thái xanh/vàng/đỏ. Bỏ giới hạn chiều cao/scroll dọc lồng ở chart, table và danh sách; căn đều Takt/Target; Solver & data hết khoảng trống do flex fill.
+- Vì sample/API chỉ có một line/shift và không có lịch sử theo ngày, line/shift là ngữ cảnh cố định và lọc date-range được ghi rõ là chưa khả dụng; không sinh mock time series.
+- Mọi số trong dashboard vẫn lấy từ `result`, `request` hoặc sample data tổng hợp; không đổi KPI/MILP/API semantics. Kiểm tra desktop 1440px, tablet 768/1024px, mobile 390px; tìm kiếm/lọc/sort station chạy, không tràn ngang.
+- Kiểm tra: `scripts/verify.ps1` pass — 26 pytest, coverage 85.74%, Ruff/mypy, ESLint, Prettier, TypeScript và Vite build; `git diff --check` pass. Ảnh desktop: `frontend_dashboard.png`; EN/VI, scenario A/B, actuals/time study/solver và table search/filter/sort đã smoke-test trên browser.
+
+### 2026-11-06 — Blue/indigo palette refinement (UI-only)
+
+- Theo phản hồi giao diện, bỏ accent xanh lá/lime và nền sidebar xanh rêu; chuyển positive/optimal/normal sang xanh chàm, sidebar navy, giữ amber cho watch và đỏ cho bottleneck/error, slate cho underutilized.
+- Áp dụng hướng review `critique → colorize → audit → polish` của Impeccable cho dashboard hiện có; giữ typography/layout đã thống nhất, không thêm gradient màu sặc sỡ hoặc thư viện.
+- Chỉ đổi presentation tokens/màu; không đổi trạng thái, công thức KPI, dữ liệu, API hoặc semantics. Contrast/focus/responsive được kiểm tra lại cùng quality gate.
+- Contrast tính được: primary #1E40AF/white **8.72:1**, positive-dark #334691/positive-soft #EDF1FF **7.68:1**, amber #8A5A0D/amber-soft #FDF4E3 **5.42:1**, red #9F3A24/red-soft #FBEAE5 **5.80:1**. Ảnh cập nhật: `frontend_dashboard.png`, `frontend_dashboard_mobile.png`.
+- Sau đổi palette, `scripts/verify.ps1` pass: 26 pytest, coverage 85.74%, Ruff/mypy, ESLint, Prettier, TypeScript và Vite build; `git diff --check` pass. Browser console sạch; 390/768/1024/1440px không tràn ngang.
+
+### 2026-11-06 — Chuẩn hóa EN/VI và thuật ngữ IE (UI-only)
+
+- Rà soát cả 6 mục ở chế độ EN và VI; mỗi chế độ dùng một ngôn ngữ, chỉ giữ tên riêng/mã kỹ thuật. Không còn nhãn, trạng thái, warning, ghi chú actuals hoặc thông báo lỗi tiếng Anh trong VI.
+- Thuật ngữ VI đã chốt: Solver → **Tối ưu hóa**; Takt → **nhịp**; allowance → **phụ cấp thời gian**; baseline → **hiện trạng**; Yamazumi → **biểu đồ tải trạm**; SAM → **định mức**; Excel → **bảng tính**. Giữ nguyên `LineBalance`, `ST09`, `OP100`, `W14`, `SHIFT_01`, `BASIC-TEE-001`, `HBI`, `PuLP`, `HiGHS`, `MILP-SAM-v2.0`.
+- Dịch ở client các chuỗi lấy từ API: trạng thái tối ưu, data policy, warning theo `code`, actuals notes, machine type, tên chuyền/ca/công đoạn mẫu và lỗi API. Thêm helper hiển thị solver để giữ đúng tên **HiGHS** thay vì `HIGHS`.
+- Sửa footnote `standard_utilization_pct` ở cả EN/VI: tải trạm chia **nhịp hiệu dụng**, không phải tải nút cổ chai; thống nhất với `KPI_SPEC.md`.
+- Thuần presentation: không đổi API, Pydantic schema, `types.ts`, KPI/MILP semantics hay sample data.
+- Kiểm chứng: `scripts/verify.ps1` pass — 26 pytest, coverage 85.74%, Ruff/mypy, ESLint, Prettier, TypeScript, Vite build; `git diff --check` pass. Browser 1440/1024/768/390px không tràn ngang; console không lỗi; đã thử 6 mục, form actuals, time study, warning details, snapshot save/load/delete và error state ở cả EN/VI.
+- Ảnh cập nhật theo giao diện EN mới: `frontend_dashboard.png`, `frontend_dashboard_mobile.png`.

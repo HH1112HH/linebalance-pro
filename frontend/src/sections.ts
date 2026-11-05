@@ -1,26 +1,53 @@
+import type { MessageKey, Translate } from "./i18n";
 import type { SectionKey } from "./types";
 
 export interface SectionMeta {
   key: SectionKey;
-  label: string;
-  short: string;
-  hint: string;
+  labelKey: MessageKey;
+  shortKey: MessageKey;
+  hintKey: MessageKey;
 }
 
 export const SECTIONS: SectionMeta[] = [
-  { key: "overview", label: "Overview", short: "Overview", hint: "Cockpit" },
-  { key: "balance", label: "Line balance", short: "Balance", hint: "Yamazumi & map" },
+  {
+    key: "overview",
+    labelKey: "nav.overview.label",
+    shortKey: "nav.overview.short",
+    hintKey: "nav.overview.hint",
+  },
+  {
+    key: "balance",
+    labelKey: "nav.balance.label",
+    shortKey: "nav.balance.short",
+    hintKey: "nav.balance.hint",
+  },
   {
     key: "capacity",
-    label: "Capacity & people",
-    short: "Capacity",
-    hint: "HC & machines",
+    labelKey: "nav.capacity.label",
+    shortKey: "nav.capacity.short",
+    hintKey: "nav.capacity.hint",
   },
-  { key: "actuals", label: "Actuals", short: "Actuals", hint: "Shift log" },
-  { key: "time-study", label: "Time study", short: "Time study", hint: "Method" },
-  { key: "solver", label: "Solver & data", short: "Solver", hint: "Provenance" },
+  {
+    key: "actuals",
+    labelKey: "nav.actuals.label",
+    shortKey: "nav.actuals.short",
+    hintKey: "nav.actuals.hint",
+  },
+  {
+    key: "time-study",
+    labelKey: "nav.timeStudy.label",
+    shortKey: "nav.timeStudy.short",
+    hintKey: "nav.timeStudy.hint",
+  },
+  {
+    key: "solver",
+    labelKey: "nav.solver.label",
+    shortKey: "nav.solver.short",
+    hintKey: "nav.solver.hint",
+  },
 ];
 
-export function sectionLabel(key: SectionKey): string {
-  return SECTIONS.find((item) => item.key === key)?.label ?? "Overview";
+export function sectionLabel(key: SectionKey, t: Translate): string {
+  const section = SECTIONS.find((item) => item.key === key);
+  return section ? t(section.labelKey) : t("nav.overview.label");
 }

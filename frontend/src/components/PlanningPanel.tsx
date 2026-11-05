@@ -1,4 +1,5 @@
 import type { OptimizeResult } from "../types";
+import { displayOperationName, machineTypeLabel, useLanguage } from "../i18n";
 import { cx, formatNumber, formatPct } from "../utils";
 
 interface Props {
@@ -6,17 +7,18 @@ interface Props {
 }
 
 export default function PlanningPanel({ result }: Props) {
+  const { language, t } = useLanguage();
   const planning = result.planning;
   if (!planning) {
     return (
       <section className="panel" aria-labelledby="planning-title">
         <div className="panel-head">
           <div>
-            <span className="eyebrow">Capacity & HC</span>
-            <h2 id="planning-title">Planning summary</h2>
+            <span className="eyebrow">{t("planning.eyebrow")}</span>
+            <h2 id="planning-title">{t("planning.title")}</h2>
           </div>
         </div>
-        <div className="empty-state">No planning summary for this result.</div>
+        <div className="empty-state">{t("planning.empty")}</div>
       </section>
     );
   }
@@ -29,78 +31,91 @@ export default function PlanningPanel({ result }: Props) {
     <section className="panel planning-panel" aria-labelledby="planning-title">
       <div className="panel-head">
         <div>
-          <span className="eyebrow">Capacity & HC</span>
-          <h2 id="planning-title">Planning summary</h2>
+          <span className="eyebrow">{t("planning.eyebrow")}</span>
+          <h2 id="planning-title">{t("planning.title")}</h2>
         </div>
-        <span className="panel-chip">Bottleneck-constrained</span>
+        <span className="panel-chip">{t("planning.chip")}</span>
       </div>
 
       <div className="mini-stat-grid">
         <div className="mini-stat">
-          <span>Theoretical capacity</span>
+          <span>{t("planning.theoretical.label")}</span>
           <strong>{formatNumber(capacity.theoretical_capacity_per_shift, 1)}</strong>
-          <small>pcs/shift · ignores balance</small>
+          <small>{t("planning.theoretical.note")}</small>
         </div>
         <div className="mini-stat mini-stat-accent">
-          <span>Bottleneck capacity</span>
+          <span>{t("planning.bottleneck.label")}</span>
           <strong>{formatNumber(capacity.bottleneck_capacity_per_shift, 1)}</strong>
-          <small>pcs/shift · used for target</small>
+          <small>{t("planning.bottleneck.note")}</small>
         </div>
         <div className="mini-stat">
-          <span>Required HC</span>
+          <span>{t("planning.requiredHc.label")}</span>
           <strong>{formatNumber(capacity.required_hc, 2)}</strong>
-          <small>theoretical estimate</small>
+          <small>{t("planning.requiredHc.note")}</small>
         </div>
         <div className="mini-stat">
-          <span>Available HC</span>
+          <span>{t("planning.availableHc.label")}</span>
           <strong>{capacity.available_hc}</strong>
-          <small>workers in scenario</small>
+          <small>{t("planning.availableHc.note")}</small>
         </div>
         <div className="mini-stat">
-          <span>Period target</span>
-          <strong>{formatNumber(capacity.period_target_qty, 0)}</strong>
-          <small>{capacity.working_days} working days</small>
+          <span>{t("planning.periodTarget.label")}</span>
+          <strong>
+            {formatNumber(capacity.period_target_qty, 0)}
+            {t("unit.piecesSuffix")}
+          </strong>
+          <small>
+            {t("planning.periodTarget.note", { days: capacity.working_days })}
+          </small>
         </div>
         <div className="mini-stat">
-          <span>Period capacity</span>
-          <strong>{formatNumber(capacity.period_capacity, 1)}</strong>
-          <small>gap {formatNumber(capacity.capacity_gap, 1)} pcs</small>
+          <span>{t("planning.periodCapacity.label")}</span>
+          <strong>
+            {formatNumber(capacity.period_capacity, 1)}
+            {t("unit.piecesSuffix")}
+          </strong>
+          <small>
+            {t("planning.periodCapacity.note", {
+              value: formatNumber(capacity.capacity_gap, 1),
+            })}
+          </small>
         </div>
       </div>
 
       <div className="capacity-callout">
         <strong>
-          {formatPct(capacity.capacity_achievement_pct, 2)} of period target
+          {t("planning.periodAchievement", {
+            pct: formatPct(capacity.capacity_achievement_pct, 2),
+          })}
         </strong>
         <span>
-          Theoretical capacity is{" "}
-          {formatPct(capacity.theoretical_capacity_achievement_pct, 1)} of target, but
-          it ignores precedence, machine and balance constraints. The bottleneck number
-          is the honest planning number.
+          {t("planning.callout", {
+            pct: formatPct(capacity.theoretical_capacity_achievement_pct, 1),
+          })}
         </span>
       </div>
 
       <div className="planning-split">
         <div className="planning-block">
           <div className="subhead">
-            <h3>Machine allocation coverage</h3>
-            <span className="tiny-note">Not machine utilization</span>
+            <h3>{t("planning.machine.title")}</h3>
+            <span className="tiny-note">{t("planning.machine.note")}</span>
           </div>
           <div className="table-wrap">
             <table className="data-table compact-table">
               <thead>
                 <tr>
-                  <th>Machine type</th>
-                  <th className="num">Required stations</th>
-                  <th className="num">Available</th>
-                  <th className="num">Gap</th>
-                  <th className="num">Coverage</th>
+                  <th>{t("planning.machine.col.type")}</th>
+                  <th className="num">{t("planning.machine.col.required")}</th>
+                  <th className="num">{t("planning.machine.col.available")}</th>
+                  <th className="num">{t("planning.machine.col.gap")}</th>
+                  <th className="num">{t("planning.machine.col.coverage")}</th>
                 </tr>
               </thead>
               <tbody>
                 {capacity.machine_requirements.map((item) => (
                   <tr key={item.machine_type}>
-                    <td>{item.machine_type}</td>
+                    <td>{machineTypeLabel(item.machine_type, t)}</td>
                     <td className="num">{item.required_stations}</td>
                     <td className="num">{item.available_capacity}</td>
                     <td
@@ -117,74 +132,84 @@ export default function PlanningPanel({ result }: Props) {
               </tbody>
             </table>
           </div>
-          <p className="panel-footnote">
-            Coverage compares required stations with available machine capacity. It does
-            not measure runtime, speed loss or quality, so it must never be labelled
-            machine utilization or OEE.
-          </p>
+          <p className="panel-footnote">{t("planning.machine.footnote")}</p>
         </div>
 
         <div className="planning-block">
           <div className="subhead">
-            <h3>Headcount control</h3>
-            <span className="tiny-note">Standard vs actual vs optimized</span>
+            <h3>{t("planning.hc.title")}</h3>
+            <span className="tiny-note">{t("planning.hc.note")}</span>
           </div>
           <div className="hc-strip">
             <div>
-              <span>Standard</span>
+              <span>{t("planning.hc.standard")}</span>
               <strong>{headcount.standard_hc}</strong>
             </div>
             <div>
-              <span>Planned</span>
+              <span>{t("planning.hc.planned")}</span>
               <strong>{headcount.planned_hc}</strong>
             </div>
             <div>
-              <span>Actual</span>
+              <span>{t("planning.hc.actual")}</span>
               <strong>{headcount.actual_hc}</strong>
             </div>
             <div>
-              <span>Attendance</span>
+              <span>{t("planning.hc.attendance")}</span>
               <strong>{headcount.attendance_hc}</strong>
             </div>
             <div className="hc-accent">
-              <span>Optimized</span>
+              <span>{t("planning.hc.optimized")}</span>
               <strong>{headcount.optimized_hc}</strong>
             </div>
             <div>
-              <span>Adherence</span>
+              <span>{t("planning.hc.adherence")}</span>
               <strong>{formatPct(headcount.adherence_pct, 1)}</strong>
             </div>
             <div>
-              <span>Attendance</span>
+              <span>{t("planning.hc.attendancePct")}</span>
               <strong>{formatPct(headcount.attendance_pct, 1)}</strong>
             </div>
           </div>
 
           {tightSkills.length > 0 ? (
             <div className="skill-watch">
-              <span className="tiny-note">Skill coverage watch</span>
+              <span className="tiny-note">{t("planning.skill.title")}</span>
               <ul>
                 {tightSkills.slice(0, 4).map((item) => (
                   <li key={item.operation_id}>
                     <span className={`status-dot status-${item.status}`} />
-                    <strong>{item.operation_id}</strong> {item.operation_name}
+                    <strong>{item.operation_id}</strong>{" "}
+                    {displayOperationName(
+                      { id: item.operation_id, name: item.operation_name },
+                      language,
+                    )}
                     <em>
-                      grade {item.required_grade} · {item.eligible_workers} eligible
+                      {t("planning.skill.item", {
+                        grade: item.required_grade,
+                        count: item.eligible_workers,
+                      })}
                     </em>
                   </li>
                 ))}
               </ul>
             </div>
           ) : (
-            <p className="skill-ok">All skill coverage checks are OK.</p>
+            <p className="skill-ok">{t("planning.skill.ok")}</p>
           )}
 
           {headcount.transfer_suggestions.length > 0 ? (
             <div className="transfer-note">
-              <span className="tiny-note">Transfer suggestions</span>
+              <span className="tiny-note">{t("planning.transfer.title")}</span>
               {headcount.transfer_suggestions.slice(0, 3).map((item) => (
                 <p key={item.worker_id}>
-                  <strong>{item.worker_id}</strong> {item.reason}
+                  <strong>{item.worker_id}</strong>{" "}
+                  {t("planning.transfer.reason", {
+                    name: item.worker_name,
+                    station:
+                      result.kpis?.bottleneck_station.toString().padStart(2, "0") ??
+                      "—",
+                    load: formatNumber(result.kpis?.bottleneck_load_sec, 1),
+                  })}
                 </p>
               ))}
             </div>

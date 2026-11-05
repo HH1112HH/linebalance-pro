@@ -1,4 +1,5 @@
 import type { OptimizeResult } from "../types";
+import { useLanguage } from "../i18n";
 import { cx, formatNumber, formatPct } from "../utils";
 
 interface Props {
@@ -7,6 +8,7 @@ interface Props {
 }
 
 export default function TaktPanel({ result, compact = false }: Props) {
+  const { t } = useLanguage();
   const kpis = result.kpis;
   if (!kpis) return null;
 
@@ -26,12 +28,12 @@ export default function TaktPanel({ result, compact = false }: Props) {
     >
       <div className="panel-head">
         <div>
-          <span className="eyebrow">Takt & cycle time</span>
+          <span className="eyebrow">{t("takt.eyebrow")}</span>
           <h2 id="takt-title">
-            {compact ? "Takt vs bottleneck" : "Two takts, one decision"}
+            {compact ? t("takt.title.compact") : t("takt.title.full")}
           </h2>
         </div>
-        <span className="panel-chip">Seconds / piece</span>
+        <span className="panel-chip">{t("takt.chip")}</span>
       </div>
 
       <div className="takt-track" aria-hidden="true">
@@ -43,39 +45,46 @@ export default function TaktPanel({ result, compact = false }: Props) {
           }}
         />
         <div className="takt-marker" style={{ left: `${effectivePct}%` }}>
-          <span>Effective {formatNumber(effective, 2)}s</span>
+          <span>
+            {t("takt.marker.effective", { value: formatNumber(effective, 2) })}
+          </span>
         </div>
         <div className="takt-marker marker-demand" style={{ left: `${demandPct}%` }}>
-          <span>Demand {formatNumber(demand, 2)}s</span>
+          <span>{t("takt.marker.demand", { value: formatNumber(demand, 2) })}</span>
         </div>
       </div>
 
       <div className="takt-rail-note">
         <span className={over > 0 ? "takt-gap" : "takt-gap is-ok"}>
           {over > 0
-            ? `Bottleneck ${formatNumber(over, 2)}s above effective takt`
-            : `Bottleneck inside effective takt by ${formatNumber(Math.abs(over), 2)}s`}
+            ? t("takt.over", { value: formatNumber(over, 2) })
+            : t("takt.inside", { value: formatNumber(Math.abs(over), 2) })}
         </span>
-        <span>
-          Bar length = bottleneck load on a 0–{formatNumber(scale, 1)}s scale.
-        </span>
+        <span>{t("takt.scale", { value: formatNumber(scale, 1) })}</span>
       </div>
 
       {compact ? (
         <div className="takt-facts">
           <div>
-            <span>Demand takt</span>
-            <strong>{formatNumber(demand, 2)}s</strong>
+            <span>{t("takt.demand.label")}</span>
+            <strong>
+              {formatNumber(demand, 2)}
+              {t("unit.secondsSuffix")}
+            </strong>
           </div>
           <div>
-            <span>Effective takt</span>
-            <strong>{formatNumber(effective, 2)}s</strong>
+            <span>{t("takt.effective.label")}</span>
+            <strong>
+              {formatNumber(effective, 2)}
+              {t("unit.secondsSuffix")}
+            </strong>
           </div>
           <div>
-            <span>Takt gap</span>
+            <span>{t("takt.gap.label")}</span>
             <strong className={over > 0 ? "value-bad" : "value-good"}>
               {over > 0 ? "+" : ""}
-              {formatNumber(over, 2)}s
+              {formatNumber(over, 2)}
+              {t("unit.secondsSuffix")}
             </strong>
           </div>
         </div>
@@ -83,40 +92,54 @@ export default function TaktPanel({ result, compact = false }: Props) {
 
       {compact ? (
         <p className="panel-footnote">
-          Demand takt is the customer requirement; effective takt applies the{" "}
-          {formatPct(kpis.planned_efficiency * 100, 0)} planned efficiency allowance
-          before comparing with the bottleneck.
+          {t("takt.footnote", {
+            pct: formatPct(kpis.planned_efficiency * 100, 0),
+          })}
         </p>
       ) : null}
 
       {compact ? null : (
         <div className="takt-explain">
           <article>
-            <span className="eyebrow">Demand takt</span>
-            <strong>{formatNumber(demand, 2)}s</strong>
+            <span className="eyebrow">{t("takt.demand.label")}</span>
+            <strong>
+              {formatNumber(demand, 2)}
+              {t("unit.secondsSuffix")}
+            </strong>
             <p>
-              {formatNumber(kpis.available_seconds, 0)} available seconds ÷{" "}
-              {kpis.target_qty} pcs. This is the customer requirement at 100% of
-              scheduled time.
+              {t("takt.demand.body", {
+                seconds: formatNumber(kpis.available_seconds, 0),
+                target: kpis.target_qty,
+              })}
             </p>
           </article>
           <article>
-            <span className="eyebrow">Effective takt</span>
-            <strong>{formatNumber(effective, 2)}s</strong>
+            <span className="eyebrow">{t("takt.effective.label")}</span>
+            <strong>
+              {formatNumber(effective, 2)}
+              {t("unit.secondsSuffix")}
+            </strong>
             <p>
-              {formatNumber(kpis.available_seconds, 0)}s ×{" "}
-              {formatPct(kpis.planned_efficiency * 100, 0)} planned efficiency ÷{" "}
-              {kpis.target_qty} pcs. This is the planning cycle allowance, not the
-              demand takt.
+              {t("takt.effective.body", {
+                seconds: formatNumber(kpis.available_seconds, 0),
+                pct: formatPct(kpis.planned_efficiency * 100, 0),
+                target: kpis.target_qty,
+              })}
             </p>
           </article>
           <article className="takt-decision">
-            <span className="eyebrow">Bottleneck</span>
-            <strong>{formatNumber(bottleneck, 2)}s</strong>
+            <span className="eyebrow">{t("metric.bottleneck.label")}</span>
+            <strong>
+              {formatNumber(bottleneck, 2)}
+              {t("unit.secondsSuffix")}
+            </strong>
             <p>
               {over > 0
-                ? `The line is ${formatNumber(over, 2)}s above the effective takt. Capacity is capped at ${formatPct(kpis.target_achievement_pct, 2)} of target.`
-                : "The bottleneck is inside the effective takt. The line can meet the target at the planned efficiency."}
+                ? t("takt.bottleneck.body.over", {
+                    value: formatNumber(over, 2),
+                    pct: formatPct(kpis.target_achievement_pct, 2),
+                  })
+                : t("takt.bottleneck.body.ok")}
             </p>
           </article>
         </div>

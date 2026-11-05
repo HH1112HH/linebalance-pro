@@ -7,6 +7,12 @@ import type {
   SampleRequest,
   TimeStudyResult,
 } from "../types";
+import {
+  apiErrorMessage,
+  displayOperationName,
+  lossCategoryLabel,
+  useLanguage,
+} from "../i18n";
 import { clone, formatNumber, formatPct, todayIso } from "../utils";
 
 interface Props {
@@ -33,11 +39,12 @@ export default function FormsPanel({
   currentAnalysis,
   onApply,
 }: Props) {
+  const { t } = useLanguage();
   const [actualTab, setActualTab] = useState<"production" | "downtime">("production");
 
   if (mode === "time-study") {
     return (
-      <section className="forms-section" aria-label="Time study input">
+      <section className="forms-section" aria-label={t("forms.timeStudyAria")}>
         <div className="forms-grid single">
           <TimeStudyForm operations={operations} />
         </div>
@@ -46,20 +53,20 @@ export default function FormsPanel({
   }
 
   return (
-    <section className="forms-section" aria-label="Shop-floor input forms">
+    <section className="forms-section" aria-label={t("forms.actualsAria")}>
       <div className="form-switch">
         <div>
-          <span className="eyebrow">Shop-floor input</span>
-          <h3>Log a shift event</h3>
+          <span className="eyebrow">{t("forms.shopFloor")}</span>
+          <h3>{t("forms.logEvent")}</h3>
         </div>
-        <div className="segmented" role="group" aria-label="Actuals form">
+        <div className="segmented" role="group" aria-label={t("forms.actualsFormAria")}>
           <button
             type="button"
             className={actualTab === "production" ? "is-active" : undefined}
             aria-pressed={actualTab === "production"}
             onClick={() => setActualTab("production")}
           >
-            Production
+            {t("forms.tab.production")}
           </button>
           <button
             type="button"
@@ -67,7 +74,7 @@ export default function FormsPanel({
             aria-pressed={actualTab === "downtime"}
             onClick={() => setActualTab("downtime")}
           >
-            Downtime
+            {t("forms.tab.downtime")}
           </button>
         </div>
       </div>
@@ -96,6 +103,7 @@ function ActualProductionForm({
   currentAnalysis,
   onApply,
 }: Pick<Props, "request" | "currentAnalysis" | "onApply">) {
+  const { language, t } = useLanguage();
   const [target, setTarget] = useState(request.config.target_qty);
   const [actualOutput, setActualOutput] = useState(request.actuals?.actual_output ?? 0);
   const [laborMinutes, setLaborMinutes] = useState(
@@ -122,7 +130,13 @@ function ActualProductionForm({
       const result = await analyzeActuals(next);
       onApply(next, result);
     } catch (caught) {
-      setError(caught instanceof Error ? caught.message : String(caught));
+      setError(
+        apiErrorMessage(
+          caught instanceof Error ? caught.message : String(caught),
+          language,
+          t,
+        ),
+      );
     } finally {
       setBusy(false);
     }
@@ -133,13 +147,13 @@ function ActualProductionForm({
       <div className="form-head">
         <span className="form-step">01</span>
         <div>
-          <h3>Actual production</h3>
-          <p>One shift snapshot. Replaces the 5-day sample view.</p>
+          <h3>{t("forms.production.title")}</h3>
+          <p>{t("forms.production.note")}</p>
         </div>
       </div>
 
       <div className="field-grid two-col">
-        <Field label="Target output">
+        <Field label={t("forms.field.target")}>
           <input
             type="number"
             min={1}
@@ -148,7 +162,7 @@ function ActualProductionForm({
             onChange={(event) => setTarget(Number(event.target.value))}
           />
         </Field>
-        <Field label="Actual output">
+        <Field label={t("forms.field.actualOutput")}>
           <input
             type="number"
             min={0}
@@ -157,7 +171,7 @@ function ActualProductionForm({
             onChange={(event) => setActualOutput(Number(event.target.value))}
           />
         </Field>
-        <Field label="Direct labor minutes">
+        <Field label={t("forms.field.laborMinutes")}>
           <input
             type="number"
             min={0}
@@ -166,7 +180,7 @@ function ActualProductionForm({
             onChange={(event) => setLaborMinutes(Number(event.target.value))}
           />
         </Field>
-        <Field label="Attendance HC">
+        <Field label={t("forms.field.attendance")}>
           <input
             type="number"
             min={0}
@@ -175,7 +189,7 @@ function ActualProductionForm({
             onChange={(event) => setAttendance(Number(event.target.value))}
           />
         </Field>
-        <Field label="Downtime minutes">
+        <Field label={t("forms.field.downtimeMinutes")}>
           <input
             type="number"
             min={0}
@@ -187,7 +201,7 @@ function ActualProductionForm({
       </div>
 
       <button type="button" className="primary-button" onClick={submit} disabled={busy}>
-        {busy ? "Calculating…" : "Apply actuals"}
+        {busy ? t("forms.calculating") : t("forms.applyActuals")}
       </button>
 
       {error ? <p className="form-error">{error}</p> : null}
@@ -201,11 +215,12 @@ function DowntimeForm({
   currentAnalysis,
   onApply,
 }: Pick<Props, "request" | "currentAnalysis" | "onApply">) {
+  const { language, t } = useLanguage();
   const [start, setStart] = useState("08:15");
   const [end, setEnd] = useState("08:40");
   const [station, setStation] = useState("ST05");
   const [category, setCategory] = useState<LossCategory>("MACHINE");
-  const [note, setNote] = useState("Overlock thread break");
+  const [note, setNote] = useState("");
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -213,7 +228,7 @@ function DowntimeForm({
 
   async function submit() {
     if (duration <= 0) {
-      setError("End time must be after start time.");
+      setError(t("forms.error.endAfterStart"));
       return;
     }
     setBusy(true);
@@ -242,7 +257,13 @@ function DowntimeForm({
       const result = await analyzeActuals(next);
       onApply(next, result);
     } catch (caught) {
-      setError(caught instanceof Error ? caught.message : String(caught));
+      setError(
+        apiErrorMessage(
+          caught instanceof Error ? caught.message : String(caught),
+          language,
+          t,
+        ),
+      );
     } finally {
       setBusy(false);
     }
@@ -255,29 +276,29 @@ function DowntimeForm({
       <div className="form-head">
         <span className="form-step">02</span>
         <div>
-          <h3>Downtime event</h3>
-          <p>Log one loss. Duration is added to the shift total.</p>
+          <h3>{t("forms.downtime.title")}</h3>
+          <p>{t("forms.downtime.note")}</p>
         </div>
       </div>
 
       <div className="field-grid two-col">
-        <Field label="Start">
+        <Field label={t("forms.field.start")}>
           <input
             type="time"
             value={start}
             onChange={(event) => setStart(event.target.value)}
           />
         </Field>
-        <Field label="End">
+        <Field label={t("forms.field.end")}>
           <input
             type="time"
             value={end}
             onChange={(event) => setEnd(event.target.value)}
           />
         </Field>
-        <Field label="Station">
+        <Field label={t("forms.field.station")}>
           <select value={station} onChange={(event) => setStation(event.target.value)}>
-            <option value="">Line level</option>
+            <option value="">{t("forms.lineLevel")}</option>
             {request.baseline_assignment
               ? Array.from(
                   new Set(
@@ -293,32 +314,36 @@ function DowntimeForm({
               : null}
           </select>
         </Field>
-        <Field label="Loss category">
+        <Field label={t("forms.field.lossCategory")}>
           <select
             value={category}
             onChange={(event) => setCategory(event.target.value as LossCategory)}
           >
             {LOSS_CATEGORIES.map((item) => (
               <option key={item} value={item}>
-                {item}
+                {lossCategoryLabel(item, t)}
               </option>
             ))}
           </select>
         </Field>
-        <Field label="Duration">
-          <input value={`${formatNumber(duration, 0)} min`} readOnly />
+        <Field label={t("forms.field.duration")}>
+          <input
+            value={`${formatNumber(duration, 0)}${t("unit.minutesSuffix")}`}
+            readOnly
+          />
         </Field>
-        <Field label="Note">
+        <Field label={t("forms.field.note")}>
           <input
             value={note}
             maxLength={120}
+            placeholder={t("forms.defaultDowntimeNote")}
             onChange={(event) => setNote(event.target.value)}
           />
         </Field>
       </div>
 
       <button type="button" className="primary-button" onClick={submit} disabled={busy}>
-        {busy ? "Calculating…" : "Add downtime"}
+        {busy ? t("forms.calculating") : t("forms.addDowntime")}
       </button>
 
       {error ? <p className="form-error">{error}</p> : null}
@@ -326,12 +351,15 @@ function DowntimeForm({
 
       {recentEvents.length > 0 ? (
         <div className="event-log">
-          <span className="tiny-note">Latest events</span>
+          <span className="tiny-note">{t("forms.latestEvents")}</span>
           {recentEvents.map((event, index) => (
             <div className="event-row" key={`${event.start_time}-${index}`}>
-              <span>{event.station_id || "LINE"}</span>
-              <span>{event.loss_category}</span>
-              <span>{formatNumber(event.duration_minutes, 0)}m</span>
+              <span>{event.station_id || t("forms.lineLevel")}</span>
+              <span>{lossCategoryLabel(event.loss_category, t)}</span>
+              <span>
+                {formatNumber(event.duration_minutes, 0)}
+                {t("unit.minutesSuffix")}
+              </span>
             </div>
           ))}
         </div>
@@ -341,6 +369,7 @@ function DowntimeForm({
 }
 
 function TimeStudyForm({ operations }: { operations: OperationInput[] }) {
+  const { language, t } = useLanguage();
   const first = operations[0];
   const [operationId, setOperationId] = useState(first?.id ?? "");
   const [observed, setObserved] = useState(first?.sam_sec ?? 30);
@@ -363,7 +392,7 @@ function TimeStudyForm({ operations }: { operations: OperationInput[] }) {
 
   async function submit() {
     if (!operationId || observed <= 0) {
-      setError("Choose an operation and enter an observed time above zero.");
+      setError(t("forms.error.chooseOperation"));
       return;
     }
     setBusy(true);
@@ -380,7 +409,13 @@ function TimeStudyForm({ operations }: { operations: OperationInput[] }) {
       });
       setResult(next);
     } catch (caught) {
-      setError(caught instanceof Error ? caught.message : String(caught));
+      setError(
+        apiErrorMessage(
+          caught instanceof Error ? caught.message : String(caught),
+          language,
+          t,
+        ),
+      );
     } finally {
       setBusy(false);
     }
@@ -391,31 +426,27 @@ function TimeStudyForm({ operations }: { operations: OperationInput[] }) {
       <div className="form-head">
         <span className="form-step">03</span>
         <div>
-          <h3>Time study</h3>
-          <p>Normal time and standard time. Draft only — no auto-SAM update.</p>
+          <h3>{t("forms.timeStudy.title")}</h3>
+          <p>{t("forms.timeStudy.note")}</p>
         </div>
       </div>
 
-      <p className="form-note">
-        Aggregate calculation: enter human/walking observed time only. Do not apply the
-        performance rating to machine automatic time; split mixed elements first
-        (playbook §3.6).
-      </p>
+      <p className="form-note">{t("forms.timeStudy.guardrail")}</p>
 
       <div className="field-grid two-col">
-        <Field label="Operation" wide>
+        <Field label={t("forms.field.operation")} wide>
           <select
             value={operationId}
             onChange={(event) => selectOperation(event.target.value)}
           >
             {operations.map((operation) => (
               <option key={operation.id} value={operation.id}>
-                {operation.id} · {operation.name}
+                {operation.id} · {displayOperationName(operation, language)}
               </option>
             ))}
           </select>
         </Field>
-        <Field label="Observed time (s)">
+        <Field label={t("forms.field.observed")}>
           <input
             type="number"
             min={0.1}
@@ -424,7 +455,7 @@ function TimeStudyForm({ operations }: { operations: OperationInput[] }) {
             onChange={(event) => setObserved(Number(event.target.value))}
           />
         </Field>
-        <Field label="Performance rating">
+        <Field label={t("forms.field.rating")}>
           <input
             type="number"
             min={0.3}
@@ -434,7 +465,7 @@ function TimeStudyForm({ operations }: { operations: OperationInput[] }) {
             onChange={(event) => setRating(Number(event.target.value))}
           />
         </Field>
-        <Field label="Allowance %">
+        <Field label={t("forms.field.allowance")}>
           <input
             type="number"
             min={0}
@@ -444,7 +475,7 @@ function TimeStudyForm({ operations }: { operations: OperationInput[] }) {
             onChange={(event) => setAllowance(Number(event.target.value) / 100)}
           />
         </Field>
-        <Field label="Approved SAM (s)">
+        <Field label={t("forms.field.approvedSam")}>
           <input
             type="number"
             min={0}
@@ -458,7 +489,7 @@ function TimeStudyForm({ operations }: { operations: OperationInput[] }) {
       </div>
 
       <button type="button" className="primary-button" onClick={submit} disabled={busy}>
-        {busy ? "Calculating…" : "Calculate time study"}
+        {busy ? t("forms.calculating") : t("forms.calculateTimeStudy")}
       </button>
 
       {error ? <p className="form-error">{error}</p> : null}
@@ -466,23 +497,29 @@ function TimeStudyForm({ operations }: { operations: OperationInput[] }) {
       {result ? (
         <div className="time-study-result">
           <div>
-            <span>Normal time</span>
-            <strong>{formatNumber(result.normal_time_sec, 2)}s</strong>
-          </div>
-          <div>
-            <span>Standard time</span>
-            <strong>{formatNumber(result.standard_time_sec, 2)}s</strong>
-          </div>
-          <div>
-            <span>Approved SAM</span>
+            <span>{t("forms.result.normal")}</span>
             <strong>
-              {result.approved_sam_sec === null
-                ? "—"
-                : `${formatNumber(result.approved_sam_sec, 2)}s`}
+              {formatNumber(result.normal_time_sec, 2)}
+              {t("unit.secondsSuffix")}
             </strong>
           </div>
           <div>
-            <span>Variance</span>
+            <span>{t("forms.result.standard")}</span>
+            <strong>
+              {formatNumber(result.standard_time_sec, 2)}
+              {t("unit.secondsSuffix")}
+            </strong>
+          </div>
+          <div>
+            <span>{t("forms.result.approved")}</span>
+            <strong>
+              {result.approved_sam_sec === null
+                ? "—"
+                : `${formatNumber(result.approved_sam_sec, 2)}${t("unit.secondsSuffix")}`}
+            </strong>
+          </div>
+          <div>
+            <span>{t("forms.result.variance")}</span>
             <strong>
               {result.variance_pct === null
                 ? "—"
@@ -490,9 +527,11 @@ function TimeStudyForm({ operations }: { operations: OperationInput[] }) {
             </strong>
           </div>
           <p className="form-note">
-            {selected ? `${selected.id} · ${selected.name}. ` : ""}
-            Draft record only. Re-time-study and approve before changing SAM in the
-            optimizer.
+            {t("forms.result.note", {
+              operation: selected
+                ? `${selected.id} · ${displayOperationName(selected, language)}.`
+                : "",
+            })}
           </p>
         </div>
       ) : null}
@@ -518,14 +557,15 @@ function Field({
 }
 
 function ActualsMini({ analysis }: { analysis: ActualsAnalysis }) {
+  const { t } = useLanguage();
   return (
     <div className="actuals-mini">
       <div>
-        <span>Achievement</span>
+        <span>{t("forms.mini.achievement")}</span>
         <strong>{formatPct(analysis.production_achievement_pct, 2)}</strong>
       </div>
       <div>
-        <span>Labor efficiency</span>
+        <span>{t("forms.mini.labor")}</span>
         <strong>
           {analysis.actual_labor_efficiency_pct === null
             ? "—"
@@ -533,8 +573,11 @@ function ActualsMini({ analysis }: { analysis: ActualsAnalysis }) {
         </strong>
       </div>
       <div>
-        <span>Downtime</span>
-        <strong>{formatNumber(analysis.downtime_minutes, 0)} min</strong>
+        <span>{t("forms.mini.downtime")}</span>
+        <strong>
+          {formatNumber(analysis.downtime_minutes, 0)}
+          {t("unit.minutesSuffix")}
+        </strong>
       </div>
     </div>
   );

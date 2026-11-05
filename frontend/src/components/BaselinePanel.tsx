@@ -1,4 +1,5 @@
 import type { OptimizeResult } from "../types";
+import { useLanguage } from "../i18n";
 import { cx, formatNumber, formatSigned } from "../utils";
 
 interface Props {
@@ -15,22 +16,22 @@ interface Row {
   suffix?: string;
   direction: Direction;
   note: string;
+  deltaFormat: "improvement" | "percentage" | "default";
 }
 
 export default function BaselinePanel({ result }: Props) {
+  const { t } = useLanguage();
   const comparison = result.baseline_comparison;
   if (!comparison) {
     return (
       <section className="panel" aria-labelledby="baseline-title">
         <div className="panel-head">
           <div>
-            <span className="eyebrow">Before / after</span>
-            <h2 id="baseline-title">Baseline comparison</h2>
+            <span className="eyebrow">{t("baseline.eyebrow")}</span>
+            <h2 id="baseline-title">{t("baseline.title")}</h2>
           </div>
         </div>
-        <div className="empty-state">
-          No baseline provided. Only optimized results are shown.
-        </div>
+        <div className="empty-state">{t("baseline.empty")}</div>
       </section>
     );
   }
@@ -41,94 +42,109 @@ export default function BaselinePanel({ result }: Props) {
       <section className="panel" aria-labelledby="baseline-title">
         <div className="panel-head">
           <div>
-            <span className="eyebrow">Before / after</span>
-            <h2 id="baseline-title">Baseline comparison</h2>
+            <span className="eyebrow">{t("baseline.eyebrow")}</span>
+            <h2 id="baseline-title">{t("baseline.title")}</h2>
           </div>
         </div>
-        <div className="empty-state">
-          No baseline provided. Only optimized results are shown.
-        </div>
+        <div className="empty-state">{t("baseline.empty")}</div>
       </section>
     );
   }
 
   const rows: Row[] = [
     {
-      label: "Stations used",
+      label: t("baseline.row.stations"),
       before: before.stations_used,
       after: after.stations_used,
       digits: 0,
       direction: "lower",
-      note: "Physical stations with work",
+      note: t("baseline.row.stations.note"),
+      deltaFormat: "default",
     },
     {
-      label: "Workers on line",
+      label: t("baseline.row.workers"),
       before: before.workers_used,
       after: after.workers_used,
       digits: 0,
       direction: "lower",
-      note: "One worker per station",
+      note: t("baseline.row.workers.note"),
+      deltaFormat: "default",
     },
     {
-      label: "Bottleneck load",
+      label: t("baseline.row.bottleneck"),
       before: before.bottleneck_load_sec,
       after: after.bottleneck_load_sec,
       digits: 1,
-      suffix: "s",
+      suffix: t("unit.secondsSuffix"),
       direction: "lower",
-      note: `Baseline ${before.bottleneck_station} → station ${after.bottleneck_station}`,
+      note: t("baseline.row.bottleneck.note", {
+        before: before.bottleneck_station,
+        after: after.bottleneck_station,
+      }),
+      deltaFormat: "improvement",
     },
     {
-      label: "Balance efficiency",
+      label: t("baseline.row.lbe"),
       before: before.balance_efficiency_pct,
       after: after.balance_efficiency_pct,
       digits: 2,
       suffix: "%",
       direction: "higher",
-      note: "LBE = planning SAM / (workers × bottleneck)",
+      note: t("baseline.row.lbe.note"),
+      deltaFormat: "percentage",
     },
     {
-      label: "Capacity / shift",
+      label: t("baseline.row.capacity"),
       before: before.capacity_per_shift,
       after: after.capacity_per_shift,
       digits: 1,
+      suffix: t("unit.piecesSuffix"),
       direction: "higher",
-      note: "Bottleneck-constrained pcs / shift",
+      note: t("baseline.row.capacity.note"),
+      deltaFormat: "default",
     },
     {
-      label: "Target achievement",
+      label: t("baseline.row.target"),
       before: before.target_achievement_pct,
       after: after.target_achievement_pct,
       digits: 2,
       suffix: "%",
       direction: "higher",
-      note: after.target_achievement_pct >= 100 ? "Target met" : "Target not met",
+      note:
+        after.target_achievement_pct >= 100
+          ? t("baseline.row.target.met")
+          : t("baseline.row.target.missed"),
+      deltaFormat: "percentage",
     },
     {
-      label: "Smoothness index",
+      label: t("baseline.row.smoothness"),
       before: before.smoothness_index,
       after: after.smoothness_index,
       digits: 2,
+      suffix: t("unit.secondsSuffix"),
       direction: "lower",
-      note: "Lower is smoother",
+      note: t("baseline.row.smoothness.note"),
+      deltaFormat: "default",
     },
     {
-      label: "Total idle time",
+      label: t("baseline.row.idle"),
       before: before.total_idle_sec,
       after: after.total_idle_sec,
       digits: 1,
-      suffix: "s",
+      suffix: t("unit.secondsSuffix"),
       direction: "lower",
-      note: "Against effective takt",
+      note: t("baseline.row.idle.note"),
+      deltaFormat: "default",
     },
     {
-      label: "Total overload",
+      label: t("baseline.row.overload"),
       before: before.total_overload_sec,
       after: after.total_overload_sec,
       digits: 1,
-      suffix: "s",
+      suffix: t("unit.secondsSuffix"),
       direction: "lower",
-      note: "Load above effective takt",
+      note: t("baseline.row.overload.note"),
+      deltaFormat: "default",
     },
   ];
 
@@ -136,20 +152,20 @@ export default function BaselinePanel({ result }: Props) {
     <section className="panel baseline-panel" aria-labelledby="baseline-title">
       <div className="panel-head">
         <div>
-          <span className="eyebrow">Before / after</span>
-          <h2 id="baseline-title">Baseline comparison</h2>
+          <span className="eyebrow">{t("baseline.eyebrow")}</span>
+          <h2 id="baseline-title">{t("baseline.title")}</h2>
         </div>
-        <span className="panel-chip chip-muted">Synthetic baseline input</span>
+        <span className="panel-chip chip-muted">{t("baseline.chip")}</span>
       </div>
 
       <div className="baseline-table-wrap">
         <table className="data-table baseline-table">
           <thead>
             <tr>
-              <th>Metric</th>
-              <th className="num">Baseline</th>
-              <th className="num">Optimized</th>
-              <th className="num">Delta</th>
+              <th>{t("baseline.col.metric")}</th>
+              <th className="num">{t("baseline.col.before")}</th>
+              <th className="num">{t("baseline.col.after")}</th>
+              <th className="num">{t("baseline.col.delta")}</th>
             </tr>
           </thead>
           <tbody>
@@ -171,7 +187,7 @@ export default function BaselinePanel({ result }: Props) {
                       flat ? "delta-flat" : good ? "delta-good" : "delta-bad",
                     )}
                   >
-                    {formatDelta(row, delta)}
+                    {formatDelta(row, delta, t)}
                   </td>
                 </tr>
               );
@@ -180,11 +196,7 @@ export default function BaselinePanel({ result }: Props) {
         </table>
       </div>
 
-      <p className="panel-footnote">
-        Baseline is a synthetic first-fit current-state layout, not an optimizer output.
-        Deltas are optimized minus baseline; for bottleneck, idle and overload, a
-        negative delta is an improvement.
-      </p>
+      <p className="panel-footnote">{t("baseline.footnote")}</p>
     </section>
   );
 }
@@ -194,13 +206,23 @@ function formatValue(value: number | null, row: Row): string {
   return `${formatNumber(value, row.digits)}${row.suffix ?? ""}`;
 }
 
-function formatDelta(row: Row, delta: number): string {
+function formatDelta(
+  row: Row,
+  delta: number,
+  t: ReturnType<typeof useLanguage>["t"],
+): string {
   const suffix = row.suffix ?? "";
-  if (row.label === "Bottleneck load") {
-    return `${formatSigned(-delta, row.digits, suffix)} improvement`;
+  if (row.deltaFormat === "improvement") {
+    return t("baseline.improvement", {
+      value: formatSigned(-delta, row.digits, suffix),
+    });
   }
-  if (row.label === "Target achievement" || row.label === "Balance efficiency") {
-    return `${formatSigned(delta, row.digits, suffix === "%" ? " pp" : suffix)}`;
+  if (row.deltaFormat === "percentage") {
+    return formatSigned(
+      delta,
+      row.digits,
+      suffix === "%" ? t("unit.percentagePointsSuffix") : suffix,
+    );
   }
   return formatSigned(delta, row.digits, suffix);
 }

@@ -1,6 +1,7 @@
+import { dataPolicyLabel, useLanguage } from "../i18n";
 import { SECTIONS } from "../sections";
 import type { HealthResponse, SectionKey } from "../types";
-import { cx } from "../utils";
+import { cx, formatSolverBackend } from "../utils";
 
 interface Props {
   active: SectionKey;
@@ -10,12 +11,15 @@ interface Props {
 }
 
 export default function Sidebar({ active, health, healthError, onSelect }: Props) {
+  const { t } = useLanguage();
   const connected = Boolean(health?.solver_available) && !healthError;
   const statusLabel = connected
-    ? `API online · ${health?.solver_backend?.toUpperCase() ?? "ready"}`
+    ? t("sidebar.apiOnline", {
+        solver: formatSolverBackend(health?.solver_backend) || t("topbar.ready"),
+      })
     : healthError
-      ? "Static demo · API offline"
-      : "Checking API…";
+      ? t("sidebar.staticDemo")
+      : t("sidebar.checkingApi");
 
   return (
     <aside className="sidebar">
@@ -25,11 +29,11 @@ export default function Sidebar({ active, health, healthError, onSelect }: Props
         </span>
         <span className="sidebar-brand-copy">
           <strong>LineBalance</strong>
-          <span>IE control room</span>
+          <span>{t("sidebar.controlRoom")}</span>
         </span>
       </div>
 
-      <nav className="sidebar-nav" aria-label="Workspace sections">
+      <nav className="sidebar-nav" aria-label={t("sidebar.navAria")}>
         {SECTIONS.map((item) => (
           <button
             key={item.key}
@@ -42,9 +46,9 @@ export default function Sidebar({ active, health, healthError, onSelect }: Props
               <NavIcon name={item.key} />
             </span>
             <span className="nav-label">
-              <strong className="nav-label-full">{item.label}</strong>
-              <strong className="nav-label-short">{item.short}</strong>
-              <small>{item.hint}</small>
+              <strong className="nav-label-full">{t(item.labelKey)}</strong>
+              <strong className="nav-label-short">{t(item.shortKey)}</strong>
+              <small>{t(item.hintKey)}</small>
             </span>
             <span className="nav-rail" aria-hidden="true" />
           </button>
@@ -52,7 +56,7 @@ export default function Sidebar({ active, health, healthError, onSelect }: Props
       </nav>
 
       <div className="sidebar-foot">
-        <span className="sidebar-badge">Synthetic data only</span>
+        <span className="sidebar-badge">{t("sidebar.synthetic")}</span>
         <div className="sidebar-status">
           <span
             className={cx(
@@ -64,11 +68,13 @@ export default function Sidebar({ active, health, healthError, onSelect }: Props
           <span>
             <strong>{statusLabel}</strong>
             <small>
-              {health ? `v${health.version} · ${health.data_policy}` : "Health check"}
+              {health
+                ? `v${health.version} · ${dataPolicyLabel(health.data_policy, t)}`
+                : t("sidebar.healthCheck")}
             </small>
           </span>
         </div>
-        <span className="sidebar-version">React · FastAPI · PuLP/HiGHS</span>
+        <span className="sidebar-version">{t("sidebar.stack")}</span>
       </div>
     </aside>
   );

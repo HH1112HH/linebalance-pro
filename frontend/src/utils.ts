@@ -21,6 +21,17 @@ export function formatSigned(
   return `${sign}${formatNumber(value, digits)}${suffix}`;
 }
 
+const SOLVER_BACKEND_LABELS: Record<string, string> = {
+  highs: "HiGHS",
+  cbc: "CBC",
+  glpk: "GLPK",
+};
+
+export function formatSolverBackend(value: string | null | undefined): string {
+  if (!value) return "";
+  return SOLVER_BACKEND_LABELS[value.toLowerCase()] ?? value.toUpperCase();
+}
+
 export function formatClock(seconds: number | null | undefined): string {
   if (seconds === null || seconds === undefined || Number.isNaN(seconds)) {
     return "—";

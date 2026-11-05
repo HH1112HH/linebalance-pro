@@ -11,7 +11,9 @@ LineBalance Pro turns a garment style's operation routing, SAM, skill matrix, an
 ![Data](https://img.shields.io/badge/data-synthetic%20demo%20only-B42318)
 ![License: MIT](https://img.shields.io/badge/license-MIT-2EA44F)
 
-![LineBalance Pro dashboard](frontend_screenshot.png)
+![LineBalance Pro dashboard](frontend_dashboard.png)
+
+[View mobile dashboard screenshot (390px)](frontend_dashboard_mobile.png)
 
 > **Data policy:** this public demo ships **synthetic data only**. It contains no production data from any manufacturer and is not a substitute for a validated time study.
 
@@ -30,6 +32,9 @@ LineBalance Pro turns a garment style's operation routing, SAM, skill matrix, an
 | **Time study** | Observed time aggregation with allowance and performance rating — human work only |
 | **Export & snapshots** | XLSX workbook export; browser-local scenario snapshots |
 | **Demo scenarios** | Scenario A (stretch target 420) and Scenario B (feasible target 400) |
+| **Analysis workspace** | English/Vietnamese switch, station load chart with takt references, bottleneck review, and searchable/filterable/sortable station assignment table |
+
+The current sample contains one synthetic line and shift, not dated production history. Line/shift are shown as fixed report context and date-range filtering is intentionally unavailable; scenario A/B selection is interactive. XLSX is the supported report export.
 
 ---
 

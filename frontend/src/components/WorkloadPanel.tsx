@@ -1,5 +1,6 @@
 import { useState } from "react";
 import type { BaselineStation, OptimizeResult, StationStatus } from "../types";
+import { stationStatusLabel, useLanguage } from "../i18n";
 import { cx, formatNumber } from "../utils";
 
 interface Props {
@@ -26,12 +27,13 @@ export default function WorkloadPanel({
   compact = false,
   onViewAll,
 }: Props) {
+  const { t } = useLanguage();
   const [view, setView] = useState<"optimized" | "baseline">("optimized");
   const kpis = result.kpis;
 
   const optimizedRows: WorkloadRow[] = result.stations.map((station) => ({
     key: `ST${station.station}`,
-    label: `ST${station.station}`,
+    label: `ST${station.station.toString().padStart(2, "0")}`,
     worker: station.worker_id,
     load: station.standard_load_sec,
     status: station.status,
@@ -72,33 +74,33 @@ export default function WorkloadPanel({
     >
       <div className="panel-head">
         <div>
-          <span className="eyebrow">Yamazumi / station load</span>
+          <span className="eyebrow">{t("workload.eyebrow")}</span>
           <h2 id="workload-title">
-            {compact ? "Top station loads" : "Where the line loses balance"}
+            {compact ? t("workload.title.compact") : t("workload.title.full")}
           </h2>
         </div>
         <div className="panel-head-actions">
           {compact ? (
             onViewAll ? (
               <button type="button" className="ghost-button" onClick={onViewAll}>
-                All stations <span aria-hidden="true">→</span>
+                {t("workload.allStations")} <span aria-hidden="true">→</span>
               </button>
             ) : null
           ) : (
-            <div className="segmented" role="group" aria-label="Workload view">
+            <div className="segmented" role="group" aria-label={t("workload.viewAria")}>
               <button
                 type="button"
                 className={cx(view === "optimized" && "is-active")}
                 onClick={() => setView("optimized")}
               >
-                Optimized
+                {t("workload.optimized")}
               </button>
               <button
                 type="button"
                 className={cx(view === "baseline" && "is-active")}
                 onClick={() => setView("baseline")}
               >
-                Baseline
+                {t("workload.baseline")}
               </button>
             </div>
           )}
@@ -107,45 +109,96 @@ export default function WorkloadPanel({
 
       <div className="workload-summary">
         <span>
-          <strong>{rows.length}</strong>
-          {compact ? ` of ${allRows.length}` : ""} stations
+          {compact
+            ? t("workload.summary.compact", {
+                shown: rows.length,
+                total: allRows.length,
+              })
+            : t("workload.summary.full", { total: allRows.length })}
         </span>
         <span>
-          <strong>{formatNumber(maxRow.load, 1)}s</strong> max load
+          <strong>
+            {t("workload.summary.maxLoad", {
+              value: formatNumber(maxRow.load, 1),
+            })}
+          </strong>
         </span>
         <span>
-          <strong>{formatNumber(effectiveTakt, 2)}s</strong> effective takt
+          <strong>
+            {t("workload.summary.effective", {
+              value: formatNumber(effectiveTakt, 2),
+            })}
+          </strong>
         </span>
         <span>
-          <strong>{formatNumber(demandTakt, 2)}s</strong> demand takt
+          <strong>
+            {t("workload.summary.demand", {
+              value: formatNumber(demandTakt, 2),
+            })}
+          </strong>
         </span>
       </div>
 
       <div className="workload-legend">
         <span>
-          <i className="swatch swatch-bottleneck" /> Bottleneck
+          <i className="swatch swatch-bottleneck" /> {t("workload.legend.bottleneck")}
         </span>
         <span>
-          <i className="swatch swatch-watch" /> Watch
+          <i className="swatch swatch-watch" /> {t("workload.legend.watch")}
         </span>
         <span>
-          <i className="swatch swatch-normal" /> Normal
+          <i className="swatch swatch-normal" /> {t("workload.legend.normal")}
         </span>
         <span>
-          <i className="swatch swatch-underutilized" /> Underutilized
+          <i className="swatch swatch-underutilized" />
+          {t("workload.legend.underutilized")}
         </span>
         <span className="legend-spacer" />
         <span>
-          <i className="line-swatch line-effective" /> Effective takt
+          <i className="line-swatch line-effective" />
+          {t("workload.legend.effective")}
         </span>
         <span>
-          <i className="line-swatch line-demand" /> Demand takt
+          <i className="line-swatch line-demand" /> {t("workload.legend.demand")}
         </span>
+      </div>
+
+      <div className="workload-axis" aria-hidden="true">
+        <span className="workload-axis-title">{t("workload.axis.load")}</span>
+        <div className="workload-axis-track">
+          {[0, 0.25, 0.5, 0.75, 1].map((fraction) => (
+            <span
+              key={fraction}
+              style={{ left: `${fraction * 100}%` }}
+              className={fraction === 0 ? "is-start" : fraction === 1 ? "is-end" : ""}
+            >
+              {t("workload.axis.scale", {
+                value: formatNumber(scale * fraction, 0),
+              })}
+            </span>
+          ))}
+        </div>
       </div>
 
       <div className={cx("workload-rows", compact && "is-compact")}>
         {rows.map((row) => (
-          <div className="wl-row" key={row.key}>
+          <div
+            className="wl-row"
+            key={row.key}
+            role="group"
+            title={t("workload.rowTooltip", {
+              station: row.label,
+              worker: row.worker,
+              load: formatNumber(row.load, 1),
+              status: stationStatusLabel(row.status, t),
+            })}
+            aria-label={t("workload.rowTooltip", {
+              station: row.label,
+              worker: row.worker,
+              load: formatNumber(row.load, 1),
+              status: stationStatusLabel(row.status, t),
+            })}
+          >
             <div className="wl-id">
               <strong>{row.label}</strong>
               <span>{row.worker}</span>
@@ -164,7 +217,10 @@ export default function WorkloadPanel({
                 style={{ left: `${(demandTakt / scale) * 100}%` }}
               />
             </div>
-            <div className="wl-load">{formatNumber(row.load, 1)}s</div>
+            <div className="wl-load">
+              {formatNumber(row.load, 1)}
+              {t("unit.secondsSuffix")}
+            </div>
             <div className="wl-ops" title={row.operationIds.join(", ")}>
               {row.operationIds.join(" · ")}
             </div>
@@ -172,13 +228,7 @@ export default function WorkloadPanel({
         ))}
       </div>
 
-      {compact ? null : (
-        <p className="panel-footnote">
-          Bar length is planning SAM per station, not machine utilization. The effective
-          takt is the planning cycle allowance at the planned efficiency; the demand
-          takt is the customer requirement at 100% of scheduled time.
-        </p>
-      )}
+      {compact ? null : <p className="panel-footnote">{t("workload.footnote")}</p>}
     </section>
   );
 }
