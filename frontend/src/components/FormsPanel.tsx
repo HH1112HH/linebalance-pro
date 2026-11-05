@@ -10,6 +10,7 @@ import type {
 import { clone, formatNumber, formatPct, todayIso } from "../utils";
 
 interface Props {
+  mode: "actuals" | "time-study";
   request: SampleRequest;
   operations: OperationInput[];
   currentAnalysis: ActualsAnalysis | null;
@@ -26,36 +27,65 @@ const LOSS_CATEGORIES: LossCategory[] = [
 ];
 
 export default function FormsPanel({
+  mode,
   request,
   operations,
   currentAnalysis,
   onApply,
 }: Props) {
-  return (
-    <section className="forms-section" aria-labelledby="forms-title">
-      <div className="section-heading">
-        <div>
-          <span className="eyebrow">Shop-floor inputs</span>
-          <h2 id="forms-title">Three small inputs, one control loop</h2>
+  const [actualTab, setActualTab] = useState<"production" | "downtime">("production");
+
+  if (mode === "time-study") {
+    return (
+      <section className="forms-section" aria-label="Time study input">
+        <div className="forms-grid single">
+          <TimeStudyForm operations={operations} />
         </div>
-        <p>
-          These forms update the dashboard through the API. They do not write back to
-          the optimizer automatically; re-run the solver after changing method or SAM.
-        </p>
+      </section>
+    );
+  }
+
+  return (
+    <section className="forms-section" aria-label="Shop-floor input forms">
+      <div className="form-switch">
+        <div>
+          <span className="eyebrow">Shop-floor input</span>
+          <h3>Log a shift event</h3>
+        </div>
+        <div className="segmented" role="group" aria-label="Actuals form">
+          <button
+            type="button"
+            className={actualTab === "production" ? "is-active" : undefined}
+            aria-pressed={actualTab === "production"}
+            onClick={() => setActualTab("production")}
+          >
+            Production
+          </button>
+          <button
+            type="button"
+            className={actualTab === "downtime" ? "is-active" : undefined}
+            aria-pressed={actualTab === "downtime"}
+            onClick={() => setActualTab("downtime")}
+          >
+            Downtime
+          </button>
+        </div>
       </div>
 
-      <div className="forms-grid">
-        <ActualProductionForm
-          request={request}
-          currentAnalysis={currentAnalysis}
-          onApply={onApply}
-        />
-        <DowntimeForm
-          request={request}
-          currentAnalysis={currentAnalysis}
-          onApply={onApply}
-        />
-        <TimeStudyForm operations={operations} />
+      <div className="forms-grid single">
+        {actualTab === "production" ? (
+          <ActualProductionForm
+            request={request}
+            currentAnalysis={currentAnalysis}
+            onApply={onApply}
+          />
+        ) : (
+          <DowntimeForm
+            request={request}
+            currentAnalysis={currentAnalysis}
+            onApply={onApply}
+          />
+        )}
       </div>
     </section>
   );
@@ -65,7 +95,7 @@ function ActualProductionForm({
   request,
   currentAnalysis,
   onApply,
-}: Omit<Props, "operations">) {
+}: Pick<Props, "request" | "currentAnalysis" | "onApply">) {
   const [target, setTarget] = useState(request.config.target_qty);
   const [actualOutput, setActualOutput] = useState(request.actuals?.actual_output ?? 0);
   const [laborMinutes, setLaborMinutes] = useState(
@@ -170,7 +200,7 @@ function DowntimeForm({
   request,
   currentAnalysis,
   onApply,
-}: Omit<Props, "operations">) {
+}: Pick<Props, "request" | "currentAnalysis" | "onApply">) {
   const [start, setStart] = useState("08:15");
   const [end, setEnd] = useState("08:40");
   const [station, setStation] = useState("ST05");

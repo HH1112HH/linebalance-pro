@@ -2,7 +2,7 @@
 
 > **Phiên bản:** 1.3  
 > **Ngày:** 2026-11-02  
-> **Cập nhật lần cuối:** 2026-11-02 — bổ sung định hướng sau audit 10 nhóm IE/Lean; ưu tiên knowledge-first, đóng băng phạm vi phần mềm.  
+> **Cập nhật lần cuối:** 2026-11-06 — cockpit UI 6 mục; giữ nguyên KPI/API/MILP semantics.  
 > **Mục đích:** Ghi lại đầy đủ các điểm review P0/P1/P2, quyết định kỹ thuật, trạng thái code và điều kiện nghiệm thu.  
 > **Nguyên tắc:** Tài liệu này là nguồn sự thật cho các sửa đổi. Nếu `ROADMAP.md` cũ mâu thuẫn với file này, file này được ưu tiên.
 
@@ -720,3 +720,15 @@ Mỗi lần chạy phải có `RunMetadata`:
 - Cập nhật playbook §1, §2, §11–§13 và Appendix B; thêm link interview guide vào README.
 - Quy tắc: mọi kết quả project đều synthetic; hypothetical answer dùng “I would”; không claim HBI production experience, public deployment, OEE, saving hoặc target achievement nếu chưa có evidence thật.
 - Phạm vi docs-only; không thêm API/backend/UI. Module 9 RACI cần xác nhận theo site thật; Module 10 cần cá nhân hóa bằng CV/kinh nghiệm thật trước phỏng vấn.
+
+### 2026-11-06 — Cockpit UI 6 mục (UI-only)
+
+- Chuyển dashboard một trang dài thành cockpit 6 mục: Overview, Line balance, Capacity & people, Actuals, Time study, Solver & data; sidebar tối + topbar scenario/API/export/re-run.
+- Overview chỉ giữ 4 KPI, takt vs bottleneck, target health và top 5 station load; assignment map đầy đủ chuyển sang Line balance với 3 tab Station loads / Assignment map / Before / after.
+- Actuals gộp form production + downtime thành tab; Time study tách màn riêng, giữ guide 4 bước; Solver & data gộp metadata, snapshot localStorage và policy strip.
+- Thuần presentation: không đổi API, Pydantic schema, `types.ts` contract, KPI/MILP semantics hay sample data. Mọi số vẫn lấy từ `result`, `data.ts` hoặc API; nhãn synthetic giữ nguyên.
+- Design system: Manrope + IBM Plex Mono, emerald accent, card 12–16px; breakpoint 1240/1100/1024/900/720/520/390; không thêm thư viện UI.
+- Kiểm chứng: 1440×900 Overview vừa một màn hình (scrollHeight 900); 390×900 không tràn ngang (scrollWidth 390); tab/form/snapshot save-load-delete chạy; console không lỗi.
+- `scripts/verify.ps1` pass: 26 pytest, coverage 85.74%, ruff/mypy/eslint/prettier/tsc/Vite build. Ảnh: `frontend_screenshot.png`, `frontend_mobile.png`.
+- Lighthouse snapshot desktop: Accessibility **100**, Best Practices **100**, SEO **100**; sửa contrast của muted text/nav accessible name và thêm `frontend/public/robots.txt`.
+- Còn chờ: public deploy Render/Netlify, benchmark 50 ops / 25 workers, xác nhận site cho Module 6–9. Snapshot vẫn chỉ lưu trong browser.

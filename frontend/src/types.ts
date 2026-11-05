@@ -1,5 +1,7 @@
 export type ScenarioKey = "A" | "B";
 export type ViewKey = ScenarioKey | "custom";
+export type SectionKey =
+  "overview" | "balance" | "capacity" | "actuals" | "time-study" | "solver";
 
 export type SamBasis = "INCLUDES_ALLOWANCE" | "EXCLUDES_ALLOWANCE";
 export type StationStatus = "bottleneck" | "watch" | "normal" | "underutilized";

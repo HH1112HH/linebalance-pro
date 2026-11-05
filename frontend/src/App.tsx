@@ -1,15 +1,17 @@
 import { useEffect, useState } from "react";
 import ActualsPanel from "./components/ActualsPanel";
-import BaselinePanel from "./components/BaselinePanel";
+import BalanceSection from "./components/BalanceSection";
 import FormsPanel from "./components/FormsPanel";
-import Header from "./components/Header";
-import KpiGrid from "./components/KpiGrid";
 import MetadataPanel from "./components/MetadataPanel";
+import OverviewMetrics from "./components/OverviewMetrics";
+import PageHeader from "./components/PageHeader";
 import PlanningPanel from "./components/PlanningPanel";
-import ScenarioBar, { type ScenarioMeta } from "./components/ScenarioBar";
+import Sidebar from "./components/Sidebar";
 import SnapshotsPanel from "./components/SnapshotsPanel";
-import StationTable from "./components/StationTable";
 import TaktPanel from "./components/TaktPanel";
+import TargetHealthPanel from "./components/TargetHealthPanel";
+import TimeStudyGuide from "./components/TimeStudyGuide";
+import Topbar, { type ScenarioMeta } from "./components/Topbar";
 import WorkloadPanel from "./components/WorkloadPanel";
 import { exportWorkbook, getHealth, runOptimizer } from "./api";
 import {
@@ -25,6 +27,7 @@ import type {
   OptimizeResult,
   SampleRequest,
   ScenarioKey,
+  SectionKey,
   Snapshot,
   ViewKey,
 } from "./types";
@@ -38,8 +41,6 @@ const SCENARIO_META: Record<ScenarioKey, ScenarioMeta> = {
     code: "A",
     title: "Stretch",
     target: SAMPLE_RESULT_A.kpis?.target_qty ?? 420,
-    availableWorkers: SAMPLE_REQUEST_A.config.max_workers ?? 24,
-    bottleneck: SAMPLE_RESULT_A.kpis?.bottleneck_load_sec ?? 58,
     workersUsed: SAMPLE_RESULT_A.kpis?.workers_used ?? 23,
     meetsTarget: SAMPLE_RESULT_A.kpis?.meets_target ?? false,
   },
@@ -47,8 +48,6 @@ const SCENARIO_META: Record<ScenarioKey, ScenarioMeta> = {
     code: "B",
     title: "Feasible",
     target: SAMPLE_RESULT_B.kpis?.target_qty ?? 400,
-    availableWorkers: SAMPLE_REQUEST_B.config.max_workers ?? 26,
-    bottleneck: SAMPLE_RESULT_B.kpis?.bottleneck_load_sec ?? 56,
     workersUsed: SAMPLE_RESULT_B.kpis?.workers_used ?? 25,
     meetsTarget: SAMPLE_RESULT_B.kpis?.meets_target ?? true,
   },
@@ -63,6 +62,7 @@ const SCENARIO_DATA: Record<
 };
 
 export default function App() {
+  const [section, setSection] = useState<SectionKey>("overview");
   const [view, setView] = useState<ViewKey>("A");
   const [request, setRequest] = useState<SampleRequest>(() => clone(SAMPLE_REQUEST_A));
   const [result, setResult] = useState<OptimizeResult>(() => clone(SAMPLE_RESULT_A));
@@ -88,6 +88,11 @@ export default function App() {
       cancelled = true;
     };
   }, []);
+
+  function selectSection(next: SectionKey) {
+    setSection(next);
+    window.scrollTo({ top: 0, behavior: "auto" });
+  }
 
   function selectScenario(key: ScenarioKey) {
     const data = SCENARIO_DATA[key];
@@ -193,143 +198,233 @@ export default function App() {
     }
   }
 
-  const kpis = result.kpis;
   const samBasisLabel =
     result.sam_basis === "INCLUDES_ALLOWANCE"
       ? "SAM includes allowance"
       : `SAM excludes allowance (+${formatNumber(result.allowance_applied_pct * 100, 1)}%)`;
+  const statusTone =
+    result.status === "OPTIMAL"
+      ? "status-optimal"
+      : result.status === "FEASIBLE_LIMIT"
+        ? "status-watch"
+        : "status-bottleneck";
+  const formKey = `${view}-${activeSnapshot?.id ?? "working"}`;
 
   return (
-    <div id="top" className="app">
-      <Header health={health} healthError={healthError} />
+    <div className="app-shell">
+      <Sidebar
+        active={section}
+        health={health}
+        healthError={healthError}
+        onSelect={selectSection}
+      />
 
-      <main className="page">
-        <ScenarioBar
-          active={view}
+      <div className="workspace">
+        <Topbar
+          section={section}
+          view={view}
           snapshotName={activeSnapshot?.name ?? null}
           scenarios={SCENARIO_META}
-          onSelect={selectScenario}
+          health={health}
+          healthError={healthError}
+          solving={solving}
+          exporting={exporting}
+          hasSolution={result.has_solution}
+          onSelectScenario={selectScenario}
+          onRerun={handleRerun}
+          onExport={handleExport}
         />
 
-        <section id="dashboard" className="summary-band">
-          <div className="summary-copy">
-            <span className="eyebrow">Line overview</span>
-            <h1>
-              {result.line_name} <span className="h1-dot">·</span> {result.style_code}
-            </h1>
-            <p>
-              {result.shift_id} · {formatNumber(request.config.shift_minutes, 0)} min
-              shift − {formatNumber(request.config.break_minutes, 0)} min break ·{" "}
-              {request.config.working_days} working days · {samBasisLabel}
-            </p>
-          </div>
-          <div className="summary-actions">
-            <span
-              className={cx(
-                "status-pill status-large",
-                result.status === "OPTIMAL"
-                  ? "status-optimal"
-                  : result.status === "FEASIBLE_LIMIT"
-                    ? "status-watch"
-                    : "status-bottleneck",
-              )}
-            >
-              {result.status}
-            </span>
-            <button
-              type="button"
-              className="primary-button"
-              onClick={handleRerun}
-              disabled={solving}
-            >
-              {solving ? "Solving with HiGHS…" : "Re-run optimizer"}
-            </button>
-            <button
-              type="button"
-              className="secondary-button"
-              onClick={handleExport}
-              disabled={exporting || !result.has_solution}
-            >
-              {exporting ? "Building XLSX…" : "Export XLSX"}
-            </button>
-          </div>
-        </section>
+        <main className="page">
+          {notice || solveError ? (
+            <div className="content-alerts">
+              {notice ? (
+                <div className="notice">
+                  <span>{notice}</span>
+                  <button
+                    type="button"
+                    className="alert-close"
+                    aria-label="Dismiss notice"
+                    onClick={() => setNotice(null)}
+                  >
+                    ×
+                  </button>
+                </div>
+              ) : null}
+              {solveError ? (
+                <div className="error-banner" role="alert">
+                  <span>{solveError}</span>
+                  <button
+                    type="button"
+                    className="alert-close"
+                    aria-label="Dismiss error"
+                    onClick={() => setSolveError(null)}
+                  >
+                    ×
+                  </button>
+                </div>
+              ) : null}
+            </div>
+          ) : null}
 
-        {notice ? <div className="notice">{notice}</div> : null}
-        {solveError ? (
-          <div className="error-banner" role="alert">
-            {solveError}
-          </div>
-        ) : null}
+          {section === "overview" ? (
+            <div className="section-stack">
+              <PageHeader
+                eyebrow={`Shift cockpit · ${request.config.shift_name}`}
+                title={
+                  <>
+                    {result.line_name} <span className="h1-dot">·</span>{" "}
+                    {result.style_code}
+                  </>
+                }
+                description={`${result.shift_id} · ${formatNumber(
+                  request.config.shift_minutes,
+                  0,
+                )} min shift − ${formatNumber(
+                  request.config.break_minutes,
+                  0,
+                )} min break · ${request.config.working_days} working days · ${samBasisLabel}`}
+                actions={
+                  <span className={cx("status-pill status-large", statusTone)}>
+                    {result.status}
+                  </span>
+                }
+              />
 
-        <KpiGrid result={result} />
+              <OverviewMetrics result={result} />
 
-        <div id="takt">
-          <TaktPanel result={result} />
-        </div>
+              <div className="overview-grid">
+                <TaktPanel result={result} compact />
+                <TargetHealthPanel result={result} />
+              </div>
 
-        <div className="grid-two wide-left">
-          <WorkloadPanel result={result} baselineStations={BASELINE_STATIONS} />
-          <BaselinePanel result={result} />
-        </div>
+              <WorkloadPanel
+                result={result}
+                baselineStations={BASELINE_STATIONS}
+                compact
+                onViewAll={() => selectSection("balance")}
+              />
+            </div>
+          ) : null}
 
-        <div className="grid-two">
-          <PlanningPanel result={result} />
-          <ActualsPanel actuals={result.actuals_analysis} />
-        </div>
+          {section === "balance" ? (
+            <div className="section-stack">
+              <PageHeader
+                eyebrow="Balance engineering"
+                title="Line balance"
+                description="Station loads, worker assignment and the synthetic before/after delta. Bar length is planning SAM, not machine utilization."
+              />
+              <BalanceSection result={result} baselineStations={BASELINE_STATIONS} />
+            </div>
+          ) : null}
 
-        <div id="forms">
-          <FormsPanel
-            key={`${view}-${activeSnapshot?.id ?? "working"}`}
-            request={request}
-            operations={request.operations}
-            currentAnalysis={result.actuals_analysis}
-            onApply={handleApply}
-          />
-        </div>
+          {section === "capacity" ? (
+            <div className="section-stack">
+              <PageHeader
+                eyebrow="Planning"
+                title="Capacity & people"
+                description="Bottleneck capacity, machine coverage and headcount control. Theoretical capacity ignores precedence, skills and balance."
+              />
+              <PlanningPanel result={result} />
+            </div>
+          ) : null}
 
-        <div className="grid-two">
-          <StationTable result={result} />
-          <div id="run">
-            <MetadataPanel result={result} />
-          </div>
-        </div>
+          {section === "actuals" ? (
+            <div className="section-stack">
+              <PageHeader
+                eyebrow="Shop floor"
+                title="Actuals"
+                description="Read one shift snapshot and log production or downtime. Inputs refresh the actuals analysis through the API; re-run only when method or SAM changes."
+              />
+              <div className="page-grid wide-left">
+                <ActualsPanel actuals={result.actuals_analysis} />
+                <FormsPanel
+                  key={`actuals-${formKey}`}
+                  mode="actuals"
+                  request={request}
+                  operations={request.operations}
+                  currentAnalysis={result.actuals_analysis}
+                  onApply={handleApply}
+                />
+              </div>
+            </div>
+          ) : null}
 
-        <SnapshotsPanel
-          snapshots={snapshots}
-          activeId={activeSnapshot?.id ?? null}
-          onSave={handleSaveSnapshot}
-          onLoad={handleLoadSnapshot}
-          onDelete={handleDeleteSnapshot}
-        />
+          {section === "time-study" ? (
+            <div className="section-stack">
+              <PageHeader
+                eyebrow="Industrial engineering"
+                title="Time study"
+                description="Observed, normal and standard time for human work. This workflow produces a draft record only; approved SAM remains the planning input."
+              />
+              <div className="page-grid wide-left">
+                <FormsPanel
+                  key={`time-study-${formKey}`}
+                  mode="time-study"
+                  request={request}
+                  operations={request.operations}
+                  currentAnalysis={result.actuals_analysis}
+                  onApply={handleApply}
+                />
+                <TimeStudyGuide />
+              </div>
+            </div>
+          ) : null}
 
-        <section className="closing-note">
-          <div>
-            <span className="eyebrow">What this demo proves</span>
-            <h2>Balance the line. Then prove the constraint.</h2>
-          </div>
-          <p>
-            The optimizer uses a two-stage lexicographic MILP: minimize workers, then
-            minimize the bottleneck. A result is labelled <strong>OPTIMAL</strong> only
-            when both stages are proven. Capacity uses the bottleneck, not theoretical
-            HC × SAM. Target 420 is not claimed when the bottleneck cannot support it.
-          </p>
-          <p className="closing-meta">
-            {kpis
-              ? `${kpis.workers_used} workers · ${formatNumber(kpis.bottleneck_load_sec, 1)}s bottleneck · ${formatNumber(kpis.capacity_per_shift, 1)} pcs/shift · ${formatNumber(kpis.target_achievement_pct, 2)}% of target`
-              : "No feasible KPI result."}
-          </p>
-        </section>
-      </main>
+          {section === "solver" ? (
+            <div className="section-stack">
+              <PageHeader
+                eyebrow="Run provenance"
+                title="Solver & data"
+                description="How this result was produced, what the status means and where local snapshots live."
+              />
+              <div className="page-grid">
+                <MetadataPanel result={result} />
+                <SnapshotsPanel
+                  snapshots={snapshots}
+                  activeId={activeSnapshot?.id ?? null}
+                  onSave={handleSaveSnapshot}
+                  onLoad={handleLoadSnapshot}
+                  onDelete={handleDeleteSnapshot}
+                />
+              </div>
+              <section className="policy-strip" aria-label="Data and status policy">
+                <article>
+                  <span className="eyebrow">Data policy</span>
+                  <strong>Synthetic only</strong>
+                  <p>
+                    No HBI production data. The sample baseline is a current-state
+                    input, not an optimizer output.
+                  </p>
+                </article>
+                <article>
+                  <span className="eyebrow">Status contract</span>
+                  <strong>Proof before OPTIMAL</strong>
+                  <p>
+                    OPTIMAL is only claimed when the lexicographic proof is true.
+                    Otherwise the run is labelled FEASIBLE_LIMIT.
+                  </p>
+                </article>
+                <article>
+                  <span className="eyebrow">Snapshots</span>
+                  <strong>This browser only</strong>
+                  <p>
+                    There is no server-side scenario write API. Delete old snapshots to
+                    free localStorage.
+                  </p>
+                </article>
+              </section>
+            </div>
+          ) : null}
+        </main>
 
-      <footer className="site-footer">
-        <span>
-          LineBalance Pro · synthetic garment IE demo · not HBI production data
-        </span>
-        <span>
-          Architecture A · React + FastAPI + PuLP/HiGHS · 40 operations · 24–26 workers
-        </span>
-      </footer>
+        <footer className="site-footer">
+          <span>
+            LineBalance Pro · synthetic garment IE demo · not HBI production data
+          </span>
+          <span>React + FastAPI + PuLP/HiGHS · 40 operations · 24–26 workers</span>
+        </footer>
+      </div>
     </div>
   );
 }

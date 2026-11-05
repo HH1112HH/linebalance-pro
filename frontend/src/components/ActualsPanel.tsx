@@ -16,7 +16,7 @@ export default function ActualsPanel({ actuals }: Props) {
           </div>
         </div>
         <div className="empty-state">
-          No actuals supplied. Add a shift snapshot in the form below to calculate
+          No actuals supplied. Log a production snapshot in the input panel to calculate
           achievement and labor efficiency.
         </div>
       </section>
