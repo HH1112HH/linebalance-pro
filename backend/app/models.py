@@ -564,6 +564,7 @@ class OptimizeResponse(BaseModel):
 class ExportPayload(BaseModel):
     request: OptimizeRequest
     result: OptimizeResponse
+    language: Literal["en", "vi"] = "en"
 
 
 class ScenarioSaveRequest(BaseModel):

@@ -60,7 +60,7 @@ const EN = {
     "Date-range filtering is unavailable because this API has no dated production history.",
   "topbar.reportContext": "Synthetic report context and scenario selection",
   "report.exportHelp":
-    "Download the current request, result, KPI and comparison as an XLSX workbook.",
+    "Download the current request, result, KPI and comparison as an XLSX workbook in the selected UI language.",
   "line.sample": "Line A — Basic Tee",
   "line.sampleFeasible": "Line A — Basic Tee · feasible target 400",
   "shift.sample": "Shift {number}",
@@ -123,7 +123,8 @@ const EN = {
   "notice.solverStatus": "Solver returned {status}. Review diagnostics and inputs.",
   "notice.applied":
     "Shop-floor input applied to the dashboard. Re-run the optimizer only if method, SAM or constraints changed.",
-  "notice.export": "XLSX export generated from the current request and result.",
+  "notice.export":
+    "XLSX workbook generated from the current request and result in English.",
   "notice.snapshotSaved": 'Snapshot "{name}" saved in this browser.',
   "notice.snapshotLoaded": 'Loaded snapshot "{name}".',
   "error.snapshotSave":
@@ -578,6 +579,7 @@ const EN = {
   "policy.snapshot.title": "This browser only",
   "policy.snapshot.body":
     "There is no server-side scenario write API. Delete old snapshots to free localStorage.",
+  "footer.authorLabel": "Built by",
   "footer.left":
     "LineBalance Pro · synthetic garment IE demo · not HBI production data",
   "footer.right":
@@ -592,7 +594,7 @@ const VI: Record<MessageKey, string> = {
   "nav.overview.hint": "Buồng lái",
   "nav.balance.label": "Cân bằng chuyền",
   "nav.balance.short": "Cân bằng",
-  "nav.balance.hint": "Biểu đồ tải trạm & sơ đồ",
+  "nav.balance.hint": "Biểu đồ & sơ đồ",
   "nav.capacity.label": "Năng lực & nhân sự",
   "nav.capacity.short": "Năng lực",
   "nav.capacity.hint": "Nhân lực & máy",
@@ -634,7 +636,7 @@ const VI: Record<MessageKey, string> = {
     "Chưa thể lọc theo ngày vì dịch vụ chưa có dữ liệu sản xuất theo ngày.",
   "topbar.reportContext": "Ngữ cảnh báo cáo và lựa chọn kịch bản",
   "report.exportHelp":
-    "Tải bảng tính gồm dữ liệu đầu vào, kết quả, chỉ số và phần so sánh.",
+    "Tải bảng tính gồm dữ liệu đầu vào, kết quả, chỉ số và phần so sánh, theo ngôn ngữ giao diện đang chọn.",
   "line.sample": "Chuyền A — Áo thun cơ bản",
   "line.sampleFeasible": "Chuyền A — Áo thun cơ bản · phương án khả thi 400 sản phẩm",
   "shift.sample": "Ca {number}",
@@ -698,7 +700,8 @@ const VI: Record<MessageKey, string> = {
     "Lần tối ưu có trạng thái {status}. Hãy kiểm tra dữ liệu và các cảnh báo.",
   "notice.applied":
     "Đã áp dụng dữ liệu hiện trường. Chỉ tối ưu lại khi phương pháp, định mức hoặc ràng buộc thay đổi.",
-  "notice.export": "Đã tạo bảng tính từ dữ liệu đầu vào và kết quả hiện tại.",
+  "notice.export":
+    "Đã tạo bảng tính từ dữ liệu đầu vào và kết quả hiện tại bằng tiếng Việt.",
   "notice.snapshotSaved": 'Đã lưu phương án "{name}" trong trình duyệt này.',
   "notice.snapshotLoaded": 'Đã mở bản lưu "{name}".',
   "error.snapshotSave":
@@ -727,7 +730,7 @@ const VI: Record<MessageKey, string> = {
   "metric.lbe.foot": "Định mức kế hoạch / (công nhân × nút cổ chai)",
   "metric.workers.label": "Công nhân trên chuyền",
   "metric.workers.delta": "{value} so với hiện trạng {base}",
-  "metric.workers.foot": "Một công nhân mỗi trạm",
+  "metric.workers.foot": "Mỗi trạm một công nhân",
   "metric.noBaseline": "Không có dữ liệu hiện trạng tổng hợp",
   "metric.capacity.label": "Năng lực / ca",
   "metric.capacity.short": "Thiếu {value} sản phẩm so với mục tiêu",
@@ -736,7 +739,7 @@ const VI: Record<MessageKey, string> = {
   "metric.capacity.delta": "{value} so với hiện trạng · theo giới hạn nút cổ chai",
   "metric.workstations.label": "Trạm làm việc",
   "metric.workstations.foot": "Số trạm đang hoạt động trong phương án",
-  "metric.idle.label": "Thời gian nhàn theo mô hình",
+  "metric.idle.label": "Thời gian nhàn rỗi theo mô hình",
   "metric.idle.note": "Tổng so với nhịp hiệu dụng · không phải thời gian nhàn thực tế",
   "metric.actualOutput.label": "Sản lượng thực tế",
   "metric.actualOutput.period": "Thực tế tổng hợp {days} ngày",
@@ -756,7 +759,7 @@ const VI: Record<MessageKey, string> = {
   "takt.scale": "Độ dài cột thể hiện tải nút cổ chai trên thang 0–{value} giây.",
   "takt.demand.label": "Nhịp theo nhu cầu",
   "takt.effective.label": "Nhịp hiệu dụng",
-  "takt.gap.label": "Chênh lệch nhịp",
+  "takt.gap.label": "Chênh lệch tải",
   "takt.footnote":
     "Nhịp theo nhu cầu thể hiện yêu cầu khách hàng; nhịp hiệu dụng đã tính {pct} hiệu suất kế hoạch trước khi so với tải nút cổ chai.",
   "takt.demand.body":
@@ -773,7 +776,7 @@ const VI: Record<MessageKey, string> = {
   "target.empty": "Chưa có chỉ số cho lần tối ưu này.",
   "target.met": "Đạt mục tiêu",
   "target.gap": "Còn thiếu",
-  "target.of": "so với mục tiêu",
+  "target.of": "mục tiêu",
   "target.target": "Mục tiêu",
   "target.capacity": "Năng lực",
   "target.short": "Thiếu",
@@ -830,7 +833,7 @@ const VI: Record<MessageKey, string> = {
   "station.col.status": "Trạng thái",
   "station.col.operationsCount": "Công đoạn",
   "station.col.takt": "Nhịp hiệu dụng",
-  "station.col.idle": "Thời gian nhàn so với nhịp hiệu dụng",
+  "station.col.idle": "Thời gian nhàn rỗi so với nhịp hiệu dụng",
   "station.searchAria": "Tìm trạm làm việc",
   "station.searchPlaceholder": "Trạm, công nhân hoặc công đoạn…",
   "station.filter.status": "Trạng thái",
@@ -869,7 +872,7 @@ const VI: Record<MessageKey, string> = {
   "baseline.row.stations": "Số trạm sử dụng",
   "baseline.row.stations.note": "Trạm thực tế có công việc",
   "baseline.row.workers": "Công nhân trên chuyền",
-  "baseline.row.workers.note": "Một công nhân mỗi trạm",
+  "baseline.row.workers.note": "Mỗi trạm một công nhân",
   "baseline.row.bottleneck": "Tải nút cổ chai",
   "baseline.row.bottleneck.note": "Trạm nút cổ chai: {before} → {after}",
   "baseline.row.lbe": "Hiệu suất cân bằng",
@@ -891,7 +894,7 @@ const VI: Record<MessageKey, string> = {
   "baseline.col.after": "Tối ưu",
   "baseline.col.delta": "Chênh lệch",
   "baseline.footnote":
-    "Hiện trạng là cách bố trí lần lượt trên dữ liệu tổng hợp, không phải kết quả của bộ tối ưu hóa. Chênh lệch = phương án tối ưu trừ hiện trạng; với tải nút cổ chai, thời gian nhàn và quá tải, chênh lệch âm là cải thiện.",
+    "Hiện trạng là cách bố trí lần lượt trên dữ liệu tổng hợp, không phải kết quả của bộ tối ưu hóa. Chênh lệch = phương án tối ưu trừ hiện trạng; với tải nút cổ chai, thời gian nhàn rỗi và quá tải, chênh lệch âm là cải thiện.",
 
   "planning.eyebrow": "Năng lực & nhân sự",
   "planning.title": "Tóm tắt hoạch định",
@@ -945,13 +948,13 @@ const VI: Record<MessageKey, string> = {
   "actuals.period.days": "{days} ngày",
   "actuals.output": "Sản lượng",
   "actuals.target": "mục tiêu {value} sản phẩm",
-  "actuals.achievement": "Mức đạt sản xuất",
+  "actuals.achievement": "Mức đạt sản lượng",
   "actuals.actualTarget": "thực tế / mục tiêu",
   "actuals.laborEfficiency": "Hiệu suất lao động thực tế",
   "actuals.samBasis": "theo định mức kế hoạch",
   "actuals.downtime": "Thời gian dừng",
   "actuals.ofPlanned": "{pct} so với thời gian kế hoạch",
-  "actuals.byCategory": "Dừng máy theo nhóm",
+  "actuals.byCategory": "Thời gian dừng theo nhóm",
   "actuals.summaryDetail": "Số liệu tổng hợp so với chi tiết sự kiện",
   "actuals.noDowntime": "Chưa ghi nhận sự kiện dừng.",
   "actuals.note.missingLabor":
@@ -978,17 +981,17 @@ const VI: Record<MessageKey, string> = {
   "forms.logEvent": "Ghi sự kiện trong ca",
   "forms.actualsFormAria": "Biểu mẫu thực tế",
   "forms.tab.production": "Sản xuất",
-  "forms.tab.downtime": "Dừng máy",
+  "forms.tab.downtime": "Thời gian dừng",
   "forms.production.title": "Sản xuất thực tế",
   "forms.production.note": "Một bản ghi cho một ca. Thay thế số liệu mẫu 5 ngày.",
   "forms.field.target": "Sản lượng mục tiêu (sản phẩm)",
   "forms.field.actualOutput": "Sản lượng thực tế (sản phẩm)",
   "forms.field.laborMinutes": "Phút lao động trực tiếp",
   "forms.field.attendance": "Số công nhân có mặt",
-  "forms.field.downtimeMinutes": "Số phút dừng máy",
+  "forms.field.downtimeMinutes": "Số phút dừng",
   "forms.calculating": "Đang tính…",
   "forms.applyActuals": "Áp dụng thực tế",
-  "forms.downtime.title": "Sự kiện dừng máy",
+  "forms.downtime.title": "Sự kiện dừng",
   "forms.downtime.note": "Ghi một tổn thất. Thời lượng được cộng vào tổng ca.",
   "forms.field.start": "Bắt đầu",
   "forms.field.end": "Kết thúc",
@@ -998,7 +1001,7 @@ const VI: Record<MessageKey, string> = {
   "forms.field.note": "Ghi chú",
   "forms.defaultDowntimeNote": "vd. Đứt chỉ trên máy vắt sổ",
   "forms.lineLevel": "Toàn chuyền",
-  "forms.addDowntime": "Thêm dừng máy",
+  "forms.addDowntime": "Thêm sự kiện dừng",
   "forms.latestEvents": "Sự kiện gần nhất",
   "forms.timeStudy.title": "Nghiên cứu thời gian",
   "forms.timeStudy.note":
@@ -1022,7 +1025,7 @@ const VI: Record<MessageKey, string> = {
     "Hãy chọn công đoạn và nhập thời gian quan sát lớn hơn 0.",
   "forms.mini.achievement": "Mức đạt",
   "forms.mini.labor": "Hiệu suất lao động",
-  "forms.mini.downtime": "Dừng máy",
+  "forms.mini.downtime": "Thời gian dừng",
 
   "guide.eyebrow": "Nguyên tắc phương pháp",
   "guide.title": "Cách xây dựng thời gian chuẩn",
@@ -1043,7 +1046,7 @@ const VI: Record<MessageKey, string> = {
   "guide.step4.body":
     "Màn hình này chỉ ghi bản nháp. Định mức đã duyệt là giá trị có thẩm quyền; bộ tối ưu hóa không tự cập nhật.",
   "guide.step4.code": "Định mức đã duyệt → đầu vào hoạch định",
-  "guide.warning.title": "Không đánh hệ số cho thời gian máy tự động.",
+  "guide.warning.title": "Không áp hệ số đánh giá cho thời gian máy tự động.",
   "guide.warning.body":
     "Phần tử hỗn hợp phải được tách trước, nếu không hệ số đánh giá sẽ thổi phồng thời gian máy và làm sai định mức.",
 
@@ -1081,7 +1084,7 @@ const VI: Record<MessageKey, string> = {
   "warning.machineCapacityShared":
     "Năng lực máy hiện có phải dùng chung cho nhiều công đoạn; cần xem lại cách phân bổ máy.",
   "warning.maxWorkersClamped":
-    "Giới hạn yêu cầu {requested} công nhân vượt số người khả dụng ({available}); hệ thống đã giảm về mức khả dụng.",
+    "Yêu cầu {requested} công nhân vượt số người khả dụng ({available}); hệ thống đã giảm về mức khả dụng.",
   "warning.operationOverEffectiveTakt":
     "Công đoạn {operation} vượt nhịp hiệu dụng; không thể đạt mục tiêu năng lực khi bố trí riêng tại một trạm.",
   "warning.operationOverDemandTakt":
@@ -1155,6 +1158,7 @@ const VI: Record<MessageKey, string> = {
   "policy.snapshot.title": "Chỉ trong trình duyệt này",
   "policy.snapshot.body":
     "Không hỗ trợ lưu kịch bản trên máy chủ. Hãy xóa bản lưu cũ để giải phóng bộ nhớ trình duyệt.",
+  "footer.authorLabel": "Người làm",
   "footer.left":
     "LineBalance Pro · phần mềm minh họa kỹ thuật công nghiệp ngành may · không phải dữ liệu sản xuất HBI",
   "footer.right":
@@ -1451,9 +1455,10 @@ export function apiErrorMessage(
   t: Translate,
 ): string {
   const normalized = message.toLowerCase();
-  const networkError = /failed to fetch|network error|connection refused|offline/.test(
-    normalized,
-  );
+  const networkError =
+    /failed to fetch|network error|connection refused|offline|^http 5\d\d$/.test(
+      normalized,
+    );
   if (language === "en") {
     return networkError ? t("error.apiUnavailable") : message;
   }

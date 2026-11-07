@@ -30,11 +30,11 @@ LineBalance Pro turns a garment style's operation routing, SAM, skill matrix, an
 | **Baseline comparison** | Synthetic current-state vs. optimized line: workers, stations, bottleneck, LBE, capacity, target achievement |
 | **Production actuals** | Output achievement, actual labor efficiency, downtime by category, loss breakdown |
 | **Time study** | Observed time aggregation with allowance and performance rating — human work only |
-| **Export & snapshots** | XLSX workbook export; browser-local scenario snapshots |
+| **Export & snapshots** | XLSX workbook export in the active EN/VI UI language; browser-local scenario snapshots |
 | **Demo scenarios** | Scenario A (stretch target 420) and Scenario B (feasible target 400) |
 | **Analysis workspace** | English/Vietnamese switch, station load chart with takt references, bottleneck review, and searchable/filterable/sortable station assignment table |
 
-The current sample contains one synthetic line and shift, not dated production history. Line/shift are shown as fixed report context and date-range filtering is intentionally unavailable; scenario A/B selection is interactive. XLSX is the supported report export.
+The current sample contains one synthetic line and shift, not dated production history. Line/shift are shown as fixed report context and date-range filtering is intentionally unavailable; scenario A/B selection is interactive. XLSX is the supported report export and follows the active English/Vietnamese language, including sheet names, headers, KPI labels, statuses, warning text, and the file suffix (`_en`/`_vi`).
 
 ---
 
@@ -56,12 +56,13 @@ FastAPI · Pydantic v2
         └─ excel.py       XLSX export
 ```
 
-The solver runs a **two-stage lexicographic MILP**:
+The solver runs a **two-stage lexicographic MILP**. The default
+`min_bottleneck` mode minimizes the bottleneck load first, then the number of
+used stations/workers with that bottleneck held fixed. The `min_workers` mode
+uses the opposite order: workers first, then the bottleneck.
 
-1. Minimize the number of workers (stations).
-2. With that worker count fixed, minimize the bottleneck station load.
-
-`OPTIMAL` is reported only when both stages are proven within the time limit.
+`OPTIMAL` is reported only when both stages are proven within the time limit,
+and the run metadata records the objective value of each stage.
 
 ### Sample benchmark
 
@@ -73,6 +74,18 @@ Synthetic 40-operation line, 60 s solver limit, 2 solver threads:
 | B — feasible | 25 used (26 available) | `OPTIMAL` | 56.0 s | 25 | 409.8 | 400 met |
 
 Target 420 requires a bottleneck of at most 54.64 s. With 24 available workers (23 used), 58.0 s is the **proven optimum**, not a timeout. Results depend on hardware, solver version, and the configured time limit.
+
+### 50-operation scaling benchmark
+
+Three synthetic 50-operation / 25-worker cases, 60 s limit, local Windows run:
+
+| Case | Status | Bottleneck | Capacity | Proven | Solve time |
+|---|---|---:|---:|---|---:|
+| `balanced_50x25` | `OPTIMAL` | 50.0 s | 459.0 | yes | 1.339 s |
+| `extended_50x25` | `OPTIMAL` | 64.0 s | 358.6 | yes | 26.313 s |
+| `stress_50x25` | `FEASIBLE_LIMIT` | 64.0 s | 358.6 | no | 60.213 s |
+
+`stress_50x25` hit the time limit and kept a feasible incumbent; it is **not** optimal. Full protocol, caveats, and raw JSON: [benchmarks/RESULTS.md](benchmarks/RESULTS.md).
 
 ---
 
@@ -157,7 +170,7 @@ CI (`.github/workflows/ci.yml`) runs two parallel jobs on every push to `main` a
 | `GET` | `/api/sample/feasible` | Scenario B request (feasible target 400) |
 | `GET` | `/api/samples` | Both sample requests |
 | `POST` | `/api/optimize` | Run the MILP and return stations, KPIs, planning, and baseline |
-| `POST` | `/api/export` | Build an XLSX workbook |
+| `POST` | `/api/export` | Build an XLSX workbook; `language` = `en` or `vi` (default `en`) |
 | `POST` | `/api/actuals/analyze` | Analyze production actuals and downtime |
 | `POST` | `/api/time-study/calculate` | Aggregate a time study |
 

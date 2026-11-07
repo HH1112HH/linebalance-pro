@@ -61,6 +61,7 @@ export function calculateTimeStudy(payload: TimeStudyRecord): Promise<TimeStudyR
 export async function exportWorkbook(payload: {
   request: SampleRequest;
   result: OptimizeResult;
+  language: "en" | "vi";
 }): Promise<Blob> {
   const response = await fetch(`${API_BASE}/api/export`, jsonInit(payload));
   if (!response.ok) {

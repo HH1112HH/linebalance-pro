@@ -179,13 +179,18 @@ export default function BaselinePanel({ result }: Props) {
                     <span className="row-label">{row.label}</span>
                     <span className="row-note">{row.note}</span>
                   </td>
-                  <td className="num">{formatValue(row.before, row)}</td>
-                  <td className="num strong">{formatValue(row.after, row)}</td>
+                  <td className="num" data-label={t("baseline.col.before")}>
+                    {formatValue(row.before, row)}
+                  </td>
+                  <td className="num strong" data-label={t("baseline.col.after")}>
+                    {formatValue(row.after, row)}
+                  </td>
                   <td
                     className={cx(
                       "num delta",
                       flat ? "delta-flat" : good ? "delta-good" : "delta-bad",
                     )}
+                    data-label={t("baseline.col.delta")}
                   >
                     {formatDelta(row, delta, t)}
                   </td>

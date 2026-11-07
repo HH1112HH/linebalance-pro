@@ -212,9 +212,9 @@ def optimize(request: OptimizeRequest) -> OptimizeResponse:
 @app.post("/api/export")
 def export(payload: ExportPayload) -> StreamingResponse:
     content = build_workbook(payload)
-    filename = f"linebalance_{payload.request.style_code or 'plan'}.xlsx".replace(
-        " ", "_"
-    )
+    filename = (
+        f"linebalance_{payload.request.style_code or 'plan'}_{payload.language}.xlsx"
+    ).replace(" ", "_")
     return StreamingResponse(
         BytesIO(content),
         media_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",

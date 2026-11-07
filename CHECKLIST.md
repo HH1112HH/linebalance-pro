@@ -761,3 +761,19 @@ Mỗi lần chạy phải có `RunMetadata`:
 - Thuần presentation: không đổi API, Pydantic schema, `types.ts`, KPI/MILP semantics hay sample data.
 - Kiểm chứng: `scripts/verify.ps1` pass — 26 pytest, coverage 85.74%, Ruff/mypy, ESLint, Prettier, TypeScript, Vite build; `git diff --check` pass. Browser 1440/1024/768/390px không tràn ngang; console không lỗi; đã thử 6 mục, form actuals, time study, warning details, snapshot save/load/delete và error state ở cả EN/VI.
 - Ảnh cập nhật theo giao diện EN mới: `frontend_dashboard.png`, `frontend_dashboard_mobile.png`.
+
+### 2026-11-08 — Light analytics UI, mobile before/after table, localized XLSX export
+
+- Đổi dashboard sang hệ **light analytics**: nền sáng, chữ gần đen, xanh dương đậm làm màu chính, sidebar sáng; amber/red chỉ dùng cho cảnh báo. Font VI dùng **Lexend** (EN giữ **Manrope**), giữ **IBM Plex Mono** cho nhãn/số; tăng cỡ chữ nhãn nhỏ và kiểm tra contrast WCAG 4.5:1.
+- Mobile ≤520px: bảng **Trước / sau** chuyển từ bảng ngang bị cắt sang dạng card xếp dọc, mỗi chỉ số có nhãn + Hiện trạng/Tối ưu/Chênh lệch; loại bỏ tràn ngang và không cần vuốt ngang. Sửa cột tải trạm để "48.0 giây" không bị wrap; cho giá trị nhịp xuống dòng thay vì ellipsis.
+- XLSX export nhận `language: "en" | "vi"` theo UI (mặc định `en`), localize tên sheet, tiêu đề, header, nhãn KPI, trạng thái, severity, nhóm downtime, warning và ghi chú; tên file có hậu tố `_en`/`_vi`. Thêm test VI export và test parity bảng dịch.
+- Lỗi backend không chạy: HTTP 5xx rỗng được map sang thông báo "không kết nối được dịch vụ tối ưu hóa" thay vì lỗi chung.
+- Thuần presentation + export contract; không đổi KPI/MILP semantics, sample data hay công thức.
+- Kiểm chứng: `scripts/verify.ps1` pass — 30 pytest, coverage 85.04%, Ruff/mypy, ESLint, Prettier, TypeScript, Vite build. Browser 360/390/768/1024/1440px không tràn ngang; console sạch; export VI trả sheet `Tổng quan/Phân công/Tải trạm/Kỹ năng CN/Trước sau/Thực tế/Cảnh báo`, export EN giữ nguyên.
+
+### 2026-11-08 — Benchmark 50 operations / 25 workers
+
+- Thêm `benchmarks/build_cases.py`, `benchmarks/run_benchmark.py` và 3 fixture synthetic 50 operations × 25 workers; kết quả chính thức lưu tại `benchmarks/results/local_2026-11-06.json`.
+- Kết quả một lần chạy local (Windows, Python 3.14.3, PuLP 4.2.0/HiGHS 1.15.1, 60s): `balanced_50x25` — `OPTIMAL`, bottleneck 50.0s, capacity 459.0, solve 1.339s; `extended_50x25` — `OPTIMAL`, bottleneck 64.0s, capacity 358.6, solve 26.313s; `stress_50x25` — `FEASIBLE_LIMIT` / `TIME_LIMIT`, incumbent 64.0s, solve 60.213s, `lexicographic_proven=false` (**không phải optimal**).
+- `scripts/verify.ps1` và CI lint/format cả `benchmarks/`; `benchmarks/RESULTS.md` ghi protocol, cách đọc stage objective và caveat single-run/Python version.
+- Không dùng số benchmark làm cam kết production; deploy target vẫn là Python 3.12 và cần chạy lại trên môi trường gần production nếu muốn trích dẫn trong CV.

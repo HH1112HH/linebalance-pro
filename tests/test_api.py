@@ -164,7 +164,7 @@ def test_export_endpoint_returns_readable_workbook():
         "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
     )
     assert response.content[:2] == b"PK"
-    assert "linebalance_TEST-001.xlsx" in response.headers["content-disposition"]
+    assert "linebalance_TEST-001_en.xlsx" in response.headers["content-disposition"]
 
     workbook = load_workbook(BytesIO(response.content))
     assert set(workbook.sheetnames) == {
@@ -177,6 +177,44 @@ def test_export_endpoint_returns_readable_workbook():
     summary = workbook["Summary"]
     assert summary["A1"].value == "LineBalance Pro — Optimization Report"
     assert summary["B4"].value == "API test line"
+
+
+def test_export_endpoint_honors_vietnamese_language():
+    payload = _small_optimize_payload()
+    optimized = client.post("/api/optimize", json=payload)
+    assert optimized.status_code == 200
+
+    response = client.post(
+        "/api/export",
+        json={
+            "request": payload,
+            "result": optimized.json(),
+            "language": "vi",
+        },
+    )
+
+    assert response.status_code == 200
+    workbook = load_workbook(BytesIO(response.content))
+    assert set(workbook.sheetnames) == {
+        "Tổng quan",
+        "Phân công",
+        "Tải trạm",
+        "Kỹ năng CN",
+        "Cảnh báo",
+    }
+    summary = workbook["Tổng quan"]
+    assert summary["A1"].value == "LineBalance Pro — Báo cáo tối ưu hóa"
+    assert summary["A4"].value == "Chuyền"
+    assert summary["B4"].value == "API test line"
+    assert summary["A6"].value == "Trạng thái"
+
+
+def test_excel_translation_tables_are_in_sync():
+    from backend.app.excel import TEXT
+
+    assert set(TEXT["en"]) == set(TEXT["vi"])
+    assert all(value for value in TEXT["en"].values())
+    assert all(value for value in TEXT["vi"].values())
 
 
 def test_body_limit_returns_413(monkeypatch):

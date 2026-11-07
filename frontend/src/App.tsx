@@ -160,8 +160,8 @@ export default function App() {
     setExporting(true);
     setSolveError(null);
     try {
-      const blob = await exportWorkbook({ request, result });
-      downloadBlob(blob, `linebalance_${result.style_code || "plan"}.xlsx`);
+      const blob = await exportWorkbook({ request, result, language });
+      downloadBlob(blob, `linebalance_${result.style_code || "plan"}_${language}.xlsx`);
       setNotice(t("notice.export"));
     } catch (caught) {
       setSolveError(
@@ -448,13 +448,19 @@ export default function App() {
         </main>
 
         <footer className="site-footer">
-          <span>{t("footer.left")}</span>
-          <span>
-            {t("footer.right", {
-              operations: request.operations.length,
-              workers: request.workers.length,
-            })}
-          </span>
+          <div className="footer-credit">
+            <span className="footer-author-label">{t("footer.authorLabel")}</span>
+            <strong>Hồ Văn Thiên Hoàng</strong>
+            <span className="footer-note">{t("footer.left")}</span>
+          </div>
+          <div className="footer-meta">
+            <span>
+              {t("footer.right", {
+                operations: request.operations.length,
+                workers: request.workers.length,
+              })}
+            </span>
+          </div>
         </footer>
       </div>
     </div>
