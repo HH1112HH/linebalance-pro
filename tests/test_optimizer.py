@@ -113,6 +113,31 @@ def test_small_solve_respects_assignment_precedence_skill_and_machine():
     )
 
 
+@pytest.mark.parametrize(
+    ("objective", "expected_stage1", "expected_stage2"),
+    [
+        # min_bottleneck: split the 20s + 30s work, so stage 1 = 30s and
+        # stage 2 = 2 stations. It does not minimize workers first.
+        ("min_bottleneck", 30.0, 2.0),
+        # min_workers: one station absorbs all 50s, so stage 1 = 1 station
+        # and stage 2 = the 50s bottleneck.
+        ("min_workers", 1.0, 50.0),
+    ],
+)
+def test_lexicographic_metadata_matches_each_stage_objective(
+    objective: str,
+    expected_stage1: float,
+    expected_stage2: float,
+):
+    result = solve_line_balancing(small_request(objective=objective))
+
+    assert result.status == "OPTIMAL"
+    assert result.metadata is not None
+    assert result.metadata.lexicographic_proven is True
+    assert result.metadata.stage1_objective == pytest.approx(expected_stage1)
+    assert result.metadata.stage2_objective == pytest.approx(expected_stage2)
+
+
 def test_allowance_is_applied_once_in_optimizer_sam():
     result = solve_line_balancing(
         small_request(sam_basis="EXCLUDES_ALLOWANCE", allowance_pct=0.20)

@@ -4,7 +4,7 @@
   "has_solution": true,
   "solver_available": true,
   "solver_message": "HIGHS: PuLP 4.2.0 / HiGHS 1.15.1",
-  "solve_time_sec": 17.797,
+  "solve_time_sec": 25.883,
   "data_source": "synthetic-demo-only",
   "line_name": "Line A — Basic Tee",
   "style_code": "BASIC-TEE-001",
@@ -3319,7 +3319,7 @@
     ]
   },
   "metadata": {
-    "run_id": "f91e82a2-ff81-4398-a0ff-32590aadc3e6",
+    "run_id": "f89636fb-a5b0-4df1-94d2-63a89f7dc0d5",
     "app_version": "0.2.0",
     "data_version": "9f099560d091",
     "model_version": "MILP-SAM-v2.0",
@@ -3327,10 +3327,10 @@
     "objective": "min_bottleneck",
     "input_hash": "9f099560d09132051d2c3d299a6a9820dba8efdeca48be05af98b0b662bc1fe2",
     "solver_status": "OPTIMAL",
-    "solve_time_sec": 17.799,
-    "created_at": "2026-11-02T00:22:50.929289+00:00",
+    "solve_time_sec": 25.885,
+    "created_at": "2026-11-05T21:49:05.996918+00:00",
     "lexicographic_proven": true,
     "stage1_objective": 58.0,
-    "stage2_objective": 58.0
+    "stage2_objective": 23.0
   }
 }

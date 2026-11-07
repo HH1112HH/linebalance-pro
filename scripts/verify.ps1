@@ -46,13 +46,13 @@ try {
 
     Write-Host ""
     Write-Host "==> Backend lint" -ForegroundColor Cyan
-    & $python -m ruff check backend tests
+    & $python -m ruff check backend tests benchmarks
     if ($LASTEXITCODE -ne 0) {
         throw "Ruff check failed (exit $LASTEXITCODE). Run: .venv\Scripts\python.exe -m pip install -r backend\requirements-dev.txt"
     }
-    & $python -m ruff format --check backend tests
+    & $python -m ruff format --check backend tests benchmarks
     if ($LASTEXITCODE -ne 0) {
-        throw "Ruff format check failed (exit $LASTEXITCODE). Run: .venv\Scripts\python.exe -m ruff format backend tests"
+        throw "Ruff format check failed (exit $LASTEXITCODE). Run: .venv\Scripts\python.exe -m ruff format backend tests benchmarks"
     }
 
     Write-Host ""

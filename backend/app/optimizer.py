@@ -1143,8 +1143,21 @@ def _extract_solution(
     )
 
 
-def _stage_objective(req: OptimizeRequest, model: ModelVars) -> float:
-    if req.config.objective == "min_bottleneck":
+def _stage_objective(req: OptimizeRequest, model: ModelVars, *, stage: int) -> float:
+    """Return the objective value optimized by one lexicographic stage.
+
+    ``min_bottleneck`` minimizes Cmax first and the used-station count second;
+    ``min_workers`` uses the opposite order. Reporting Cmax for both stages (or
+    the station count for both stages) makes the metadata contradict the model,
+    even when the assignment itself is correct.
+    """
+    if stage not in (1, 2):
+        raise ValueError(f"Lexicographic stage must be 1 or 2, got {stage}.")
+
+    minimize_cmax = (req.config.objective == "min_bottleneck" and stage == 1) or (
+        req.config.objective == "min_workers" and stage == 2
+    )
+    if minimize_cmax:
         return round(_value(model.cmax), 6)
     return float(sum(1 for station in model.stations if _value(model.z[station]) > 0.5))
 
@@ -1205,7 +1218,7 @@ def solve_line_balancing(req: OptimizeRequest) -> OptimizeResponse:
                 solver_message,
             )
 
-        stage1_objective = _stage_objective(req, first)
+        stage1_objective = _stage_objective(req, first, stage=1)
         stage1_workers = sum(
             1 for station in first.stations if _value(first.z[station]) > 0.5
         )
@@ -1242,7 +1255,7 @@ def solve_line_balancing(req: OptimizeRequest) -> OptimizeResponse:
             if second_stats.has_solution:
                 final_model = second
                 final_status = second_status
-                stage2_objective = _stage_objective(req, second)
+                stage2_objective = _stage_objective(req, second, stage=2)
                 lexicographic_proven = (
                     first_status == "OPTIMAL" and second_status == "OPTIMAL"
                 )
