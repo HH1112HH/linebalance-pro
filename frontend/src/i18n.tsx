@@ -15,7 +15,7 @@ export type TranslationVars = Record<string, string | number>;
 const EN = {
   "nav.overview.label": "Overview",
   "nav.overview.short": "Overview",
-  "nav.overview.hint": "Cockpit",
+  "nav.overview.hint": "Dashboard",
   "nav.balance.label": "Line balance",
   "nav.balance.short": "Balance",
   "nav.balance.hint": "Yamazumi & map",
@@ -28,6 +28,12 @@ const EN = {
   "nav.timeStudy.label": "Time study",
   "nav.timeStudy.short": "Time study",
   "nav.timeStudy.hint": "Method",
+  "nav.styleSetup.label": "New style",
+  "nav.styleSetup.short": "Style",
+  "nav.styleSetup.hint": "Readiness & flow",
+  "nav.materials.label": "Material norms",
+  "nav.materials.short": "Materials",
+  "nav.materials.hint": "Usage & variance",
   "nav.solver.label": "Solver & data",
   "nav.solver.short": "Solver",
   "nav.solver.hint": "Provenance",
@@ -51,6 +57,13 @@ const EN = {
   "topbar.language": "Language",
   "topbar.english": "English",
   "topbar.vietnamese": "Vietnamese",
+  "topbar.login": "Sign in",
+  "topbar.logout": "Sign out",
+  "topbar.admin": "Admin",
+  "topbar.viewer": "Read-only",
+  "topbar.signedIn": "{user} · {role}",
+  "topbar.loginHelp":
+    "Sign in to save scenarios to the demo server. Compute and local snapshots work without an account.",
   "topbar.line": "Line",
   "topbar.shift": "Shift",
   "topbar.period": "Report period",
@@ -92,7 +105,7 @@ const EN = {
   "sidebar.healthCheck": "Health check",
   "sidebar.stack": "React · FastAPI · PuLP/HiGHS",
 
-  "app.shiftCockpit": "Shift cockpit · {shift}",
+  "app.shiftDashboard": "Shift dashboard · {shift}",
   "app.shiftSummary":
     "{shiftId} · {minutes} min shift − {break} min break · {days} working days · {samBasis}",
   "sam.includes": "SAM includes allowance",
@@ -114,19 +127,246 @@ const EN = {
   "page.timeStudy.title": "Time study",
   "page.timeStudy.description":
     "Observed, normal and standard time for human work. This workflow produces a draft record only; approved SAM remains the planning input.",
+  "page.styleSetup.eyebrow": "Style launch control",
+  "page.styleSetup.title": "New style readiness",
+  "page.styleSetup.description":
+    "Review launch gates and inspect the active routing before and after the current line assignment. This is a readiness aid, not a release approval.",
+  "page.materials.eyebrow": "Material standardization",
+  "page.materials.title": "Material usage & variance",
+  "page.materials.description":
+    "Synthetic T13 case for thread, 3M tape and binding, plus a what-if usage check. Positive variance is usage above standard; totals are cost avoidance, not Finance-verified cash saving.",
   "page.solver.eyebrow": "Run provenance",
   "page.solver.title": "Solver & data",
   "page.solver.description":
     "How this result was produced, what the status means and where local snapshots live.",
 
+  "style.dataPolicy":
+    "Synthetic portfolio workflow. Checklist updates are not stored or treated as production sign-off.",
+  "style.readiness.aria": "New style readiness checklist",
+  "style.readiness.eyebrow": "Launch gates",
+  "style.readiness.title": "Readiness checklist",
+  "style.readiness.note":
+    "Mark required gates, record an owner or evidence note, then calculate readiness. The score counts completed required items only.",
+  "style.readiness.required": "Required gate",
+  "style.readiness.status": "Status",
+  "style.readiness.evidence": "Owner / evidence / note",
+  "style.readiness.evaluate": "Evaluate readiness",
+  "style.readiness.evaluating": "Evaluating…",
+  "style.readiness.empty":
+    "No readiness evaluation yet. Complete the checklist and evaluate it.",
+  "style.readiness.resultAria": "Readiness evaluation result",
+  "style.readiness.progress": "Required gates complete",
+  "style.readiness.ready": "Ready for controlled trial",
+  "style.readiness.notReady": "Not ready for release",
+  "style.readiness.blockers": "Items to close",
+  "style.readiness.noBlockers": "No blocking items in this checklist.",
+  "style.readiness.apiError": "Could not calculate readiness. Try again.",
+  "style.item.operation_routing": "Operation routing approved",
+  "style.item.sam_approved": "SAM basis reviewed and approved",
+  "style.item.machine_ready": "Machines and attachments ready",
+  "style.item.manpower_assigned": "Manpower plan confirmed",
+  "style.item.skill_coverage": "Required skill coverage confirmed",
+  "style.item.layout_ready": "Layout and material flow reviewed",
+  "style.item.material_ready": "Materials and trims available",
+  "style.item.production_trial": "Production trial and first-piece check",
+  "style.status.NOT_STARTED": "Not started",
+  "style.status.IN_PROGRESS": "In progress",
+  "style.status.COMPLETED": "Completed",
+  "style.status.BLOCKED": "Blocked",
+  "style.flow.aria": "Operation process flow",
+  "style.flow.title": "Routing process flow",
+  "style.flow.note":
+    "Edges follow routing precedence. The optimized view adds station and worker from the current solver result.",
+  "style.flow.operationCount": "{count} operations",
+  "style.flow.routingOnly": "Routing only",
+  "style.flow.optimized": "With assignment",
+  "style.flow.loading": "Building the process flow…",
+  "style.flow.empty": "No process flow is available for this style.",
+  "style.flow.error":
+    "Could not build the process flow. Check routing inputs and retry.",
+  "style.flow.retry": "Retry flow",
+  "style.flow.routingView": "Routing view",
+  "style.flow.optimizedView": "Optimized assignment view",
+  "style.flow.sam": "SAM {seconds}s",
+  "style.flow.machine": "Machine: {machine}",
+  "style.flow.manual": "Manual operation",
+  "style.flow.qualityGate": "Quality gate",
+  "style.flow.station": "Station {station}",
+  "style.flow.worker": "Worker {worker}",
+  "style.flow.predecessors": "From: {operations}",
+  "style.flow.start": "Start of route",
+  "style.flow.mobileAria": "Process-flow operation list",
+  "style.flow.canvasAria": "Precedence process-flow diagram",
+
+  "materials.loading": "Loading the synthetic material case…",
+  "materials.error": "Could not load the material case. Check the API and retry.",
+  "materials.retry": "Retry",
+  "materials.case.aria": "Synthetic material standardization case",
+  "materials.case.eyebrow": "T13 portfolio case",
+  "materials.case.title": "Before vs after usage",
+  "materials.case.note":
+    "LINE_01 / BASIC-TEE-001 · 1,820 pcs per phase · same standard and unit cost.",
+  "materials.case.standard": "Standard cost",
+  "materials.case.standardDetail": "3 materials · same standard",
+  "materials.case.before": "Before actual",
+  "materials.case.after": "After actual",
+  "materials.case.reduction": "Excess reduction",
+  "materials.case.excess": "Excess {value}",
+  "materials.case.reductionDetail": "{value} less excess than before",
+  "materials.table.material": "Material",
+  "materials.table.standard": "Standard / pc",
+  "materials.table.before": "Before / pc",
+  "materials.table.after": "After / pc",
+  "materials.table.variance": "Variance vs standard",
+  "materials.table.beforeVar": "Before",
+  "materials.table.afterVar": "After",
+  "materials.case.footnote":
+    "After values remain above standard. The reduction is cost avoidance inside a synthetic 1,820-pc window, not verified cash saving.",
+  "materials.check.aria": "Material usage variance calculator",
+  "materials.check.eyebrow": "What-if",
+  "materials.check.title": "Usage variance check",
+  "materials.check.note":
+    "Edit actual usage or unit cost and recalculate. Defaults are the synthetic after-pilot values.",
+  "materials.check.pcs": "Inspected pcs",
+  "materials.check.material": "Material",
+  "materials.check.actual": "Actual qty / pc",
+  "materials.check.unitCost": "Unit cost (VND)",
+  "materials.check.standard": "Standard / pc",
+  "materials.check.calculate": "Calculate variance",
+  "materials.check.calculating": "Calculating…",
+  "materials.check.empty": "No what-if calculation yet.",
+  "materials.check.pcsError": "Inspected pcs must be a whole number above zero.",
+  "materials.check.valuesError":
+    "Actual usage must be zero or above, and unit cost must be above zero.",
+  "materials.check.error":
+    "Could not calculate material variance. Check input values and retry.",
+  "materials.result.standard": "Standard cost",
+  "materials.result.actual": "Actual cost",
+  "materials.result.variance": "Variance",
+  "materials.result.excessCount": "{count} of {total} materials above standard",
+  "materials.result.variancePct": "{value} vs standard",
+  "materials.result.above": "Above standard",
+  "materials.result.within": "Within standard",
+  "materials.result.footnote":
+    "Standard / actual cost = quantity per pc × inspected pcs × unit cost. Positive variance means usage is above standard; this is a usage variance, not a purchase-price variance. Synthetic/demo only — not a verified production result or a Finance-approved saving.",
+  "materials.import.aria": "Material CSV import preview",
+  "materials.import.eyebrow": "CSV import · API",
+  "materials.import.title": "Validate a material CSV",
+  "materials.import.note":
+    "Upload a synthetic material-consumption CSV. The server aggregates rows by inspected pcs, ignores other phases, and recalculates cost. Nothing is saved.",
+  "materials.import.phase": "Phase to import",
+  "materials.import.file": "CSV file",
+  "materials.import.fileHint": "text/csv, UTF-8 · up to 5,000 data rows / 2 MB",
+  "materials.import.submit": "Validate CSV",
+  "materials.import.importing": "Validating…",
+  "materials.import.empty": "Choose a CSV file to see a validated preview.",
+  "materials.import.fileRequired": "Choose a CSV file first.",
+  "materials.import.fileTooLarge": "CSV must be 2 MB or smaller.",
+  "materials.import.error": "Could not validate this CSV. Check the file and retry.",
+  "materials.import.previewTitle": "Validated preview",
+  "materials.import.rows": "Rows used",
+  "materials.import.ignored": "Rows ignored",
+  "materials.import.pcs": "Inspected pcs",
+  "materials.import.warnings": "Warnings",
+  "materials.import.warningIgnored":
+    "Ignored {count} rows for other phases; only {phase} was imported.",
+  "materials.import.warningDerived":
+    "Derived cost columns were ignored; cost is recalculated from quantity and unit cost.",
+  "materials.import.warningGeneric":
+    "The server returned an additional import warning.",
+  "materials.import.footnote":
+    "Preview only: the file and result are not stored. Synthetic/demo data; not a material master or a Finance-approved saving.",
+  "materials.import.errorColumns": "The CSV is missing required columns: {columns}.",
+  "materials.import.errorPolicy":
+    "Only synthetic/demo data is accepted (data_policy = SYNTHETIC).",
+  "materials.import.errorRows": "The CSV exceeds the 5,000 data-row limit.",
+  "materials.import.errorEmptyCsv": "The CSV is empty.",
+  "materials.import.errorEncoding": "The CSV must be UTF-8 encoded.",
+  "materials.import.errorPhase": "The CSV has no rows for the selected phase.",
+  "materials.import.errorRow":
+    "CSV row {row} has invalid data. Check the row values and retry.",
+
+  "scenarioImport.aria": "Scenario master-data CSV or Excel import",
+  "scenarioImport.eyebrow": "Master data · CSV / XLSX",
+  "scenarioImport.title": "Import routing, crew and machines",
+  "scenarioImport.note":
+    "Load four synthetic CSV files together or one .xlsx workbook with four sheets. The API checks columns, references and precedence; nothing is stored. Apply replaces the working scenario and reruns the optimizer.",
+  "scenarioImport.operations": "Operations CSV",
+  "scenarioImport.workers": "Workers CSV",
+  "scenarioImport.skills": "Worker skills CSV",
+  "scenarioImport.machines": "Machines CSV",
+  "scenarioImport.required": "Required",
+  "scenarioImport.optional": "Optional",
+  "scenarioImport.hint.operations":
+    "operation_id, sam_sec, predecessor_ids, machine_type, skill_code…",
+  "scenarioImport.hint.workers": "worker_id, worker_name, available, machine_types",
+  "scenarioImport.hint.skills": "worker_id, operation_id, skill_grade (A/B/C or 0–3)",
+  "scenarioImport.hint.machines": "machine_id, machine_type, available, capacity",
+  "scenarioImport.fileMissing": "Choose the {file} first.",
+  "scenarioImport.tooLarge": "The four CSV files together must be 2 MB or smaller.",
+  "scenarioImport.error": "Could not validate the import. Check the files and retry.",
+  "scenarioImport.validating": "Validating import…",
+  "scenarioImport.submit": "Validate import",
+  "scenarioImport.or": "or",
+  "scenarioImport.workbookFile": "Excel workbook",
+  "scenarioImport.workbookHint":
+    ".xlsx with sheets operations, workers, worker_skills, machines · max 2 MB",
+  "scenarioImport.workbookMissing": "Choose an .xlsx workbook first.",
+  "scenarioImport.workbookTooLarge": "The workbook must be 2 MB or smaller.",
+  "scenarioImport.workbookValidating": "Validating workbook…",
+  "scenarioImport.workbookSubmit": "Validate workbook",
+  "scenarioImport.empty":
+    "Choose the operations, workers and skills files, or one .xlsx workbook, to see a validated preview.",
+  "scenarioImport.previewTitle": "Validated scenario",
+  "scenarioImport.unknownStyle": "Unnamed style",
+  "scenarioImport.count.operations": "Operations",
+  "scenarioImport.count.workers": "Workers",
+  "scenarioImport.count.skills": "Skill assignments",
+  "scenarioImport.count.machines": "Machines",
+  "scenarioImport.layers": "Precedence layers",
+  "scenarioImport.machineTypes": "Machine types",
+  "scenarioImport.table.operation": "Operation",
+  "scenarioImport.table.sam": "SAM (s)",
+  "scenarioImport.table.predecessors": "Predecessors",
+  "scenarioImport.table.machine": "Machine",
+  "scenarioImport.table.skill": "Skill requirement",
+  "scenarioImport.noPredecessors": "—",
+  "scenarioImport.manual": "Manual",
+  "scenarioImport.apply": "Apply & solve",
+  "scenarioImport.applying": "Applying & solving…",
+  "scenarioImport.applyHint":
+    "Apply replaces routing, workers and machines, clears the old synthetic baseline, and reruns the optimizer. Actuals inputs are kept only when the imported style and line match the current scenario.",
+  "scenarioImport.footnote":
+    "Preview only: files are not stored. Imported master data is synthetic/demo; optimizer diagnostics still apply.",
+  "scenarioImport.errorColumns": "The CSV is missing required columns: {columns}.",
+  "scenarioImport.errorNoRows": "A CSV has no data rows.",
+  "scenarioImport.errorEfficiency":
+    "Worker-specific efficiency is not supported. Remove the efficiency_factor column and use approved SAM per operation.",
+  "scenarioImport.errorWorkbookInvalid": "The file is not a valid .xlsx workbook.",
+  "scenarioImport.errorWorkbookSheets":
+    "The workbook is missing required sheets: {sheets}.",
+  "scenarioImport.errorWorkbookSize":
+    "The workbook expands beyond the safe size limit. Reduce its content and retry.",
+  "scenarioImport.errorDetail":
+    "The import failed validation. Technical detail: {detail}",
+
   "notice.rerun": "Re-ran the optimizer in {seconds}s · {status}.",
   "notice.solverStatus": "Solver returned {status}. Review diagnostics and inputs.",
   "notice.applied":
     "Shop-floor input applied to the dashboard. Re-run the optimizer only if method, SAM or constraints changed.",
+  "notice.importApplied":
+    "Imported {operations} operations, {workers} workers and {machines} machines · optimizer returned {status}.",
   "notice.export":
     "XLSX workbook generated from the current request and result in English.",
   "notice.snapshotSaved": 'Snapshot "{name}" saved in this browser.',
   "notice.snapshotLoaded": 'Loaded snapshot "{name}".',
+  "notice.login": "Signed in as {user}.",
+  "notice.logout": "Signed out. Local snapshots and compute still work.",
+  "notice.sessionExpired":
+    "The session expired or is invalid. Sign in again to use server scenarios.",
+  "notice.serverSaved": 'Scenario "{name}" re-solved and saved on the server.',
+  "notice.serverLoaded": 'Loaded server scenario "{name}".',
+  "notice.serverDeleted": 'Deleted server scenario "{name}".',
   "error.snapshotSave":
     "Could not save: localStorage may be full. Delete an old snapshot first.",
   "error.storage": "Could not update localStorage.",
@@ -490,7 +730,7 @@ const EN = {
   "metadata.notFeasible": "Not feasible",
   "metadata.showNotes": "Show constraint notes",
   "metadata.footnote":
-    "This public demo uses synthetic data only. The sample baseline is an input, not an optimizer output. Scenario write/delete is disabled on the API; saved snapshots stay in this browser.",
+    "This public demo uses synthetic data only. The sample baseline is an input, not an optimizer output. Scenario write/delete requires a signed-in admin demo account; local snapshots stay in this browser.",
   "severity.info": "Info",
   "severity.warning": "Warning",
   "severity.critical": "Critical",
@@ -526,11 +766,52 @@ const EN = {
     "Worker {worker} has no qualified operation with the current skill and machine data.",
   "warning.generic": "An additional optimization warning is available.",
 
+  "auth.eyebrow": "Demo account",
+  "auth.title": "Sign in",
+  "auth.intro":
+    "Sign in to save and load scenarios on the server. The optimizer and browser-local snapshots still work without an account.",
+  "auth.username": "Username",
+  "auth.password": "Password",
+  "auth.submit": "Sign in",
+  "auth.submitting": "Signing in…",
+  "auth.cancel": "Cancel",
+  "auth.close": "Close sign-in dialog",
+  "auth.disabled":
+    "Demo login is not configured on this server. Set AUTH_DEMO_PASSWORD and AUTH_SESSION_SECRET before using accounts.",
+  "auth.demoAccounts":
+    "Demo accounts: admin or test1–test4. The password is configured on the server and is never stored in the browser.",
+
+  "serverScenarios.eyebrow": "Server persistence",
+  "serverScenarios.title": "Server scenarios",
+  "serverScenarios.chip": "Neon-backed demo",
+  "serverScenarios.intro":
+    "Signed-in accounts can store synthetic scenarios in the demo workspace. Local snapshots stay in this browser.",
+  "serverScenarios.loginPrompt":
+    "Sign in to save and load server scenarios. Compute and local snapshots do not require an account.",
+  "serverScenarios.readOnly":
+    "Read-only account: you can load server scenarios but cannot create or delete them.",
+  "serverScenarios.nameAria": "Server scenario name",
+  "serverScenarios.placeholder": "e.g. A — admin review",
+  "serverScenarios.save": "Save to server",
+  "serverScenarios.saving": "Saving and re-solving…",
+  "serverScenarios.empty": "No server scenarios yet.",
+  "serverScenarios.loading": "Loading server scenarios…",
+  "serverScenarios.load": "Load",
+  "serverScenarios.delete": "Delete",
+  "serverScenarios.loadAria": "Load server scenario {name}",
+  "serverScenarios.deleteAria": "Delete server scenario {name}",
+  "serverScenarios.meta":
+    "{savedAt} · {status} · {workers} workers · {stations} stations",
+  "serverScenarios.loadMore": "Load more",
+  "serverScenarios.confirmDelete":
+    'Delete server scenario "{name}"? This cannot be undone.',
+  "serverScenarios.errorName": "Give the server scenario a name first.",
+
   "snapshots.eyebrow": "Local persistence",
   "snapshots.title": "Saved snapshots",
   "snapshots.chip": "localStorage only",
   "snapshots.intro":
-    "Save the current request and result in this browser. There is no server-side scenario write API on the public demo.",
+    "Save the current request and result in this browser. Sign in to also store synthetic scenarios on the demo server.",
   "snapshots.nameAria": "Snapshot name",
   "snapshots.placeholder": "e.g. A — after rebalance",
   "snapshots.save": "Save snapshot",
@@ -576,9 +857,9 @@ const EN = {
   "policy.status.body":
     "OPTIMAL is only claimed when the lexicographic proof is true. Otherwise the run is labelled FEASIBLE_LIMIT.",
   "policy.snapshot.eyebrow": "Snapshots",
-  "policy.snapshot.title": "This browser only",
+  "policy.snapshot.title": "Local + optional server",
   "policy.snapshot.body":
-    "There is no server-side scenario write API. Delete old snapshots to free localStorage.",
+    "Local snapshots stay in this browser. Signed-in admin accounts can save synthetic scenarios to the Neon-backed demo workspace; read-only accounts cannot write.",
   "footer.authorLabel": "Built by",
   "footer.left":
     "LineBalance Pro · synthetic garment IE demo · not HBI production data",
@@ -591,7 +872,7 @@ export type MessageKey = keyof typeof EN;
 const VI: Record<MessageKey, string> = {
   "nav.overview.label": "Tổng quan",
   "nav.overview.short": "Tổng quan",
-  "nav.overview.hint": "Buồng lái",
+  "nav.overview.hint": "Bảng điều khiển",
   "nav.balance.label": "Cân bằng chuyền",
   "nav.balance.short": "Cân bằng",
   "nav.balance.hint": "Biểu đồ & sơ đồ",
@@ -604,6 +885,12 @@ const VI: Record<MessageKey, string> = {
   "nav.timeStudy.label": "Nghiên cứu thời gian",
   "nav.timeStudy.short": "Thời gian",
   "nav.timeStudy.hint": "Phương pháp",
+  "nav.styleSetup.label": "Mã hàng mới",
+  "nav.styleSetup.short": "Mã hàng",
+  "nav.styleSetup.hint": "Sẵn sàng & quy trình",
+  "nav.materials.label": "Định mức vật tư",
+  "nav.materials.short": "Vật tư",
+  "nav.materials.hint": "Tiêu hao & chênh lệch",
   "nav.solver.label": "Tối ưu hóa & dữ liệu",
   "nav.solver.short": "Tối ưu hóa",
   "nav.solver.hint": "Nguồn kết quả",
@@ -627,6 +914,53 @@ const VI: Record<MessageKey, string> = {
   "topbar.language": "Ngôn ngữ",
   "topbar.english": "Tiếng Anh",
   "topbar.vietnamese": "Tiếng Việt",
+  "topbar.login": "Đăng nhập",
+  "topbar.logout": "Đăng xuất",
+  "topbar.admin": "Quản trị",
+  "topbar.viewer": "Chỉ đọc",
+  "topbar.signedIn": "{user} · {role}",
+  "topbar.loginHelp":
+    "Đăng nhập để lưu kịch bản lên máy chủ demo. Tối ưu hóa và bản lưu trong trình duyệt vẫn dùng được khi chưa có tài khoản.",
+
+  "auth.eyebrow": "Tài khoản demo",
+  "auth.title": "Đăng nhập",
+  "auth.intro":
+    "Đăng nhập để lưu và mở kịch bản trên máy chủ. Bộ tối ưu hóa và bản lưu trong trình duyệt vẫn hoạt động khi chưa có tài khoản.",
+  "auth.username": "Tên đăng nhập",
+  "auth.password": "Mật khẩu",
+  "auth.submit": "Đăng nhập",
+  "auth.submitting": "Đang đăng nhập…",
+  "auth.cancel": "Hủy",
+  "auth.close": "Đóng hộp đăng nhập",
+  "auth.disabled":
+    "Máy chủ chưa bật đăng nhập demo. Cần đặt AUTH_DEMO_PASSWORD và AUTH_SESSION_SECRET trước khi dùng tài khoản.",
+  "auth.demoAccounts":
+    "Tài khoản demo: admin hoặc test1–test4. Mật khẩu do máy chủ cấu hình và không lưu trong trình duyệt.",
+
+  "serverScenarios.eyebrow": "Lưu trên máy chủ",
+  "serverScenarios.title": "Kịch bản máy chủ",
+  "serverScenarios.chip": "Demo trên Neon",
+  "serverScenarios.intro":
+    "Tài khoản đã đăng nhập có thể lưu kịch bản tổng hợp vào không gian demo. Bản lưu nội bộ vẫn nằm trong trình duyệt này.",
+  "serverScenarios.loginPrompt":
+    "Đăng nhập để lưu và mở kịch bản máy chủ. Tối ưu hóa và bản lưu nội bộ không cần tài khoản.",
+  "serverScenarios.readOnly":
+    "Tài khoản chỉ đọc: có thể mở kịch bản máy chủ nhưng không thể tạo hoặc xóa.",
+  "serverScenarios.nameAria": "Tên kịch bản máy chủ",
+  "serverScenarios.placeholder": "Ví dụ: A — quản trị xem lại",
+  "serverScenarios.save": "Lưu lên máy chủ",
+  "serverScenarios.saving": "Đang lưu và tối ưu lại…",
+  "serverScenarios.empty": "Chưa có kịch bản máy chủ.",
+  "serverScenarios.loading": "Đang tải kịch bản máy chủ…",
+  "serverScenarios.load": "Mở",
+  "serverScenarios.delete": "Xóa",
+  "serverScenarios.loadAria": "Mở kịch bản máy chủ {name}",
+  "serverScenarios.deleteAria": "Xóa kịch bản máy chủ {name}",
+  "serverScenarios.meta":
+    "{savedAt} · {status} · {workers} công nhân · {stations} trạm",
+  "serverScenarios.loadMore": "Tải thêm",
+  "serverScenarios.confirmDelete": 'Xóa kịch bản máy chủ "{name}"? Không thể hoàn tác.',
+  "serverScenarios.errorName": "Hãy đặt tên kịch bản máy chủ trước.",
   "topbar.line": "Chuyền",
   "topbar.shift": "Ca",
   "topbar.period": "Kỳ báo cáo",
@@ -668,7 +1002,7 @@ const VI: Record<MessageKey, string> = {
   "sidebar.healthCheck": "Kiểm tra trạng thái",
   "sidebar.stack": "React · FastAPI · PuLP/HiGHS",
 
-  "app.shiftCockpit": "Màn hình điều hành ca · {shift}",
+  "app.shiftDashboard": "Bảng điều khiển ca · {shift}",
   "app.shiftSummary":
     "{shiftId} · ca {minutes} phút − {break} phút nghỉ · {days} ngày làm việc · {samBasis}",
   "sam.includes": "Định mức đã bao gồm phụ cấp thời gian",
@@ -690,20 +1024,246 @@ const VI: Record<MessageKey, string> = {
   "page.timeStudy.title": "Nghiên cứu thời gian",
   "page.timeStudy.description":
     "Thời gian quan sát, thời gian chuẩn hóa và thời gian chuẩn cho lao động thủ công. Quy trình này chỉ tạo bản nháp; định mức đã phê duyệt vẫn là đầu vào hoạch định.",
+  "page.styleSetup.eyebrow": "Kiểm soát đưa mã hàng vào chuyền",
+  "page.styleSetup.title": "Mức độ sẵn sàng mã hàng mới",
+  "page.styleSetup.description":
+    "Rà soát các điều kiện đưa mã hàng vào chuyền và xem routing trước/sau phân công hiện tại. Đây là công cụ hỗ trợ, không thay thế phê duyệt chạy chuyền.",
+  "page.materials.eyebrow": "Chuẩn hóa vật tư",
+  "page.materials.title": "Tiêu hao & chênh lệch vật tư",
+  "page.materials.description":
+    "Case T13 tổng hợp cho chỉ, băng keo 3M và viền, kèm kiểm tra what-if. Chênh lệch dương là tiêu hao vượt định mức; tổng tiền là cost avoidance, không phải cash saving đã được Finance xác nhận.",
   "page.solver.eyebrow": "Nguồn gốc kết quả",
   "page.solver.title": "Tối ưu hóa & dữ liệu",
   "page.solver.description":
     "Kết quả được tạo thế nào, trạng thái có nghĩa gì và bản lưu cục bộ nằm ở đâu.",
+
+  "style.dataPolicy":
+    "Quy trình minh họa với dữ liệu tổng hợp. Checklist không được lưu và không phải xác nhận sản xuất.",
+  "style.readiness.aria": "Danh sách kiểm tra mức độ sẵn sàng mã hàng mới",
+  "style.readiness.eyebrow": "Điều kiện đưa vào chuyền",
+  "style.readiness.title": "Danh sách kiểm tra sẵn sàng",
+  "style.readiness.note":
+    "Đánh dấu điều kiện bắt buộc, ghi người phụ trách hoặc bằng chứng rồi tính mức độ sẵn sàng. Điểm chỉ tính các mục bắt buộc đã hoàn tất.",
+  "style.readiness.required": "Điều kiện bắt buộc",
+  "style.readiness.status": "Trạng thái",
+  "style.readiness.evidence": "Người phụ trách / bằng chứng / ghi chú",
+  "style.readiness.evaluate": "Tính mức độ sẵn sàng",
+  "style.readiness.evaluating": "Đang tính…",
+  "style.readiness.empty":
+    "Chưa có kết quả đánh giá. Hãy cập nhật checklist rồi tính mức độ sẵn sàng.",
+  "style.readiness.resultAria": "Kết quả đánh giá sẵn sàng",
+  "style.readiness.progress": "Điều kiện bắt buộc đã hoàn tất",
+  "style.readiness.ready": "Sẵn sàng cho chạy thử có kiểm soát",
+  "style.readiness.notReady": "Chưa sẵn sàng đưa vào chuyền",
+  "style.readiness.blockers": "Mục cần hoàn tất",
+  "style.readiness.noBlockers": "Không còn mục chặn trong checklist này.",
+  "style.readiness.apiError": "Không tính được mức độ sẵn sàng. Hãy thử lại.",
+  "style.item.operation_routing": "Routing công đoạn đã được phê duyệt",
+  "style.item.sam_approved": "Cơ sở SAM đã được rà soát và duyệt",
+  "style.item.machine_ready": "Máy và cữ gá đã sẵn sàng",
+  "style.item.manpower_assigned": "Đã xác nhận phương án nhân lực",
+  "style.item.skill_coverage": "Đã xác nhận độ phủ kỹ năng yêu cầu",
+  "style.item.layout_ready": "Đã rà soát layout và luồng vật liệu",
+  "style.item.material_ready": "Nguyên phụ liệu đã sẵn sàng",
+  "style.item.production_trial": "Đã chạy thử và kiểm tra sản phẩm đầu tiên",
+  "style.status.NOT_STARTED": "Chưa bắt đầu",
+  "style.status.IN_PROGRESS": "Đang thực hiện",
+  "style.status.COMPLETED": "Hoàn tất",
+  "style.status.BLOCKED": "Đang bị chặn",
+  "style.flow.aria": "Luồng công đoạn sản xuất",
+  "style.flow.title": "Sơ đồ luồng công đoạn",
+  "style.flow.note":
+    "Các mũi tên theo quan hệ trước–sau trong routing. Chế độ tối ưu bổ sung trạm và công nhân từ kết quả solver hiện tại.",
+  "style.flow.operationCount": "{count} công đoạn",
+  "style.flow.routingOnly": "Chỉ routing",
+  "style.flow.optimized": "Có phân công",
+  "style.flow.loading": "Đang dựng process flow…",
+  "style.flow.empty": "Chưa có process flow cho mã hàng này.",
+  "style.flow.error": "Không dựng được process flow. Hãy kiểm tra routing rồi thử lại.",
+  "style.flow.retry": "Thử dựng lại",
+  "style.flow.routingView": "Chế độ routing",
+  "style.flow.optimizedView": "Chế độ phân công tối ưu",
+  "style.flow.sam": "SAM {seconds} giây",
+  "style.flow.machine": "Máy: {machine}",
+  "style.flow.manual": "Công đoạn thủ công",
+  "style.flow.qualityGate": "Điểm kiểm soát chất lượng",
+  "style.flow.station": "Trạm {station}",
+  "style.flow.worker": "Công nhân {worker}",
+  "style.flow.predecessors": "Trước đó: {operations}",
+  "style.flow.start": "Đầu routing",
+  "style.flow.mobileAria": "Danh sách công đoạn trong process flow",
+  "style.flow.canvasAria": "Sơ đồ process flow theo precedence",
+
+  "materials.loading": "Đang tải case vật tư tổng hợp…",
+  "materials.error": "Không tải được case vật tư. Hãy kiểm tra API rồi thử lại.",
+  "materials.retry": "Thử lại",
+  "materials.case.aria": "Case chuẩn hóa vật tư tổng hợp",
+  "materials.case.eyebrow": "Case portfolio T13",
+  "materials.case.title": "Tiêu hao trước và sau",
+  "materials.case.note":
+    "LINE_01 / BASIC-TEE-001 · 1.820 pcs mỗi giai đoạn · cùng định mức và đơn giá.",
+  "materials.case.standard": "Chi phí định mức",
+  "materials.case.standardDetail": "3 vật tư · cùng định mức",
+  "materials.case.before": "Thực tế trước",
+  "materials.case.after": "Thực tế sau",
+  "materials.case.reduction": "Giảm phần vượt",
+  "materials.case.excess": "Vượt {value}",
+  "materials.case.reductionDetail": "Giảm {value} phần vượt so với trước",
+  "materials.table.material": "Vật tư",
+  "materials.table.standard": "Định mức / pc",
+  "materials.table.before": "Trước / pc",
+  "materials.table.after": "Sau / pc",
+  "materials.table.variance": "Chênh lệch so với định mức",
+  "materials.table.beforeVar": "Trước",
+  "materials.table.afterVar": "Sau",
+  "materials.case.footnote":
+    "Các giá trị sau vẫn cao hơn định mức. Mức giảm là cost avoidance trong cửa sổ 1.820 pcs tổng hợp, không phải cash saving đã xác nhận.",
+  "materials.check.aria": "Máy tính chênh lệch tiêu hao vật tư",
+  "materials.check.eyebrow": "What-if",
+  "materials.check.title": "Kiểm tra chênh lệch tiêu hao",
+  "materials.check.note":
+    "Sửa tiêu hao thực tế hoặc đơn giá rồi tính lại. Giá trị mặc định là số sau pilot tổng hợp.",
+  "materials.check.pcs": "Số pcs kiểm tra",
+  "materials.check.material": "Vật tư",
+  "materials.check.actual": "Tiêu hao thực tế / pc",
+  "materials.check.unitCost": "Đơn giá (VND)",
+  "materials.check.standard": "Định mức / pc",
+  "materials.check.calculate": "Tính chênh lệch",
+  "materials.check.calculating": "Đang tính…",
+  "materials.check.empty": "Chưa có kết quả what-if.",
+  "materials.check.pcsError": "Số pcs kiểm tra phải là số nguyên lớn hơn 0.",
+  "materials.check.valuesError":
+    "Tiêu hao thực tế phải từ 0 trở lên và đơn giá phải lớn hơn 0.",
+  "materials.check.error":
+    "Không tính được chênh lệch vật tư. Hãy kiểm tra giá trị nhập rồi thử lại.",
+  "materials.result.standard": "Chi phí định mức",
+  "materials.result.actual": "Chi phí thực tế",
+  "materials.result.variance": "Chênh lệch",
+  "materials.result.excessCount": "{count}/{total} vật tư vượt định mức",
+  "materials.result.variancePct": "{value} so với định mức",
+  "materials.result.above": "Vượt định mức",
+  "materials.result.within": "Trong định mức",
+  "materials.result.footnote":
+    "Chi phí định mức / thực tế = tiêu hao mỗi pc × số pcs kiểm tra × đơn giá. Chênh lệch dương là tiêu hao vượt định mức; đây là chênh lệch tiêu hao, không phải chênh lệch giá mua. Chỉ dữ liệu tổng hợp/demo — không phải kết quả sản xuất đã kiểm chứng hay khoản tiết kiệm đã được Finance phê duyệt.",
+  "materials.import.aria": "Xem trước import CSV vật tư",
+  "materials.import.eyebrow": "Nhập CSV · API",
+  "materials.import.title": "Kiểm tra file CSV vật tư",
+  "materials.import.note":
+    "Tải file CSV tiêu hao vật tư tổng hợp. Server cộng dòng theo số pcs kiểm tra, bỏ qua phase khác và tính lại chi phí. Không lưu file hay kết quả.",
+  "materials.import.phase": "Phase cần nhập",
+  "materials.import.file": "File CSV",
+  "materials.import.fileHint": "text/csv, UTF-8 · tối đa 5.000 dòng dữ liệu / 2 MB",
+  "materials.import.submit": "Kiểm tra CSV",
+  "materials.import.importing": "Đang kiểm tra…",
+  "materials.import.empty": "Chọn file CSV để xem kết quả kiểm tra.",
+  "materials.import.fileRequired": "Hãy chọn file CSV trước.",
+  "materials.import.fileTooLarge": "File CSV phải có dung lượng tối đa 2 MB.",
+  "materials.import.error":
+    "Không kiểm tra được file CSV. Hãy xem lại file rồi thử lại.",
+  "materials.import.previewTitle": "Kết quả kiểm tra",
+  "materials.import.rows": "Số dòng dùng",
+  "materials.import.ignored": "Số dòng bỏ qua",
+  "materials.import.pcs": "Số pcs kiểm tra",
+  "materials.import.warnings": "Cảnh báo",
+  "materials.import.warningIgnored":
+    "Đã bỏ qua {count} dòng thuộc phase khác; chỉ nhập {phase}.",
+  "materials.import.warningDerived":
+    "Cột chi phí dẫn xuất đã bị bỏ qua; chi phí được tính lại từ số lượng và đơn giá.",
+  "materials.import.warningGeneric": "Server trả thêm một cảnh báo import.",
+  "materials.import.footnote":
+    "Chỉ xem trước: file và kết quả không được lưu. Dữ liệu tổng hợp/demo; không phải material master hay khoản tiết kiệm đã được Finance phê duyệt.",
+  "materials.import.errorColumns": "File CSV thiếu cột bắt buộc: {columns}.",
+  "materials.import.errorPolicy":
+    "Chỉ chấp nhận dữ liệu tổng hợp/demo (data_policy = SYNTHETIC).",
+  "materials.import.errorRows": "File CSV vượt giới hạn 5.000 dòng dữ liệu.",
+  "materials.import.errorEmptyCsv": "File CSV đang trống.",
+  "materials.import.errorEncoding": "File CSV phải được mã hóa UTF-8.",
+  "materials.import.errorPhase": "File CSV không có dòng nào cho phase đã chọn.",
+  "materials.import.errorRow":
+    "Dòng {row} có dữ liệu không hợp lệ. Hãy kiểm tra giá trị trong dòng rồi thử lại.",
+
+  "scenarioImport.aria": "Nhập CSV hoặc Excel dữ liệu gốc kịch bản",
+  "scenarioImport.eyebrow": "Dữ liệu gốc · CSV / XLSX",
+  "scenarioImport.title": "Nhập định tuyến, nhân sự và máy",
+  "scenarioImport.note":
+    "Tải cùng lúc bốn file CSV tổng hợp hoặc một workbook .xlsx có bốn sheet. API kiểm tra cột, tham chiếu và thứ tự công đoạn; không lưu dữ liệu. Áp dụng sẽ thay kịch bản đang làm việc và chạy lại solver.",
+  "scenarioImport.operations": "CSV công đoạn",
+  "scenarioImport.workers": "CSV công nhân",
+  "scenarioImport.skills": "CSV kỹ năng công nhân",
+  "scenarioImport.machines": "CSV máy",
+  "scenarioImport.required": "Bắt buộc",
+  "scenarioImport.optional": "Tùy chọn",
+  "scenarioImport.hint.operations":
+    "operation_id, sam_sec, predecessor_ids, machine_type, skill_code…",
+  "scenarioImport.hint.workers": "worker_id, worker_name, available, machine_types",
+  "scenarioImport.hint.skills": "worker_id, operation_id, skill_grade (A/B/C hoặc 0–3)",
+  "scenarioImport.hint.machines": "machine_id, machine_type, available, capacity",
+  "scenarioImport.fileMissing": "Hãy chọn {file} trước.",
+  "scenarioImport.tooLarge": "Tổng dung lượng bốn file CSV phải từ 2 MB trở xuống.",
+  "scenarioImport.error":
+    "Không kiểm tra được dữ liệu nhập. Hãy xem lại các file rồi thử lại.",
+  "scenarioImport.validating": "Đang kiểm tra dữ liệu…",
+  "scenarioImport.submit": "Kiểm tra dữ liệu",
+  "scenarioImport.or": "hoặc",
+  "scenarioImport.workbookFile": "Workbook Excel",
+  "scenarioImport.workbookHint":
+    ".xlsx với các sheet operations, workers, worker_skills, machines · tối đa 2 MB",
+  "scenarioImport.workbookMissing": "Hãy chọn workbook .xlsx trước.",
+  "scenarioImport.workbookTooLarge": "Workbook phải có dung lượng tối đa 2 MB.",
+  "scenarioImport.workbookValidating": "Đang kiểm tra workbook…",
+  "scenarioImport.workbookSubmit": "Kiểm tra workbook",
+  "scenarioImport.empty":
+    "Chọn file công đoạn, công nhân và kỹ năng, hoặc một workbook .xlsx, để xem bản xem trước đã kiểm tra.",
+  "scenarioImport.previewTitle": "Kịch bản đã kiểm tra",
+  "scenarioImport.unknownStyle": "Style chưa đặt tên",
+  "scenarioImport.count.operations": "Công đoạn",
+  "scenarioImport.count.workers": "Công nhân",
+  "scenarioImport.count.skills": "Lượt kỹ năng",
+  "scenarioImport.count.machines": "Máy",
+  "scenarioImport.layers": "Số lớp thứ tự",
+  "scenarioImport.machineTypes": "Loại máy",
+  "scenarioImport.table.operation": "Công đoạn",
+  "scenarioImport.table.sam": "SAM (giây)",
+  "scenarioImport.table.predecessors": "Công đoạn trước",
+  "scenarioImport.table.machine": "Máy",
+  "scenarioImport.table.skill": "Yêu cầu kỹ năng",
+  "scenarioImport.noPredecessors": "—",
+  "scenarioImport.manual": "Thủ công",
+  "scenarioImport.apply": "Áp dụng & tối ưu",
+  "scenarioImport.applying": "Đang áp dụng & tối ưu…",
+  "scenarioImport.applyHint":
+    "Áp dụng sẽ thay định tuyến, công nhân và máy, xóa baseline tổng hợp cũ và chạy lại solver. Dữ liệu thực tế chỉ được giữ khi style và line nhập vào trùng kịch bản hiện tại.",
+  "scenarioImport.footnote":
+    "Chỉ xem trước: file không được lưu. Dữ liệu gốc nhập vào là tổng hợp/demo; các chẩn đoán của solver vẫn áp dụng.",
+  "scenarioImport.errorColumns": "File CSV thiếu cột bắt buộc: {columns}.",
+  "scenarioImport.errorNoRows": "Một file CSV không có dòng dữ liệu.",
+  "scenarioImport.errorEfficiency":
+    "Không hỗ trợ hiệu suất riêng theo công nhân. Hãy bỏ cột efficiency_factor và dùng SAM đã duyệt cho từng công đoạn.",
+  "scenarioImport.errorWorkbookInvalid": "File không phải workbook .xlsx hợp lệ.",
+  "scenarioImport.errorWorkbookSheets": "Workbook thiếu các sheet bắt buộc: {sheets}.",
+  "scenarioImport.errorWorkbookSize":
+    "Workbook vượt giới hạn dung lượng an toàn. Hãy giảm nội dung rồi thử lại.",
+  "scenarioImport.errorDetail":
+    "Dữ liệu nhập không qua kiểm tra. Chi tiết kỹ thuật: {detail}",
 
   "notice.rerun": "Đã tối ưu lại trong {seconds} giây · {status}.",
   "notice.solverStatus":
     "Lần tối ưu có trạng thái {status}. Hãy kiểm tra dữ liệu và các cảnh báo.",
   "notice.applied":
     "Đã áp dụng dữ liệu hiện trường. Chỉ tối ưu lại khi phương pháp, định mức hoặc ràng buộc thay đổi.",
+  "notice.importApplied":
+    "Đã nhập {operations} công đoạn, {workers} công nhân và {machines} máy · solver trả trạng thái {status}.",
   "notice.export":
     "Đã tạo bảng tính từ dữ liệu đầu vào và kết quả hiện tại bằng tiếng Việt.",
   "notice.snapshotSaved": 'Đã lưu phương án "{name}" trong trình duyệt này.',
   "notice.snapshotLoaded": 'Đã mở bản lưu "{name}".',
+  "notice.login": "Đã đăng nhập với tài khoản {user}.",
+  "notice.logout": "Đã đăng xuất. Bản lưu nội bộ và tối ưu hóa vẫn dùng được.",
+  "notice.sessionExpired":
+    "Phiên đăng nhập đã hết hạn hoặc không hợp lệ. Hãy đăng nhập lại để dùng kịch bản máy chủ.",
+  "notice.serverSaved": 'Đã tối ưu lại và lưu kịch bản "{name}" trên máy chủ.',
+  "notice.serverLoaded": 'Đã mở kịch bản máy chủ "{name}".',
+  "notice.serverDeleted": 'Đã xóa kịch bản máy chủ "{name}".',
   "error.snapshotSave":
     "Không lưu được: bộ nhớ trình duyệt có thể đã đầy. Hãy xóa bớt bản lưu cũ.",
   "error.storage": "Không cập nhật được bộ nhớ trình duyệt.",
@@ -1068,7 +1628,7 @@ const VI: Record<MessageKey, string> = {
   "metadata.notFeasible": "Không có phương án khả thi",
   "metadata.showNotes": "Xem ghi chú ràng buộc",
   "metadata.footnote":
-    "Phần mềm minh họa công khai chỉ dùng dữ liệu tổng hợp. Hiện trạng mẫu là dữ liệu đầu vào, không phải kết quả của bộ tối ưu hóa. Dịch vụ không hỗ trợ lưu hoặc xóa kịch bản trên máy chủ; bản lưu chỉ nằm trong trình duyệt này.",
+    "Phần mềm minh họa công khai chỉ dùng dữ liệu tổng hợp. Hiện trạng mẫu là dữ liệu đầu vào, không phải kết quả của bộ tối ưu hóa. Lưu hoặc xóa kịch bản trên máy chủ cần tài khoản demo quyền quản trị; bản lưu nội bộ vẫn nằm trong trình duyệt này.",
   "severity.info": "Thông tin",
   "severity.warning": "Cảnh báo",
   "severity.critical": "Nghiêm trọng",
@@ -1109,7 +1669,7 @@ const VI: Record<MessageKey, string> = {
   "snapshots.title": "Các bản lưu",
   "snapshots.chip": "Chỉ lưu trên trình duyệt",
   "snapshots.intro":
-    "Lưu dữ liệu đầu vào và kết quả hiện tại trong trình duyệt này. Phần mềm minh họa công khai không hỗ trợ lưu kịch bản trên máy chủ.",
+    "Lưu dữ liệu đầu vào và kết quả hiện tại trong trình duyệt này. Đăng nhập để lưu thêm kịch bản tổng hợp trên máy chủ demo.",
   "snapshots.nameAria": "Tên bản lưu",
   "snapshots.placeholder": "vd. A — sau cân bằng lại",
   "snapshots.save": "Lưu phương án",
@@ -1155,9 +1715,9 @@ const VI: Record<MessageKey, string> = {
   "policy.status.body":
     "Chỉ báo phương án tối ưu khi cả hai bước đã được chứng minh. Nếu hết thời gian trước khi chứng minh xong, kết quả được ghi là phương án khả thi, chưa chứng minh tối ưu.",
   "policy.snapshot.eyebrow": "Bản lưu",
-  "policy.snapshot.title": "Chỉ trong trình duyệt này",
+  "policy.snapshot.title": "Nội bộ + máy chủ tùy chọn",
   "policy.snapshot.body":
-    "Không hỗ trợ lưu kịch bản trên máy chủ. Hãy xóa bản lưu cũ để giải phóng bộ nhớ trình duyệt.",
+    "Bản lưu nội bộ nằm trong trình duyệt này. Tài khoản quản trị đã đăng nhập có thể lưu kịch bản tổng hợp lên không gian demo trên Neon; tài khoản chỉ đọc không thể ghi.",
   "footer.authorLabel": "Người làm",
   "footer.left":
     "LineBalance Pro · phần mềm minh họa kỹ thuật công nghiệp ngành may · không phải dữ liệu sản xuất HBI",
@@ -1477,6 +2037,62 @@ export function apiErrorMessage(
   }
   if (networkError) {
     return t("error.apiUnavailable");
+  }
+  if (/missing csv columns/.test(normalized)) {
+    const columns = message.match(/missing csv columns:\s*(.+?)\.?$/i);
+    return t("materials.import.errorColumns", {
+      columns: columns?.[1] ?? "—",
+    });
+  }
+  if (/data_policy must be synthetic/.test(normalized)) {
+    return t("materials.import.errorPolicy");
+  }
+  if (/more than [\d,]+ data rows/.test(normalized)) {
+    return t("materials.import.errorRows");
+  }
+  if (/csv is empty/.test(normalized)) {
+    return t("materials.import.errorEmptyCsv");
+  }
+  if (/must be utf-8/.test(normalized)) {
+    return t("materials.import.errorEncoding");
+  }
+  if (/no rows found for phase/.test(normalized)) {
+    return t("materials.import.errorPhase");
+  }
+  if (/^row \d+:/.test(normalized)) {
+    const row = message.match(/^row (\d+):/i);
+    return t("materials.import.errorRow", { row: row?.[1] ?? "—" });
+  }
+  if (/efficiency_factor/.test(normalized)) {
+    return t("scenarioImport.errorEfficiency");
+  }
+  if (/^\[[a-z_]+\]/.test(normalized)) {
+    return t("scenarioImport.errorDetail", { detail: message });
+  }
+  if (/csv is missing columns:/.test(normalized)) {
+    const columns = message.match(/csv is missing columns:\s*(.+?)\.?$/i);
+    return t("scenarioImport.errorColumns", {
+      columns: columns?.[1] ?? "—",
+    });
+  }
+  if (/csv has no data rows/.test(normalized)) {
+    return t("scenarioImport.errorNoRows");
+  }
+  if (/excel workbook is missing required sheets:/.test(normalized)) {
+    const sheets = message.match(/missing required sheets:\s*(.+?)\.?$/i);
+    return t("scenarioImport.errorWorkbookSheets", {
+      sheets: sheets?.[1] ?? "—",
+    });
+  }
+  if (/excel workbook expands beyond/.test(normalized)) {
+    return t("scenarioImport.errorWorkbookSize");
+  }
+  if (
+    /excel file is not a valid|excel file could not be read|excel workbook is empty/.test(
+      normalized,
+    )
+  ) {
+    return t("scenarioImport.errorWorkbookInvalid");
   }
   if (/422|validation|invalid input|must be greater|not valid/.test(normalized)) {
     return t("error.apiValidation");

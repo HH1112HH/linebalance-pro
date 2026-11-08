@@ -1,21 +1,33 @@
 import { useEffect, useState } from "react";
 import ActualsPanel from "./components/ActualsPanel";
+import AuthDialog from "./components/AuthDialog";
 import BalanceSection from "./components/BalanceSection";
 import FormsPanel from "./components/FormsPanel";
 import MetadataPanel from "./components/MetadataPanel";
+import MaterialsPanel from "./components/MaterialsPanel";
 import OverviewMetrics from "./components/OverviewMetrics";
 import BottleneckPanel from "./components/BottleneckPanel";
 import PageHeader from "./components/PageHeader";
 import PlanningPanel from "./components/PlanningPanel";
 import RunInputSummary from "./components/RunInputSummary";
+import ScenarioImportPanel from "./components/ScenarioImportPanel";
+import ServerSnapshotsPanel from "./components/ServerSnapshotsPanel";
 import Sidebar from "./components/Sidebar";
 import SnapshotsPanel from "./components/SnapshotsPanel";
+import StyleSetupPanel from "./components/StyleSetupPanel";
 import TaktPanel from "./components/TaktPanel";
 import TargetHealthPanel from "./components/TargetHealthPanel";
 import TimeStudyGuide from "./components/TimeStudyGuide";
 import Topbar, { type ScenarioMeta } from "./components/Topbar";
 import WorkloadPanel from "./components/WorkloadPanel";
-import { exportWorkbook, getHealth, runOptimizer } from "./api";
+import {
+  exportWorkbook,
+  getAuthSession,
+  getHealth,
+  login,
+  logout,
+  runOptimizer,
+} from "./api";
 import {
   apiErrorMessage,
   displayLineName,
@@ -32,11 +44,14 @@ import {
 } from "./data";
 import type {
   ActualsAnalysis,
+  AuthSession,
   HealthResponse,
   OptimizeResult,
   SampleRequest,
+  ScenarioImportPreview,
   ScenarioKey,
   SectionKey,
+  ServerScenarioDetail,
   Snapshot,
   ViewKey,
 } from "./types";
@@ -84,6 +99,11 @@ export default function App() {
   const [notice, setNotice] = useState<string | null>(null);
   const [snapshots, setSnapshots] = useState<Snapshot[]>(() => loadSnapshots());
   const [activeSnapshot, setActiveSnapshot] = useState<Snapshot | null>(null);
+  const [activeServerName, setActiveServerName] = useState<string | null>(null);
+  const [authSession, setAuthSession] = useState<AuthSession | null>(null);
+  const [authDialogOpen, setAuthDialogOpen] = useState(false);
+  const [authBusy, setAuthBusy] = useState(false);
+  const [authError, setAuthError] = useState<string | null>(null);
 
   useEffect(() => {
     let cancelled = false;
@@ -93,6 +113,20 @@ export default function App() {
       })
       .catch(() => {
         if (!cancelled) setHealthError(true);
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  useEffect(() => {
+    let cancelled = false;
+    getAuthSession()
+      .then((session) => {
+        if (!cancelled) setAuthSession(session);
+      })
+      .catch(() => {
+        if (!cancelled) setAuthSession(null);
       });
     return () => {
       cancelled = true;
@@ -110,8 +144,84 @@ export default function App() {
     setRequest(clone(data.request));
     setResult(clone(data.result));
     setActiveSnapshot(null);
+    setActiveServerName(null);
     setSolveError(null);
     setNotice(null);
+  }
+
+  async function handleLogin(username: string, password: string) {
+    setAuthBusy(true);
+    setAuthError(null);
+    try {
+      const session = await login(username, password);
+      setAuthSession(session);
+      setAuthDialogOpen(false);
+      setNotice(t("notice.login", { user: session.username ?? username }));
+    } catch (caught) {
+      setAuthError(
+        apiErrorMessage(
+          caught instanceof Error ? caught.message : String(caught),
+          language,
+          t,
+        ),
+      );
+    } finally {
+      setAuthBusy(false);
+    }
+  }
+
+  async function handleLogout() {
+    setAuthBusy(true);
+    try {
+      await logout();
+      setAuthSession((previous) =>
+        previous
+          ? {
+              ...previous,
+              authenticated: false,
+              username: null,
+              role: null,
+              expires_at: null,
+            }
+          : previous,
+      );
+      setNotice(t("notice.logout"));
+    } catch (caught) {
+      setSolveError(
+        apiErrorMessage(
+          caught instanceof Error ? caught.message : String(caught),
+          language,
+          t,
+        ),
+      );
+    } finally {
+      setAuthBusy(false);
+    }
+  }
+
+  function handleSessionExpired() {
+    setAuthSession((previous) =>
+      previous
+        ? {
+            ...previous,
+            authenticated: false,
+            username: null,
+            role: null,
+            expires_at: null,
+          }
+        : previous,
+    );
+    setNotice(t("notice.sessionExpired"));
+  }
+
+  function handleServerLoad(detail: ServerScenarioDetail) {
+    setRequest(clone(detail.request));
+    setResult(clone(detail.result));
+    setView("custom");
+    setActiveSnapshot(null);
+    setActiveServerName(detail.name);
+    setSolveError(null);
+    setNotice(t("notice.serverLoaded", { name: detail.name }));
   }
 
   async function handleRerun() {
@@ -122,6 +232,7 @@ export default function App() {
       const next = await runOptimizer(request);
       setResult(next);
       setActiveSnapshot(null);
+      setActiveServerName(null);
       if (next.has_solution) {
         setNotice(
           t("notice.rerun", {
@@ -153,7 +264,56 @@ export default function App() {
     setRequest(next);
     setResult((previous) => ({ ...previous, actuals_analysis: analysis }));
     setActiveSnapshot(null);
+    setActiveServerName(null);
     setNotice(t("notice.applied"));
+  }
+
+  async function handleScenarioImport(preview: ScenarioImportPreview) {
+    const sameIdentity =
+      (!preview.style_code || preview.style_code === request.style_code) &&
+      (!preview.line_name || preview.line_name === request.line_name);
+    const next: SampleRequest = {
+      ...request,
+      line_name: preview.line_name ?? request.line_name,
+      style_code: preview.style_code ?? request.style_code,
+      operations: preview.operations,
+      workers: preview.workers,
+      machines: preview.machines,
+      baseline_assignment: null,
+      actuals: sameIdentity ? request.actuals : null,
+      headcount_standard: sameIdentity ? request.headcount_standard : null,
+      daily_actuals: sameIdentity ? request.daily_actuals : [],
+    };
+
+    setSolving(true);
+    setSolveError(null);
+    setNotice(null);
+    try {
+      const nextResult = await runOptimizer(next);
+      setRequest(next);
+      setResult(nextResult);
+      setView("custom");
+      setActiveSnapshot(null);
+      setActiveServerName(null);
+      setNotice(
+        t("notice.importApplied", {
+          operations: formatNumber(preview.counts.operations, 0),
+          workers: formatNumber(preview.counts.workers, 0),
+          machines: formatNumber(preview.counts.machines, 0),
+          status: optimizationStatusLabel(nextResult.status, t),
+        }),
+      );
+    } catch (caught) {
+      setSolveError(
+        apiErrorMessage(
+          caught instanceof Error ? caught.message : String(caught),
+          language,
+          t,
+        ),
+      );
+    } finally {
+      setSolving(false);
+    }
   }
 
   async function handleExport() {
@@ -206,6 +366,7 @@ export default function App() {
     setRequest(clone(snapshot.request));
     setResult(clone(snapshot.result));
     setActiveSnapshot(snapshot);
+    setActiveServerName(null);
     setView("custom");
     setSolveError(null);
     setNotice(t("notice.snapshotLoaded", { name: snapshot.name }));
@@ -252,17 +413,24 @@ export default function App() {
         <Topbar
           section={section}
           view={view}
-          snapshotName={activeSnapshot?.name ?? null}
+          snapshotName={activeSnapshot?.name ?? activeServerName}
           lineName={result.line_name}
           shiftName={displayShiftName(request.config.shift_name, t)}
           shiftId={result.shift_id}
           scenarios={SCENARIO_META}
           health={health}
           healthError={healthError}
+          authSession={authSession}
+          authBusy={authBusy}
           solving={solving}
           exporting={exporting}
           hasSolution={result.has_solution}
           onSelectScenario={selectScenario}
+          onOpenLogin={() => {
+            setAuthError(null);
+            setAuthDialogOpen(true);
+          }}
+          onLogout={() => void handleLogout()}
           onRerun={handleRerun}
           onExport={handleExport}
         />
@@ -302,7 +470,7 @@ export default function App() {
           {section === "overview" ? (
             <div className="section-stack">
               <PageHeader
-                eyebrow={t("app.shiftCockpit", {
+                eyebrow={t("app.shiftDashboard", {
                   shift: displayShiftName(request.config.shift_name, t),
                 })}
                 title={
@@ -408,6 +576,28 @@ export default function App() {
             </div>
           ) : null}
 
+          {section === "style-setup" ? (
+            <div className="section-stack">
+              <PageHeader
+                eyebrow={t("page.styleSetup.eyebrow")}
+                title={t("page.styleSetup.title")}
+                description={t("page.styleSetup.description")}
+              />
+              <StyleSetupPanel request={request} result={result} />
+            </div>
+          ) : null}
+
+          {section === "materials" ? (
+            <div className="section-stack">
+              <PageHeader
+                eyebrow={t("page.materials.eyebrow")}
+                title={t("page.materials.title")}
+                description={t("page.materials.description")}
+              />
+              <MaterialsPanel />
+            </div>
+          ) : null}
+
           {section === "solver" ? (
             <div className="section-stack">
               <PageHeader
@@ -426,6 +616,19 @@ export default function App() {
                 onLoad={handleLoadSnapshot}
                 onDelete={handleDeleteSnapshot}
               />
+              <ServerSnapshotsPanel
+                key={authSession?.username ?? "anonymous"}
+                session={authSession}
+                request={request}
+                onOpenLogin={() => {
+                  setAuthError(null);
+                  setAuthDialogOpen(true);
+                }}
+                onLoad={handleServerLoad}
+                onNotice={(message) => setNotice(message)}
+                onSessionExpired={handleSessionExpired}
+              />
+              <ScenarioImportPanel onApply={handleScenarioImport} applying={solving} />
               <section className="policy-strip" aria-label={t("policy.aria")}>
                 <article>
                   <span className="eyebrow">{t("policy.data.eyebrow")}</span>
@@ -463,6 +666,21 @@ export default function App() {
           </div>
         </footer>
       </div>
+
+      {authDialogOpen ? (
+        <AuthDialog
+          busy={authBusy}
+          error={authError}
+          loginEnabled={authSession?.login_enabled ?? false}
+          onClose={() => {
+            if (!authBusy) {
+              setAuthDialogOpen(false);
+              setAuthError(null);
+            }
+          }}
+          onSubmit={(username, password) => void handleLogin(username, password)}
+        />
+      ) : null}
     </div>
   );
 }

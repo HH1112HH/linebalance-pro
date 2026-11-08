@@ -1,7 +1,14 @@
 export type ScenarioKey = "A" | "B";
 export type ViewKey = ScenarioKey | "custom";
 export type SectionKey =
-  "overview" | "balance" | "capacity" | "actuals" | "time-study" | "solver";
+  | "overview"
+  | "balance"
+  | "capacity"
+  | "actuals"
+  | "time-study"
+  | "style-setup"
+  | "materials"
+  | "solver";
 
 export type SamBasis = "INCLUDES_ALLOWANCE" | "EXCLUDES_ALLOWANCE";
 export type StationStatus = "bottleneck" | "watch" | "normal" | "underutilized";
@@ -342,6 +349,191 @@ export interface TimeStudyResult {
   notes: string[];
 }
 
+export type ReadinessKey =
+  | "operation_routing"
+  | "sam_approved"
+  | "machine_ready"
+  | "manpower_assigned"
+  | "skill_coverage"
+  | "layout_ready"
+  | "material_ready"
+  | "production_trial";
+export type ReadinessStatus = "NOT_STARTED" | "IN_PROGRESS" | "COMPLETED" | "BLOCKED";
+
+export interface ReadinessDraftItem {
+  key: ReadinessKey;
+  required: boolean;
+  status: ReadinessStatus;
+  note: string;
+}
+
+export interface ReadinessItemInput extends ReadinessDraftItem {
+  label: string;
+}
+
+export interface ReadinessEvaluationRequest {
+  style_code: string;
+  items: ReadinessItemInput[];
+}
+
+export interface StyleReadinessResult {
+  style_code: string;
+  items: ReadinessItemInput[];
+  readiness_pct: number;
+  ready: boolean;
+  blocking_items: string[];
+}
+
+export interface ProcessFlowAssignment {
+  operation_id: string;
+  station: number;
+  worker_id: string;
+  worker_name: string;
+}
+
+export interface ProcessFlowRequest {
+  style_code: string;
+  operations: OperationInput[];
+  assignments: ProcessFlowAssignment[];
+}
+
+export interface ProcessFlowNode {
+  operation_id: string;
+  name: string;
+  sam_sec: number;
+  machine_type: string | null;
+  is_quality_gate: boolean;
+  predecessors: string[];
+  layer: number;
+  order: number;
+  station: number | null;
+  worker_id: string | null;
+  worker_name: string | null;
+}
+
+export interface ProcessFlowEdge {
+  source: string;
+  target: string;
+}
+
+export interface ProcessFlowResult {
+  style_code: string;
+  nodes: ProcessFlowNode[];
+  edges: ProcessFlowEdge[];
+  has_assignment: boolean;
+}
+
+export type MaterialPhase = "CURRENT" | "BEFORE" | "AFTER";
+
+export interface MaterialUsageInput {
+  material_id: string;
+  material_name: string;
+  unit: string;
+  standard_qty_per_pc: number;
+  actual_qty_per_pc: number;
+  unit_cost_vnd: number;
+}
+
+export interface MaterialAnalysisRequest {
+  style_code: string;
+  inspected_pcs: number;
+  phase: MaterialPhase;
+  materials: MaterialUsageInput[];
+}
+
+export interface MaterialVarianceLine {
+  material_id: string;
+  material_name: string;
+  unit: string;
+  standard_qty_per_pc: number;
+  actual_qty_per_pc: number;
+  unit_cost_vnd: number;
+  standard_qty: number;
+  actual_qty: number;
+  standard_cost_vnd: number;
+  actual_cost_vnd: number;
+  variance_vnd: number;
+  variance_pct: number;
+  is_excess: boolean;
+}
+
+export interface MaterialAnalysisResult {
+  style_code: string;
+  phase: MaterialPhase;
+  inspected_pcs: number;
+  material_count: number;
+  standard_cost_vnd: number;
+  actual_cost_vnd: number;
+  variance_vnd: number;
+  variance_pct: number;
+  excess_materials: number;
+  lines: MaterialVarianceLine[];
+  data_policy: string;
+  notes: string[];
+}
+
+export interface MaterialComparison {
+  standard_cost_vnd: number;
+  before_cost_vnd: number;
+  after_cost_vnd: number;
+  before_variance_vnd: number;
+  after_variance_vnd: number;
+  variance_reduction_vnd: number;
+  variance_reduction_pct: number;
+  before_cost_per_pc_vnd: number;
+  after_cost_per_pc_vnd: number;
+  cost_per_pc_delta_vnd: number;
+}
+
+export interface MaterialSampleResult {
+  style_code: string;
+  inspected_pcs: number;
+  materials: MaterialUsageInput[];
+  before: MaterialAnalysisResult;
+  after: MaterialAnalysisResult;
+  comparison: MaterialComparison;
+  data_policy: string;
+  notes: string[];
+}
+
+export interface MaterialImportPreview {
+  style_code: string;
+  phase: MaterialPhase;
+  inspected_pcs: number;
+  row_count: number;
+  ignored_rows: number;
+  materials: MaterialUsageInput[];
+  analysis: MaterialAnalysisResult;
+  data_policy: string;
+  warnings: string[];
+}
+
+export interface ScenarioImportRequest {
+  operations_csv: string;
+  workers_csv: string;
+  worker_skills_csv: string;
+  machines_csv: string;
+}
+
+export interface ScenarioImportCounts {
+  operations: number;
+  workers: number;
+  skill_assignments: number;
+  machines: number;
+  precedence_layers: number;
+  machine_types: string[];
+}
+
+export interface ScenarioImportPreview {
+  line_name: string | null;
+  style_code: string | null;
+  operations: OperationInput[];
+  workers: WorkerInput[];
+  machines: MachineInput[];
+  counts: ScenarioImportCounts;
+  data_policy: string;
+}
+
 export interface HealthResponse {
   status: string;
   version: string;
@@ -350,6 +542,55 @@ export interface HealthResponse {
   solver_available: boolean;
   data_policy: string;
   scenario_persistence: string;
+  auth?: {
+    enabled: boolean;
+    mode: string;
+    roles: string[];
+    session_ttl_sec: number;
+  };
+  scenario_auth?: string;
+}
+
+export type AuthRole = "admin" | "viewer";
+
+export interface AuthSession {
+  authenticated: boolean;
+  login_enabled: boolean;
+  username: string | null;
+  role: AuthRole | null;
+  expires_at: string | null;
+}
+
+export interface ServerScenarioSummary {
+  id: string;
+  name: string;
+  created_at: string;
+  status: "OPTIMAL" | "FEASIBLE_LIMIT";
+  solver_status: string;
+  line_name: string;
+  style_code: string;
+  workers_used: number;
+  stations_used: number;
+  balance_efficiency_pct: number;
+  model_version: string;
+  data_version: string;
+}
+
+export interface ServerScenarioDetail extends ServerScenarioSummary {
+  result_origin: "server-solve";
+  schema_version: number;
+  request: SampleRequest;
+  result: OptimizeResult;
+}
+
+export interface ServerScenarioList {
+  items: ServerScenarioSummary[];
+  next_cursor: string | null;
+}
+
+export interface ScenarioCreateRequest {
+  name: string;
+  request: SampleRequest;
 }
 
 export interface BaselineStation {

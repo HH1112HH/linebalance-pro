@@ -40,6 +40,18 @@ export const SECTIONS: SectionMeta[] = [
     hintKey: "nav.timeStudy.hint",
   },
   {
+    key: "style-setup",
+    labelKey: "nav.styleSetup.label",
+    shortKey: "nav.styleSetup.short",
+    hintKey: "nav.styleSetup.hint",
+  },
+  {
+    key: "materials",
+    labelKey: "nav.materials.label",
+    shortKey: "nav.materials.short",
+    hintKey: "nav.materials.hint",
+  },
+  {
     key: "solver",
     labelKey: "nav.solver.label",
     shortKey: "nav.solver.short",

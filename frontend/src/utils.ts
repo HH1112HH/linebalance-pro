@@ -11,6 +11,15 @@ export function formatPct(value: number | null | undefined, digits = 1): string 
   return `${formatNumber(value, digits)}%`;
 }
 
+export function formatDateTime(value: string, locale: string): string {
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) return value;
+  return date.toLocaleString(locale, {
+    dateStyle: "medium",
+    timeStyle: "short",
+  });
+}
+
 export function formatSigned(
   value: number | null | undefined,
   digits = 1,

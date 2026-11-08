@@ -1,6 +1,12 @@
 import { displayLineName, displayShiftName, useLanguage } from "../i18n";
 import { sectionLabel } from "../sections";
-import type { HealthResponse, ScenarioKey, SectionKey, ViewKey } from "../types";
+import type {
+  AuthSession,
+  HealthResponse,
+  ScenarioKey,
+  SectionKey,
+  ViewKey,
+} from "../types";
 import { cx, formatSolverBackend } from "../utils";
 
 export interface ScenarioMeta {
@@ -21,10 +27,14 @@ interface Props {
   scenarios: Record<ScenarioKey, ScenarioMeta>;
   health: HealthResponse | null;
   healthError: boolean;
+  authSession: AuthSession | null;
+  authBusy: boolean;
   solving: boolean;
   exporting: boolean;
   hasSolution: boolean;
   onSelectScenario: (key: ScenarioKey) => void;
+  onOpenLogin: () => void;
+  onLogout: () => void;
   onRerun: () => void;
   onExport: () => void;
 }
@@ -39,10 +49,14 @@ export default function Topbar({
   scenarios,
   health,
   healthError,
+  authSession,
+  authBusy,
   solving,
   exporting,
   hasSolution,
   onSelectScenario,
+  onOpenLogin,
+  onLogout,
   onRerun,
   onExport,
 }: Props) {
@@ -66,6 +80,38 @@ export default function Topbar({
         </div>
 
         <div className="topbar-actions">
+          {authSession?.authenticated ? (
+            <div className="auth-chip" title={t("topbar.loginHelp")}>
+              <i aria-hidden="true" />
+              <span className="auth-chip-copy">
+                <strong>{authSession.username}</strong>
+                <small>
+                  {authSession.role === "admin"
+                    ? t("topbar.admin")
+                    : t("topbar.viewer")}
+                </small>
+              </span>
+              <button
+                type="button"
+                className="auth-chip-logout"
+                onClick={onLogout}
+                disabled={authBusy}
+              >
+                {t("topbar.logout")}
+              </button>
+            </div>
+          ) : (
+            <button
+              type="button"
+              className="secondary-button is-compact auth-login-button"
+              onClick={onOpenLogin}
+              disabled={authSession?.login_enabled === false}
+              title={t("topbar.loginHelp")}
+            >
+              {t("topbar.login")}
+            </button>
+          )}
+
           <div
             className="language-switch"
             role="group"
