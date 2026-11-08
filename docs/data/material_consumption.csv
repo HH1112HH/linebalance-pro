@@ -1,0 +1,31 @@
+phase,date,line_id,style_code,material_id,material_name,unit,standard_qty_per_pc,actual_qty_per_pc,inspected_pcs,unit_cost_vnd,standard_cost_vnd,actual_cost_vnd,variance_vnd,variance_pct,data_policy,note
+BEFORE,2026-10-26,LINE_01,BASIC-TEE-001,MAT-THREAD,Thread 40/2 synthetic,m,45.0,46.6,364,250.0,4095000,4240600,145600,3.556,SYNTHETIC,Baseline consumption; no standard issue quantity enforced
+BEFORE,2026-10-27,LINE_01,BASIC-TEE-001,MAT-THREAD,Thread 40/2 synthetic,m,45.0,46.7,364,250.0,4095000,4249700,154700,3.778,SYNTHETIC,Baseline consumption; no standard issue quantity enforced
+BEFORE,2026-10-28,LINE_01,BASIC-TEE-001,MAT-THREAD,Thread 40/2 synthetic,m,45.0,46.9,364,250.0,4095000,4267900,172900,4.222,SYNTHETIC,Baseline consumption; no standard issue quantity enforced
+BEFORE,2026-10-29,LINE_01,BASIC-TEE-001,MAT-THREAD,Thread 40/2 synthetic,m,45.0,46.9,364,250.0,4095000,4267900,172900,4.222,SYNTHETIC,Baseline consumption; no standard issue quantity enforced
+BEFORE,2026-10-30,LINE_01,BASIC-TEE-001,MAT-THREAD,Thread 40/2 synthetic,m,45.0,46.9,364,250.0,4095000,4267900,172900,4.222,SYNTHETIC,Baseline consumption; no standard issue quantity enforced
+BEFORE,2026-10-26,LINE_01,BASIC-TEE-001,MAT-TAPE3M,3M tape synthetic,m,0.35,0.37,364,1200.0,152880,161616,8736,5.714,SYNTHETIC,Baseline consumption; no standard issue quantity enforced
+BEFORE,2026-10-27,LINE_01,BASIC-TEE-001,MAT-TAPE3M,3M tape synthetic,m,0.35,0.38,364,1200.0,152880,165984,13104,8.571,SYNTHETIC,Baseline consumption; no standard issue quantity enforced
+BEFORE,2026-10-28,LINE_01,BASIC-TEE-001,MAT-TAPE3M,3M tape synthetic,m,0.35,0.38,364,1200.0,152880,165984,13104,8.571,SYNTHETIC,Baseline consumption; no standard issue quantity enforced
+BEFORE,2026-10-29,LINE_01,BASIC-TEE-001,MAT-TAPE3M,3M tape synthetic,m,0.35,0.39,364,1200.0,152880,170352,17472,11.429,SYNTHETIC,Baseline consumption; no standard issue quantity enforced
+BEFORE,2026-10-30,LINE_01,BASIC-TEE-001,MAT-TAPE3M,3M tape synthetic,m,0.35,0.38,364,1200.0,152880,165984,13104,8.571,SYNTHETIC,Baseline consumption; no standard issue quantity enforced
+BEFORE,2026-10-26,LINE_01,BASIC-TEE-001,MAT-BINDING,Binding tape synthetic,m,0.6,0.65,364,900.0,196560,212940,16380,8.333,SYNTHETIC,Baseline consumption; no standard issue quantity enforced
+BEFORE,2026-10-27,LINE_01,BASIC-TEE-001,MAT-BINDING,Binding tape synthetic,m,0.6,0.66,364,900.0,196560,216216,19656,10.0,SYNTHETIC,Baseline consumption; no standard issue quantity enforced
+BEFORE,2026-10-28,LINE_01,BASIC-TEE-001,MAT-BINDING,Binding tape synthetic,m,0.6,0.66,364,900.0,196560,216216,19656,10.0,SYNTHETIC,Baseline consumption; no standard issue quantity enforced
+BEFORE,2026-10-29,LINE_01,BASIC-TEE-001,MAT-BINDING,Binding tape synthetic,m,0.6,0.67,364,900.0,196560,219492,22932,11.667,SYNTHETIC,Baseline consumption; no standard issue quantity enforced
+BEFORE,2026-10-30,LINE_01,BASIC-TEE-001,MAT-BINDING,Binding tape synthetic,m,0.6,0.66,364,900.0,196560,216216,19656,10.0,SYNTHETIC,Baseline consumption; no standard issue quantity enforced
+AFTER,2026-11-02,LINE_01,BASIC-TEE-001,MAT-THREAD,Thread 40/2 synthetic,m,45.0,45.8,364,250.0,4095000,4167800,72800,1.778,SYNTHETIC,After standard issuance and cutting guides
+AFTER,2026-11-03,LINE_01,BASIC-TEE-001,MAT-THREAD,Thread 40/2 synthetic,m,45.0,45.9,364,250.0,4095000,4176900,81900,2.0,SYNTHETIC,After standard issuance and cutting guides
+AFTER,2026-11-04,LINE_01,BASIC-TEE-001,MAT-THREAD,Thread 40/2 synthetic,m,45.0,45.9,364,250.0,4095000,4176900,81900,2.0,SYNTHETIC,After standard issuance and cutting guides
+AFTER,2026-11-05,LINE_01,BASIC-TEE-001,MAT-THREAD,Thread 40/2 synthetic,m,45.0,46.0,364,250.0,4095000,4186000,91000,2.222,SYNTHETIC,After standard issuance and cutting guides
+AFTER,2026-11-06,LINE_01,BASIC-TEE-001,MAT-THREAD,Thread 40/2 synthetic,m,45.0,45.9,364,250.0,4095000,4176900,81900,2.0,SYNTHETIC,After standard issuance and cutting guides
+AFTER,2026-11-02,LINE_01,BASIC-TEE-001,MAT-TAPE3M,3M tape synthetic,m,0.35,0.35,364,1200.0,152880,152880,0,0.0,SYNTHETIC,After standard issuance and cutting guides
+AFTER,2026-11-03,LINE_01,BASIC-TEE-001,MAT-TAPE3M,3M tape synthetic,m,0.35,0.36,364,1200.0,152880,157248,4368,2.857,SYNTHETIC,After standard issuance and cutting guides
+AFTER,2026-11-04,LINE_01,BASIC-TEE-001,MAT-TAPE3M,3M tape synthetic,m,0.35,0.36,364,1200.0,152880,157248,4368,2.857,SYNTHETIC,After standard issuance and cutting guides
+AFTER,2026-11-05,LINE_01,BASIC-TEE-001,MAT-TAPE3M,3M tape synthetic,m,0.35,0.37,364,1200.0,152880,161616,8736,5.714,SYNTHETIC,After standard issuance and cutting guides
+AFTER,2026-11-06,LINE_01,BASIC-TEE-001,MAT-TAPE3M,3M tape synthetic,m,0.35,0.36,364,1200.0,152880,157248,4368,2.857,SYNTHETIC,After standard issuance and cutting guides
+AFTER,2026-11-02,LINE_01,BASIC-TEE-001,MAT-BINDING,Binding tape synthetic,m,0.6,0.61,364,900.0,196560,199836,3276,1.667,SYNTHETIC,After standard issuance and cutting guides
+AFTER,2026-11-03,LINE_01,BASIC-TEE-001,MAT-BINDING,Binding tape synthetic,m,0.6,0.62,364,900.0,196560,203112,6552,3.333,SYNTHETIC,After standard issuance and cutting guides
+AFTER,2026-11-04,LINE_01,BASIC-TEE-001,MAT-BINDING,Binding tape synthetic,m,0.6,0.62,364,900.0,196560,203112,6552,3.333,SYNTHETIC,After standard issuance and cutting guides
+AFTER,2026-11-05,LINE_01,BASIC-TEE-001,MAT-BINDING,Binding tape synthetic,m,0.6,0.63,364,900.0,196560,206388,9828,5.0,SYNTHETIC,After standard issuance and cutting guides
+AFTER,2026-11-06,LINE_01,BASIC-TEE-001,MAT-BINDING,Binding tape synthetic,m,0.6,0.62,364,900.0,196560,203112,6552,3.333,SYNTHETIC,After standard issuance and cutting guides

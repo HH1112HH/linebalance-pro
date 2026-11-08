@@ -1,0 +1,11 @@
+phase,date,line_id,station_id,operation_id,inspected_pcs,defect_count,rework_min_each,rework_min_total,defect_rate_pct,data_policy,note
+BEFORE,2026-10-26,LINE_01,ST05,OP060,364,10,3.0,30.0,2.747,SYNTHETIC,End-line 100% inspection; all inspection records retained
+BEFORE,2026-10-27,LINE_01,ST05,OP060,364,10,3.0,30.0,2.747,SYNTHETIC,End-line 100% inspection; all inspection records retained
+BEFORE,2026-10-28,LINE_01,ST05,OP060,364,8,3.0,24.0,2.198,SYNTHETIC,End-line 100% inspection; all inspection records retained
+BEFORE,2026-10-29,LINE_01,ST05,OP060,364,10,3.0,30.0,2.747,SYNTHETIC,End-line 100% inspection; all inspection records retained
+BEFORE,2026-10-30,LINE_01,ST05,OP060,364,7,3.0,21.0,1.923,SYNTHETIC,End-line 100% inspection; all inspection records retained
+AFTER,2026-11-02,LINE_01,ST05,OP060,364,4,3.0,12.0,1.099,SYNTHETIC,End-line 100% inspection; same inspection standard
+AFTER,2026-11-03,LINE_01,ST05,OP060,364,4,3.0,12.0,1.099,SYNTHETIC,End-line 100% inspection; same inspection standard
+AFTER,2026-11-04,LINE_01,ST05,OP060,364,3,3.0,9.0,0.824,SYNTHETIC,End-line 100% inspection; same inspection standard
+AFTER,2026-11-05,LINE_01,ST05,OP060,364,4,3.0,12.0,1.099,SYNTHETIC,End-line 100% inspection; same inspection standard
+AFTER,2026-11-06,LINE_01,ST05,OP060,364,3,3.0,9.0,0.824,SYNTHETIC,End-line 100% inspection; same inspection standard

@@ -1,8 +1,8 @@
 category,item,quantity,unit,unit_cost_vnd,total_vnd,basis,data_policy
-ASSUMPTION,Direct labor rate,1,hour,60000,60000,Synthetic planning rate; not HBI payroll,SYNTHETIC
-ASSUMPTION,Paid hours per shift,1,shift,7.5,7.5,480 scheduled minutes minus 30 break minutes,SYNTHETIC
-ASSUMPTION,Working days per month,1,month,26,26,Synthetic planning calendar,SYNTHETIC
+ASSUMPTION,Direct labor rate,1,hour,60000,,Synthetic planning rate; not HBI payroll,SYNTHETIC
+ASSUMPTION,Paid hours per shift,7.5,hours/shift,,,480 scheduled minutes minus 30 break minutes,SYNTHETIC
+ASSUMPTION,Working days per month,26,days/month,,,Synthetic planning calendar,SYNTHETIC
 IMPLEMENTATION,IE analysis and solver run,24,hour,250000,6000000,3 days IE time at synthetic internal rate,SYNTHETIC
 IMPLEMENTATION,Operator training,92,person-hour,50000,4600000,4 hours x 23 operators,SYNTHETIC
 IMPLEMENTATION,Visual aids and standard work,1,lot,1400000,1400000,Station photos and visual standards,SYNTHETIC
-IMPLEMENTATION,Total implementation cost,1,lot,12000000,12000000,Sum of the three items above,SYNTHETIC
+IMPLEMENTATION,Total implementation cost,1,lot,,12000000,Sum of the three items above,SYNTHETIC

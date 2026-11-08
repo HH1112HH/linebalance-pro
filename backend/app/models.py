@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import unicodedata
 from typing import Literal
 
 from pydantic import BaseModel, Field, field_validator
@@ -494,6 +495,14 @@ class ReadinessItem(BaseModel):
     )
     note: str = Field(default="", max_length=500)
 
+    @field_validator("key", "label")
+    @classmethod
+    def strip_readiness_text(cls, value: str) -> str:
+        cleaned = value.strip()
+        if not cleaned:
+            raise ValueError("Readiness item key and label cannot be blank.")
+        return cleaned
+
 
 class StyleReadiness(BaseModel):
     style_code: str = Field(min_length=1, max_length=80)
@@ -501,6 +510,200 @@ class StyleReadiness(BaseModel):
     readiness_pct: float = 0.0
     ready: bool = False
     blocking_items: list[str] = Field(default_factory=list)
+
+
+class ReadinessEvaluationRequest(BaseModel):
+    style_code: str = Field(min_length=1, max_length=80)
+    items: list[ReadinessItem] = Field(min_length=1, max_length=100)
+
+    @field_validator("style_code")
+    @classmethod
+    def strip_style_code(cls, value: str) -> str:
+        cleaned = value.strip()
+        if not cleaned:
+            raise ValueError("Style code cannot be blank.")
+        return cleaned
+
+
+class ProcessFlowAssignment(BaseModel):
+    operation_id: str = Field(min_length=1, max_length=40)
+    station: int = Field(gt=0, le=200)
+    worker_id: str = Field(min_length=1, max_length=40)
+    worker_name: str = Field(min_length=1, max_length=160)
+
+
+class ProcessFlowRequest(BaseModel):
+    style_code: str = Field(min_length=1, max_length=80)
+    operations: list[Operation] = Field(min_length=1, max_length=200)
+    assignments: list[ProcessFlowAssignment] = Field(
+        default_factory=list, max_length=200
+    )
+
+    @field_validator("style_code")
+    @classmethod
+    def strip_style_code(cls, value: str) -> str:
+        cleaned = value.strip()
+        if not cleaned:
+            raise ValueError("Style code cannot be blank.")
+        return cleaned
+
+
+class ProcessFlowNode(BaseModel):
+    operation_id: str
+    name: str
+    sam_sec: float
+    machine_type: str | None
+    is_quality_gate: bool
+    predecessors: list[str]
+    layer: int
+    order: int
+    station: int | None = None
+    worker_id: str | None = None
+    worker_name: str | None = None
+
+
+class ProcessFlowEdge(BaseModel):
+    source: str
+    target: str
+
+
+class ProcessFlowResponse(BaseModel):
+    style_code: str
+    nodes: list[ProcessFlowNode]
+    edges: list[ProcessFlowEdge]
+    has_assignment: bool
+
+
+class MaterialUsageInput(BaseModel):
+    material_id: str = Field(min_length=1, max_length=40)
+    material_name: str = Field(min_length=1, max_length=160)
+    unit: str = Field(min_length=1, max_length=20)
+    standard_qty_per_pc: float = Field(gt=0, le=100_000)
+    actual_qty_per_pc: float = Field(ge=0, le=100_000)
+    unit_cost_vnd: float = Field(gt=0, le=1_000_000_000)
+
+    @field_validator("material_id", "material_name", "unit")
+    @classmethod
+    def strip_material_text(cls, value: str) -> str:
+        cleaned = value.strip()
+        if not cleaned:
+            raise ValueError("Material ID, name and unit cannot be blank.")
+        return cleaned
+
+
+class MaterialAnalysisRequest(BaseModel):
+    style_code: str = Field(min_length=1, max_length=80)
+    inspected_pcs: int = Field(gt=0, le=10_000_000)
+    phase: Literal["CURRENT", "BEFORE", "AFTER"] = "CURRENT"
+    materials: list[MaterialUsageInput] = Field(min_length=1, max_length=50)
+
+    @field_validator("style_code")
+    @classmethod
+    def strip_material_style_code(cls, value: str) -> str:
+        cleaned = value.strip()
+        if not cleaned:
+            raise ValueError("Style code cannot be blank.")
+        return cleaned
+
+
+class MaterialVarianceLine(BaseModel):
+    material_id: str
+    material_name: str
+    unit: str
+    standard_qty_per_pc: float
+    actual_qty_per_pc: float
+    unit_cost_vnd: float
+    standard_qty: float
+    actual_qty: float
+    standard_cost_vnd: float
+    actual_cost_vnd: float
+    variance_vnd: float
+    variance_pct: float
+    is_excess: bool
+
+
+class MaterialAnalysisResult(BaseModel):
+    style_code: str
+    phase: Literal["CURRENT", "BEFORE", "AFTER"]
+    inspected_pcs: int
+    material_count: int
+    standard_cost_vnd: float
+    actual_cost_vnd: float
+    variance_vnd: float
+    variance_pct: float
+    excess_materials: int
+    lines: list[MaterialVarianceLine]
+    data_policy: str = "synthetic-demo-only"
+    notes: list[str] = Field(default_factory=list)
+
+
+class MaterialComparison(BaseModel):
+    standard_cost_vnd: float
+    before_cost_vnd: float
+    after_cost_vnd: float
+    before_variance_vnd: float
+    after_variance_vnd: float
+    variance_reduction_vnd: float
+    variance_reduction_pct: float
+    before_cost_per_pc_vnd: float
+    after_cost_per_pc_vnd: float
+    cost_per_pc_delta_vnd: float
+
+
+class MaterialSampleResponse(BaseModel):
+    style_code: str
+    inspected_pcs: int
+    materials: list[MaterialUsageInput]
+    before: MaterialAnalysisResult
+    after: MaterialAnalysisResult
+    comparison: MaterialComparison
+    data_policy: str = "synthetic-demo-only"
+    notes: list[str] = Field(default_factory=list)
+
+
+class MaterialImportPreview(BaseModel):
+    style_code: str
+    phase: Literal["CURRENT", "BEFORE", "AFTER"]
+    inspected_pcs: int
+    row_count: int
+    ignored_rows: int
+    materials: list[MaterialUsageInput]
+    analysis: MaterialAnalysisResult
+    data_policy: str = "synthetic-demo-only"
+    warnings: list[str] = Field(default_factory=list)
+
+
+class ScenarioImportRequest(BaseModel):
+    """Raw CSV text for the core scenario master data.
+
+    Each field is a complete CSV document. The API receives JSON instead of
+    multipart so the app does not need a multipart dependency. Nothing is
+    persisted; the response is a validated, in-memory preview.
+    """
+
+    operations_csv: str = Field(min_length=1, max_length=2_000_000)
+    workers_csv: str = Field(min_length=1, max_length=2_000_000)
+    worker_skills_csv: str = Field(min_length=1, max_length=2_000_000)
+    machines_csv: str = Field(default="", max_length=2_000_000)
+
+
+class ScenarioImportCounts(BaseModel):
+    operations: int
+    workers: int
+    skill_assignments: int
+    machines: int
+    precedence_layers: int
+    machine_types: list[str] = Field(default_factory=list)
+
+
+class ScenarioImportPreview(BaseModel):
+    line_name: str | None = None
+    style_code: str | None = None
+    operations: list[Operation] = Field(default_factory=list)
+    workers: list[Worker] = Field(default_factory=list)
+    machines: list[Machine] = Field(default_factory=list)
+    counts: ScenarioImportCounts
+    data_policy: str = "synthetic-demo-only"
 
 
 class TimeStudyRecord(BaseModel):
@@ -567,27 +770,72 @@ class ExportPayload(BaseModel):
     language: Literal["en", "vi"] = "en"
 
 
-class ScenarioSaveRequest(BaseModel):
+class ScenarioCreateRequest(BaseModel):
+    """Save payload: the server re-solves instead of trusting a client result."""
+
     name: str = Field(min_length=1, max_length=120)
     request: OptimizeRequest
-    result: OptimizeResponse
+
+    @field_validator("name")
+    @classmethod
+    def clean_scenario_name(cls, value: str) -> str:
+        cleaned = value.strip()
+        if not cleaned:
+            raise ValueError("Scenario name cannot be blank.")
+        if any(unicodedata.category(char).startswith("C") for char in cleaned):
+            raise ValueError("Scenario name cannot contain control characters.")
+        return cleaned
 
 
 class ScenarioSummary(BaseModel):
     id: str
     name: str
     created_at: str
-    status: str
+    status: Literal["OPTIMAL", "FEASIBLE_LIMIT"]
     solver_status: str
+    line_name: str
+    style_code: str
     workers_used: int
+    stations_used: int
     balance_efficiency_pct: float
     model_version: str
     data_version: str
 
 
-class ScenarioDetail(BaseModel):
-    id: str
-    name: str
-    created_at: str
+class ScenarioDetail(ScenarioSummary):
+    result_origin: Literal["server-solve"] = "server-solve"
+    schema_version: int = 1
     request: OptimizeRequest
     result: OptimizeResponse
+
+
+class ScenarioListResponse(BaseModel):
+    items: list[ScenarioSummary] = Field(default_factory=list)
+    next_cursor: str | None = None
+
+
+class LoginRequest(BaseModel):
+    """Demo account credentials.
+
+    The password is compared against a server-side environment value; it is
+    never stored in PostgreSQL or returned by the API.
+    """
+
+    username: str = Field(min_length=1, max_length=32)
+    password: str = Field(min_length=1, max_length=200)
+
+    @field_validator("username")
+    @classmethod
+    def clean_username(cls, value: str) -> str:
+        cleaned = value.strip().lower()
+        if not cleaned:
+            raise ValueError("Username cannot be blank.")
+        return cleaned
+
+
+class AuthSessionResponse(BaseModel):
+    authenticated: bool
+    login_enabled: bool
+    username: str | None = None
+    role: Literal["admin", "viewer"] | None = None
+    expires_at: str | None = None
