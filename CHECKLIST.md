@@ -930,3 +930,11 @@ Mỗi lần chạy phải có `RunMetadata`:
 - Public smoke: `GET /` 200; `/api/health` 200 qua Render và Netlify (`solver_available=true`, `scenario_persistence=localStorage`, `auth.enabled=false`); UI load dashboard và gọi health qua proxy OK. Sample 40 operations: `POST /api/optimize` 200 `FEASIBLE_LIMIT` sau 60,9s trên free CPU (local `OPTIMAL` ~28s) — giữ status trung thực, không hạ chuẩn.
 - Chưa bật Neon/auth public; `SCENARIO_PERSISTENCE=localStorage`, `auth.enabled=false`. Không thêm secret vào repo; Render API key chỉ dùng qua biến môi trường/shell và đã xuất hiện trong chat nên cần rotate sau khi hoàn tất.
 - Kiểm chứng: `powershell -ExecutionPolicy Bypass -File scripts/verify.ps1` pass — **138 passed, 3 skipped**, coverage **86.19%**, Ruff/format/mypy, ESLint, Prettier, `tsc --noEmit`, Vite build. `git diff --check` sạch.
+
+### 2026-11-08 — Chốt scope phiên kế tiếp: Neon public + role passwords + trang `/login`
+
+- Chốt hướng triển khai cho 2026-11-09 (chi tiết trong `docs/NEXT_SESSION_CHECKLIST.md`):
+  - **Login UI:** thêm trang full-screen `/login` (không thêm router; đọc `window.location.pathname`, Netlify SPA fallback đã có), giữ `AuthDialog` cho quick sign-in, tách `LoginForm` dùng chung.
+  - **Mật khẩu:** tách `AUTH_ADMIN_PASSWORD` (private) và `AUTH_VIEWER_PASSWORD` (public demo), giữ `AUTH_DEMO_PASSWORD` làm fallback; fingerprint session token theo role để rotate độc lập.
+  - **Neon:** bật `SCENARIO_PERSISTENCE=postgres` trên Render public; migration `001` đã apply trên private staging; rollback về `localStorage` nếu lỗi.
+- Đây là quyết định scope, **chưa phải kết quả triển khai**; docs/CV chỉ cập nhật sau khi smoke public pass.
