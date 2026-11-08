@@ -121,7 +121,7 @@ MVP đạt khi:
 - Benchmark 50 ops / 25 workers được ghi lại.
 - README ghi rõ kiến trúc, cách chạy, dữ liệu synthetic.
 
-> **Trạng thái 2026-11-08:** T06 mới hoàn thành một phần (readiness checklist + process-flow viewer trên routing hiện có). T13 có thêm usage-variance API/UI + what-if và material CSV import API/UI, nhưng chưa có material master/BOM hoặc material Excel import. Scenario master data đã có CSV và workbook .xlsx import. Public URL **chưa đạt**; Phase 4 đã có PostgreSQL private staging, migration `001`, `/api/scenarios` và demo accounts, nhưng chưa deploy public. Không mô tả style master, launch approval, material master/BOM hay các mục roadmap khác như đã hoàn thành.
+> **Trạng thái 2026-11-08:** T06 mới hoàn thành một phần (readiness checklist + process-flow viewer trên routing hiện có). T13 có thêm usage-variance API/UI + what-if và material CSV import API/UI, nhưng chưa có material master/BOM hoặc material Excel import. Scenario master data đã có CSV và workbook .xlsx import. Public URL đã có (`https://linebalance-pro.netlify.app`, API `https://linebalance-pro.onrender.com`); Phase 4 vẫn là PostgreSQL private staging, public chạy `localStorage` + demo login tắt. Không mô tả style master, launch approval, material master/BOM hay các mục roadmap khác như đã hoàn thành.
 
 ### 1.4. Ngoài phạm vi MVP
 
@@ -241,7 +241,7 @@ MVP đạt khi:
 | Backend | FastAPI, Uvicorn, Pydantic 2 | API + validation |
 | Optimization | PuLP 4.2, HiGHS qua `pulp.HiGHS` | CBC chỉ là fallback tùy chọn qua `SOLVER_BACKEND=cbc` |
 | Persistence | localStorage là mặc định; PostgreSQL 18 + psycopg 3 là opt-in Phase 4 | Snapshot cá nhân trong browser; server-side scenario có demo accounts admin/viewer |
-| Deploy | Netlify + Render configs (chưa live) | Free tier cho demo; public URL chưa có |
+| Deploy | Netlify UI + Render API (public demo live) | Free tier; 40-op sample có thể trả `FEASIBLE_LIMIT` trên CPU free |
 | Testing | pytest, httpx/TestClient | Unit + API |
 | Docs | Markdown | DATA_DICTIONARY, MODEL, KPI_SPEC, ROADMAP, CHECKLIST |
 
@@ -346,7 +346,7 @@ Assignment + Station + KPI + Planning + Warnings
 
 ### 3.6. Persistence strategy
 
-> **Trạng thái 2026-11-08:** PostgreSQL Phase 4 **đã triển khai trên private staging** (Neon PostgreSQL 18.6): migration `001` applied, repository PostgreSQL, bốn endpoint `/api/scenarios` (bearer token hoặc demo session), demo accounts admin/viewer và panel server scenarios trong UI. Default frontend vẫn `localStorage`; chưa deploy public.
+> **Trạng thái 2026-11-08:** PostgreSQL Phase 4 **đã triển khai trên private staging** (Neon PostgreSQL 18.6): migration `001` applied, repository PostgreSQL, bốn endpoint `/api/scenarios` (bearer token hoặc demo session), demo accounts admin/viewer và panel server scenarios trong UI. Default frontend/public demo vẫn `localStorage`; UI + API đã deploy public, Neon/auth chưa bật.
 
 **Thiết kế đề xuất (tóm tắt):**
 
@@ -1125,7 +1125,7 @@ Nếu trễ, cắt theo thứ tự:
 
 ### 9.4. Acceptance checklist
 
-> **Đây là checklist MVP đầy đủ, không phải trạng thái hiện tại.** Public URL và PostgreSQL scenario **chưa đạt**; CSV và workbook `.xlsx` cho operations/workers/skills/machines đã đạt ở Phase 3.3–3.4. Trạng thái thực tế ở `CHECKLIST.md` và phần đầu file này.
+> **Đây là checklist MVP đầy đủ, không phải trạng thái hiện tại.** Public URL và `/api/health` đã đạt (Netlify + Render, §8.2 của `DEPLOYMENT.md`); PostgreSQL scenario vẫn là private staging, chưa public. CSV và workbook `.xlsx` cho operations/workers/skills/machines đã đạt ở Phase 3.3–3.4. Trạng thái thực tế ở `CHECKLIST.md` và phần đầu file này.
 
 - [ ] Public URL HTTPS.
 - [ ] `/api/health` 200 + solver available.
@@ -1160,7 +1160,7 @@ Nếu trễ, cắt theo thứ tự:
 
 [[redirects]]
   from = "/api/*"
-  to = "https://linebalance-api.onrender.com/api/:splat"
+  to = "https://linebalance-pro.onrender.com/api/:splat"
   status = 200
   force = true
 

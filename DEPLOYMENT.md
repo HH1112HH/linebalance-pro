@@ -9,7 +9,7 @@
 > - **Kết quả đo thật:** 40 operations / 24 workers → `OPTIMAL` 58.0s, 23 stations, ~28s; 26 workers / target 400 → `OPTIMAL` 56.0s, 25 stations, ~42s. Không dùng heuristic làm kết quả cuối.
 > - **Dữ liệu:** synthetic demo only; không có dữ liệu HBI thật.
 >
-> **Trạng thái 2026-11-08:** các file cấu hình đã có trong repo nhưng **chưa deploy public** — chưa có Netlify/Render URL đang chạy. PostgreSQL Phase 4 đã chạy trên **private staging Neon** (không phải Render); các số solver trong tài liệu là đo local. Checklist §8 và CV bullet §9 là kế hoạch/mẫu, không phải thành tích đã xác nhận.
+> **Trạng thái 2026-11-08 (public demo deployed):** UI `https://linebalance-pro.netlify.app`, API `https://linebalance-pro.onrender.com`; `GET /api/health` trả `200` cả trực tiếp lẫn qua proxy Netlify. Render service `linebalance-pro` dùng `rootDir=backend`, health check `/api/health`, build/start command trong `render.yaml`, `SOLVER_BACKEND=highs`. Public chạy **`SCENARIO_PERSISTENCE=localStorage` + demo auth tắt**; PostgreSQL Phase 4 vẫn chỉ là **private staging Neon**, không phải public persistence. Các số solver trong tài liệu là đo local; trên Render free CPU, sample 40 operations trả `FEASIBLE_LIMIT` sau ~61s trong budget 60s — không claim `OPTIMAL`. Checklist §8 và CV bullet §9 chỉ dùng sau khi đối chiếu đúng môi trường.
 
 > **Kết luận nhanh:** Netlify **không chạy được Streamlit** và không phải môi trường phù hợp để chạy PuLP/HiGHS dạng server Python liên tục. Với 8 ngày, có 3 hướng:
 >
@@ -147,10 +147,10 @@ linebalance-pro/
   command = "npm run build"
   publish = "dist"
 
-# API proxy: /api/optimize → https://linebalance-api.onrender.com/api/optimize
+# API proxy: /api/optimize → https://linebalance-pro.onrender.com/api/optimize
 [[redirects]]
   from = "/api/*"
-  to = "https://linebalance-api.onrender.com/api/:splat"
+  to = "https://linebalance-pro.onrender.com/api/:splat"
   status = 200
   force = true
 
@@ -473,7 +473,7 @@ Dù chọn A hay B, scope nên là:
 - Skill matrix heatmap + skill gap.
 - What-if 2–3 kịch bản.
 - Export XLSX (CSV import/export là roadmap).
-- Public URL (mục tiêu; hiện chưa deploy).
+- Public URL (đã deploy: Netlify UI + Render API; xem §8.2).
 - README + demo video.
 
 ### Không làm
@@ -539,7 +539,7 @@ Dù chọn A hay B, scope nên là:
 
 ### 8.1. Phase 4 persistence + demo accounts — private staging, not public
 
-> **Trạng thái 2026-11-08:** PostgreSQL Phase 4 đã chạy trên **private staging Neon** (PostgreSQL 18.6, AWS `us-east-2`): migration `001` applied, bốn endpoint `/api/scenarios`, demo accounts admin/viewer và frontend server-scenario client đã có test/smoke. Chưa cấu hình secret trên Render, chưa deploy public. Local `.env.local` (gitignored) giữ DSN/token/mật khẩu demo; không commit.
+> **Trạng thái 2026-11-08:** PostgreSQL Phase 4 đã chạy trên **private staging Neon** (PostgreSQL 18.6, AWS `us-east-2`): migration `001` applied, bốn endpoint `/api/scenarios`, demo accounts admin/viewer và frontend server-scenario client đã có test/smoke. Public demo đã deploy nhưng **chưa cấu hình secret/Neon trên Render** — persistence vẫn `localStorage`, login tắt. Local `.env.local` (gitignored) giữ DSN/token/mật khẩu demo; không commit.
 
 Env chính (đầy đủ ở design doc §9):
 
@@ -572,15 +572,24 @@ Khi triển khai thật:
 - Rollback: đặt lại `SCENARIO_PERSISTENCE=localStorage`, restart, kiểm tra optimize/export và snapshot localStorage vẫn hoạt động; login demo vẫn dùng được nhưng không có scenario server.
 - Đã rotate Neon password ngày 2026-11-08; cập nhật secret Render khi tạo deployment.
 - Cân nhắc DB role giới hạn quyền thay vì owner `neondb_owner`; quota hiện chưa có advisory lock; demo accounts dùng chung mật khẩu và workspace, không phải production identity.
-- Không hứa public URL cho đến khi Render/Netlify thực sự được cấu hình và `/api/health` trả 200.
+- Public URL đã kiểm chứng ngày 2026-11-08 (`/` và `/api/health` trả `200`; xem §8.2); chỉ claim thêm tính năng server persistence sau khi bật Neon + auth và smoke lại.
 
 Chi tiết schema, env, runbook và acceptance gate: [`docs/POSTGRESQL_PERSISTENCE_DESIGN.md`](docs/POSTGRESQL_PERSISTENCE_DESIGN.md).
+
+### 8.2. Public demo verified — 2026-11-08
+
+- **Render:** service `linebalance-pro` (`srv-dbo7n3psrm7s73b6jf6g`, owner HBICV, region Ohio, plan free), deploy `live`. Cấu hình: `rootDir=backend`, build `pip install -r requirements.txt`, start `uvicorn app.main:app --host 0.0.0.0 --port $PORT --proxy-headers --forwarded-allow-ips="*"`, health check `/api/health`. Env đặt qua Render API: `PYTHON_VERSION=3.12.8`, `SOLVER_BACKEND=highs`, `SOLVER_THREADS=2`, `MAX_CONCURRENT_SOLVES=2`, `SCENARIO_PERSISTENCE=localStorage`, `AUTH_*` (không có `AUTH_DEMO_PASSWORD`/`AUTH_SESSION_SECRET` nên login tắt).
+- **Netlify:** project `linebalance-pro` (`a5ab6684-ddb0-4fff-aeb8-c1db1d572841`), deploy thủ công từ `frontend/dist` bằng `npx netlify-cli deploy --prod --no-build --dir frontend/dist --site <site-id>`. `netlify.toml` proxy `/api/*` sang `https://linebalance-pro.onrender.com/api/:splat`; SPA fallback `/*` → `/index.html`.
+- **Team protection:** Netlify teams tạo từ 2026-07-28 mặc định project mới là **Private** (team login). Site này đặt `sso_login=true`, `sso_login_context=non_production` để production public, deploy preview vẫn được bảo vệ. Nếu production trả `401` kèm redirect `app.netlify.com/edge-access`, kiểm tra lại cặp field này trước khi debug ứng dụng.
+- **Kiểm chứng:** `GET /` Netlify `200`; `GET /api/health` qua Render và qua Netlify đều `200`, `solver_available=true`, `scenario_persistence=localStorage`, `auth.enabled=false`; UI load dashboard và gọi health qua proxy thành công. `POST /api/optimize` với sample 40 operations trả `200` nhưng `FEASIBLE_LIMIT` sau 60,9s trên CPU free — status trung thực, không hạ chuẩn `OPTIMAL`.
+- **Cold start:** Render free ngủ sau 15 phút không dùng; request đầu có thể mất 30–60s. Warm up `/api/health` trước demo.
+- **Rollback:** Netlify giữ các deploy trước để restore; Render có thể rollback về deploy `live` gần nhất trong dashboard. Không cần đổi env khi rollback UI.
 
 ---
 
 ## 9. Câu chuyện CV theo từng phương án
 
-> **Cảnh báo:** đây là các mẫu để chọn hướng, không phải thành tích đã xác nhận. Phương án B/C chưa được xây; Phương án A chưa deploy public. Chỉ dùng các bullet có “deployed/public URL” sau khi thực sự deploy và kiểm tra `/api/health` trả 200.
+> **Cảnh báo:** đây là các mẫu để chọn hướng, không phải thành tích đã xác nhận. Phương án B/C chưa được xây; Phương án A đã deploy public (UI Netlify + API Render; xem §8.2). Chỉ dùng các bullet có “deployed/public URL” sau khi đối chiếu đúng môi trường và kiểm tra `/api/health` trả 200.
 
 ### Phương án A
 

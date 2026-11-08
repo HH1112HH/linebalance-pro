@@ -15,7 +15,7 @@ LineBalance Pro turns a garment style's operation routing, SAM, skill matrix, an
 
 [View mobile dashboard screenshot (390px)](frontend_dashboard_mobile.png)
 
-> **Data policy:** this local portfolio demo uses **synthetic data only**. It contains no production data from any manufacturer and is not a substitute for a validated time study. The public deployment is not live yet.
+> **Data policy:** this demo uses **synthetic data only**. It contains no production data from any manufacturer and is not a substitute for a validated time study. **Live demo:** https://linebalance-pro.netlify.app · **API health:** https://linebalance-pro.onrender.com/api/health
 
 ---
 
@@ -286,12 +286,12 @@ DEPLOYMENT.md         Render / Netlify deployment and env vars
 
 ## Deployment
 
-| Service | Platform | Config |
-|---|---|---|
-| API | Render (Python 3.12) | [`render.yaml`](render.yaml) |
-| UI | Netlify (static Vite build) | [`netlify.toml`](netlify.toml) |
+| Service | Platform | Live URL | Config |
+|---|---|---|---|
+| API | Render (Python 3.12, free) | https://linebalance-pro.onrender.com | [`render.yaml`](render.yaml) |
+| UI | Netlify (static Vite build) | https://linebalance-pro.netlify.app | [`netlify.toml`](netlify.toml) |
 
-Environment variables, CORS, rate limits, and body limits are documented in [`DEPLOYMENT.md`](DEPLOYMENT.md). These are deployment configurations; the public demo is not live yet.
+Environment variables, CORS, rate limits, and body limits are documented in [`DEPLOYMENT.md`](DEPLOYMENT.md). The public demo runs with `SCENARIO_PERSISTENCE=localStorage` and demo login disabled. Render free CPU may return `FEASIBLE_LIMIT` instead of `OPTIMAL` for the 40-operation sample within the 60-second solver budget.
 
 ---
 

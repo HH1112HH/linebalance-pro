@@ -1,6 +1,6 @@
 # Thiết kế Phase 4 — PostgreSQL scenario persistence
 
-> **Trạng thái 2026-11-08:** Phase 4.2–4.6 đã triển khai trên private staging: migration `001` applied, PostgreSQL repository, bốn endpoint `/api/scenarios`, demo accounts admin/viewer, frontend server-scenario client và integration test opt-in. Frontend vẫn mặc định lưu snapshot trong `localStorage`; Neon persistence là opt-in. Chưa deploy public.
+> **Trạng thái 2026-11-08:** Phase 4.2–4.6 đã triển khai trên private staging: migration `001` applied, PostgreSQL repository, bốn endpoint `/api/scenarios`, demo accounts admin/viewer, frontend server-scenario client và integration test opt-in. Frontend vẫn mặc định lưu snapshot trong `localStorage`; Neon persistence là opt-in. Neon persistence chưa deploy public; public demo chạy `localStorage` + demo login tắt.
 >
 > - Đã có `ScenarioCreateRequest`/`ScenarioSummary`/`ScenarioDetail`/`ScenarioListResponse`, `LoginRequest`/`AuthSessionResponse`, `backend/app/scenario_service.py`, `backend/app/scenario_store.py` (protocol + in-memory + PostgreSQL), `backend/app/auth.py`, migration `001` và test service/API.
 > - Private staging đã có `DATABASE_URL`, `SCENARIO_API_TOKEN`, `AUTH_DEMO_PASSWORD`, `AUTH_SESSION_SECRET`, migration applied; dependency `psycopg[binary]` + `psycopg_pool` đã pin.
