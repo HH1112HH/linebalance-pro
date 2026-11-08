@@ -2,7 +2,8 @@
 
 > **Phiên bản:** 1.3  
 > **Ngày:** 2026-11-02  
-> **Cập nhật lần cuối:** 2026-11-06 — cockpit UI 6 mục; giữ nguyên KPI/API/MILP semantics.  
+> **Cập nhật lần cuối:** 2026-11-08 — Phase 1 T06, Phase 2 usage-variance, Phase 3.1–3.4 import, Phase 4.1–4.6 (PostgreSQL/Neon, private + demo-auth scenario API, frontend server scenarios) đã triển khai; verify + smoke pass. Public deployment và least-privilege DB role vẫn chưa làm.
+>
 > **Mục đích:** Ghi lại đầy đủ các điểm review P0/P1/P2, quyết định kỹ thuật, trạng thái code và điều kiện nghiệm thu.  
 > **Nguyên tắc:** Tài liệu này là nguồn sự thật cho các sửa đổi. Nếu `ROADMAP.md` cũ mâu thuẫn với file này, file này được ưu tiên.
 
@@ -63,6 +64,8 @@
 - Multi-plant, MES integration, realtime, full auth, ML/DL, CAD layout.
 - Không thêm KPI mới nếu chưa có dữ liệu.
 - Không dùng dữ liệu thật của HBI; chỉ synthetic.
+
+> **Ghi chú lịch sử:** scope freeze nêu trên được người dùng cho phép mở rộng theo phase ngày 2026-11-08; xem decision log §12. Entry mới nhất tại §12 ưu tiên khi có mâu thuẫn.
 
 ---
 
@@ -777,3 +780,145 @@ Mỗi lần chạy phải có `RunMetadata`:
 - Kết quả một lần chạy local (Windows, Python 3.14.3, PuLP 4.2.0/HiGHS 1.15.1, 60s): `balanced_50x25` — `OPTIMAL`, bottleneck 50.0s, capacity 459.0, solve 1.339s; `extended_50x25` — `OPTIMAL`, bottleneck 64.0s, capacity 358.6, solve 26.313s; `stress_50x25` — `FEASIBLE_LIMIT` / `TIME_LIMIT`, incumbent 64.0s, solve 60.213s, `lexicographic_proven=false` (**không phải optimal**).
 - `scripts/verify.ps1` và CI lint/format cả `benchmarks/`; `benchmarks/RESULTS.md` ghi protocol, cách đọc stage objective và caveat single-run/Python version.
 - Không dùng số benchmark làm cam kết production; deploy target vẫn là Python 3.12 và cần chạy lại trên môi trường gần production nếu muốn trích dẫn trong CV.
+
+### 2026-11-08 — Rà soát dữ liệu/tài liệu theo JD HBI (docs/data-only)
+
+- Sửa `docs/data/kaizen_cost_model.csv`: tách `ASSUMPTION` (labor rate, 7.5 giờ/ca, 26 ngày/tháng) khỏi cột tiền; paid hours/working days để trống `unit_cost_vnd`/`total_vnd`, labor rate chỉ có `unit_cost_vnd`. Dòng `IMPLEMENTATION` vẫn cộng đúng **12,000,000 VND**. Trước đó các giả định 7.5/26 bị đặt vào cột VND, làm sai bản chất dữ liệu.
+- Thêm `docs/data/quality_inspection_summary.csv`: 5 ngày × 364 pcs/giai đoạn = **1,820 pcs**; BEFORE **45 defect / 135 rework min**, AFTER **18 / 54**. Đây là mẫu số còn thiếu cho defect rate/FPY; `quality_defects.csv` chỉ có tử số theo defect type.
+- Thêm `docs/data/material_consumption.csv` và `docs/CASE_STUDY_MATERIAL_STANDARD.md` cho **T13 material standardization**: chỉ 45.0→46.8→45.9 m/pc; băng keo 0.35→0.38→0.36; viền 0.60→0.66→0.62; 1,820 pcs/giai đoạn. Standard cost **22,222,200 VND**; actual BEFORE **23,205,000**; AFTER **22,686,300**; excess giảm **518,700 VND (52.8%)**. Đây là case study docs-only, không phải module phần mềm; actual vẫn cao hơn định mức nên không claim “đạt định mức” hay cash saving.
+- Thêm `DATA_DICTIONARY.md`: request/response models, API endpoints thực tế, grain/unit của `docs/data`, quy tắc data-quality và danh sách tính năng chưa có (import CSV/Excel, PostgreSQL, readiness/process flow, OEE API, protection pay).
+- Sửa `README.md`: bỏ câu “not dated production history” vì sample có 5 daily actual records (2026-10-26 → 2026-10-30); ghi rõ đây là demo data, không phải production history. Thêm link `DATA_DICTIONARY.md` và material case; ghi public demo **chưa live**.
+- Sửa `ROADMAP.md`: hạ các claim chưa đúng — T06 New Style/readiness/process flow **chưa có API/UI** (chỉ có schema unused); material norms chuyển từ “Roadmap” sang **case study T13**; process flow **chưa triển khai**; T07/T08 deliverables bổ sung CSV mới; public deploy/PostgreSQL/import CSV là roadmap; CV bullets bỏ “deployed public demo on Netlify + Render + PostgreSQL”.
+- Cập nhật `docs/CASE_STUDY_QUALITY_RCA.md` (mẫu số theo ngày + nguồn CSV), `docs/CASE_STUDY_KAIZEN.md` (cách đọc CSV assumption/implementation), `docs/IE_OPERATIONS_PLAYBOOK.md` (Appendix B + Appendix C material standard), `docs/INTERVIEW_PREP.md` (Case 6 material standard).
+- Thêm `tests/test_docs_data.py`: kiểm tra tổng quality 45/18 trên 1,820; rework 135/54; material standard/actual cost và excess 982,800/464,100/518,700; assumption rows không có tiền; implementation cost 12,000,000; README/DATA_DICTIONARY link tồn tại.
+- Phạm vi: docs/data/test-only; **không** đổi API, Pydantic schema, `types.ts`, KPI/MILP semantics hay sample runtime. Không thêm feature mới, không claim HBI production data.
+
+### 2026-11-08 — Quyết định mở rộng scope theo phase (người dùng phê duyệt)
+
+- Quyết định scope freeze tại §0.1 được mở rộng theo yêu cầu mới; triển khai từng phase, giữ nguyên KPI/MILP semantics và chỉ dùng synthetic/demo data.
+- **Phase 1 — T06:** readiness checklist API/UI và process-flow DAG API/UI dựa trên style/routing/result đang chọn. Không bao gồm style master, routing editor, persistent launch record hoặc release approval.
+- **Phase 2 — T18:** material standard module dựa trên case study synthetic T13; không thay đổi định mức/BOM thật và không claim cash saving.
+- **Phase 3 — Import:** CSV/Excel import có schema validation, lỗi actionable và giới hạn upload.
+- **Phase 4 — Persistence:** PostgreSQL scenario persistence là optional, disabled-by-default; không bật endpoint ghi công khai khi chưa có auth/security review.
+- **Phase 5 — Deploy:** chuẩn bị cấu hình và checklist; public deployment chỉ thực hiện khi người dùng cấp quyền/tài khoản và xác nhận môi trường.
+- **Protection pay:** chưa implement công thức; chỉ có thể chuẩn bị policy intake/acceptance template. Chờ policy HR chính thức và phê duyệt trước khi tính bất kỳ khoản nào.
+- Các mục phase 2–5 chưa được xem là hoàn thành khi chỉ mới có docs hoặc config. Cập nhật trạng thái từng phase bằng entry mới, không sửa lịch sử.
+
+### 2026-11-08 — Đổi nhãn Cockpit → Dashboard
+
+- Thay nhãn phụ `Cockpit` / `Buồng lái` bằng `Dashboard` / `Bảng điều khiển` ở sidebar và header Tổng quan; giữ nhãn mục `Overview` / `Tổng quan`.
+- Dùng **Bảng điều khiển** thay vì **Biểu đồ** vì `dashboard` là bảng điều khiển/tổng hợp, còn `biểu đồ` (chart) đã dùng cho biểu đồ tải trạm; tránh lẫn hai khái niệm.
+- Chỉ đổi i18n/UI copy; không đổi KPI, dữ liệu hay logic.
+
+### 2026-11-08 — Phase 1 delivered: T06 readiness + process flow (limited)
+
+- Thêm `ReadinessEvaluationRequest`, `StyleReadiness`, `ProcessFlowRequest/Response` và `backend/app/style_setup.py`; endpoint `POST /api/readiness/evaluate`, `POST /api/process-flow/build`.
+- Readiness tính % trên required items, trả `ready` và `blocking_items`; process flow dựng DAG theo precedence hiện có, thêm station/worker khi có assignment. Không tự tạo cạnh hoặc dữ liệu.
+- UI “New style”: checklist readiness và process-flow DAG ngang; mobile 390px chuyển danh sách dọc. EN/VI; loading/error/empty state.
+- Giới hạn: chưa có style master, routing editor, checklist persistence, release approval hoặc multi-style workflow. Checklist reset khi rời trang.
+- Kiểm chứng: `tests/test_style_setup.py`; pytest 47 pass, coverage 85.2%; browser 1440/390px không tràn ngang; sample 40 operations, 23 layers, 51 edges.
+
+### 2026-11-08 — Phase 2 delivered: material usage variance (limited)
+
+- Thêm `backend/app/materials.py`, `backend/app/sample_materials.py`, models `MaterialUsageInput`, `MaterialAnalysisRequest`, `MaterialVarianceLine`, `MaterialAnalysisResult`, `MaterialComparison`, `MaterialSampleResponse`.
+- Endpoint `GET /api/materials/sample` (case T13 synthetic) và `POST /api/materials/analyze` (CURRENT/BEFORE/AFTER). Từ chối `material_id` trùng bằng 422; giới hạn 50 vật tư, pcs tới 10,000,000.
+- UI “Materials”: bảng before/after + what-if calculator; EN/VI; loading/error/empty state; input có min/max khớp backend. Sửa footnote kết quả để không hiển thị raw English notes trong UI tiếng Việt.
+- Kết quả sample: standard 22,222,200 VND; actual BEFORE 23,205,000; AFTER 22,686,300; excess 982,800 → 464,100; giảm 518,700 VND (52.78%). After vẫn cao hơn standard; đây là cost avoidance, không phải cash saving đã được Finance xác nhận.
+- Giới hạn: chỉ usage variance với đơn giá cố định; chưa có material master, BOM editor, import CSV/Excel, persistence hoặc purchase-price variance.
+- Kiểm chứng: `tests/test_materials.py` + API tests; `scripts/verify.ps1` pass — **54 pytest**, coverage **86.28%**, Ruff/format/mypy, ESLint, Prettier, TypeScript, Vite build. API smoke: M1 vượt +1,000,000 VND (6.67%), M2 dưới −100,000 VND (−2.5%), duplicate ID 422. Browser 1440/390px: document không tràn ngang; bảng cuộn trong `.table-wrap`; EN/VI đúng; validation pcs=0 hiển thị lỗi và xóa kết quả cũ.
+
+### 2026-11-08 — Phase 3.1 delivered: material CSV import API (limited)
+
+- Thêm `backend/app/material_import.py` (`parse_material_csv`, `MaterialImportError`) và model `MaterialImportPreview`.
+- Endpoint `POST /api/materials/import?phase=BEFORE|AFTER|CURRENT`: nhận body `text/csv` UTF-8 (cho phép BOM), trả `materials`, `analysis`, `row_count`, `ignored_rows`, `warnings`; không persist file.
+- Quy tắc: cột bắt buộc `phase, style_code, material_id, material_name, unit, standard_qty_per_pc, actual_qty_per_pc, inspected_pcs, unit_cost_vnd`; `data_policy` nếu có phải `SYNTHETIC`; aggregate có trọng số theo `inspected_pcs`; mọi vật tư phải cùng tổng pcs; metadata cùng `material_id` phải nhất quán; cột derived bị bỏ và tính lại; tối đa 5.000 dòng.
+- Lỗi: `415` nếu không phải `text/csv`; `422` kèm số dòng/tên cột hoặc UTF-8 không hợp lệ; `413` theo body limit chung 2 MB.
+- Cố ý dùng raw `text/csv` thay vì multipart để không thêm dependency `python-multipart`; UI upload và Excel import chưa làm.
+- Kiểm chứng: `tests/test_material_import.py` 14 test (sample BEFORE/AFTER khớp 22,222,200 / 23,205,000 / 22,686,300; weighted average; lỗi cột/CSV rỗng/non-synthetic/số sai/metadata lệch/pcs lệch; API 200/415/422). `scripts/verify.ps1` pass — **68 pytest**, coverage **86.50%**, Ruff/format/mypy, ESLint, Prettier, TypeScript, Vite build.
+- Live smoke (port 8021, `docs/data/material_consumption.csv`): phase BEFORE, 15 dòng dùng + 15 dòng AFTER bỏ qua, 1.820 pcs, standard 22.222.200, actual 23.205.000, variance 982.800, pct 4.42; cảnh báo bỏ phase khác và bỏ cột derived.
+
+### 2026-11-08 — Phase 3.2 delivered: material CSV upload UI (limited)
+
+- Thêm `importMaterialCsv` trong `frontend/src/api.ts`, type `MaterialImportPreview` trong `types.ts`, panel “Kiểm tra file CSV vật tư” trong `MaterialsPanel.tsx`.
+- UI cho chọn phase `BEFORE`/`AFTER`, chọn file `.csv`, đọc bằng `file.text()`, gửi body `text/csv; charset=utf-8` tới `/api/materials/import`, hiển thị preview gồm standard/actual/variance, số pcs, số dòng dùng/bỏ qua, cảnh báo và bảng vật tư.
+- Client chặn file > 2 MB và chưa chọn file; server vẫn là nguồn validation cuối (5.000 dòng, policy SYNTHETIC, cột bắt buộc, pcs nhất quán).
+- Cảnh báo backend được localize EN/VI; lỗi import thường gặp có thông điệp VI riêng; lỗi dòng cụ thể hiển thị generic ở VI và chi tiết ở EN.
+- Không persist file/kết quả, không thay case T13 hoặc dữ liệu optimizer; chưa có Excel/general import.
+- Kiểm chứng: `npm run lint`, `format:check`, `typecheck`, `build` pass. Browser 1440px và 390px: không tràn ngang trang; bảng preview cuộn trong `.table-wrap` (520/321px ở mobile); controls xếp 1 cột ở 390px; EN/VI đúng; empty, lỗi thiếu cột (422 → thông điệp VI) và success state hoạt động.
+- Live smoke qua UI: BEFORE 22.222.200 / 23.205.000 / 982.800; AFTER 22.222.200 / 22.686.300 / 464.100; file thiếu cột bị chặn và xóa preview cũ.
+
+### 2026-11-08 — Phase 3.3 delivered: scenario master-data CSV import (limited)
+
+- Thêm `backend/app/scenario_import.py` để parse/normalize bốn CSV operations/workers/worker_skills/machines; models `ScenarioImportRequest`, `ScenarioImportCounts`, `ScenarioImportPreview`; endpoint `POST /api/import/scenario`.
+- Dùng JSON chứa bốn chuỗi CSV thay vì multipart để không thêm dependency. Validate header/cột bắt buộc, ID trùng, predecessor thiếu/tự tham chiếu, chu trình precedence, skill grade, worker/operation tham chiếu, machine coverage, `line_name`/`style_code` nhất quán, `data_policy=SYNTHETIC` và giới hạn 200 operations / 100 workers / 10.000 skill rows / 200 machines.
+- Từ chối rõ ràng cột `efficiency_factor`; hiệu suất riêng theo công nhân không được đưa vào import, SAM đã duyệt theo công đoạn vẫn là cơ sở duy nhất.
+- Templates `docs/data/scenario_master/{operations,workers,worker_skills,machines}.csv`: 40 operations, 24 workers, 576 skill rows, 23 machines, 23 precedence layers; round-trip qua `validate_request` với 0 lỗi.
+- UI `ScenarioImportPanel.tsx` trong section Solver: chọn bốn file, client giới hạn tổng 2 MB, preview counts/machine types/bảng công đoạn. “Apply & solve” thay routing/crew/machines, xóa `baseline_assignment`, chỉ giữ actuals/headcount/daily inputs khi style và line trùng, gọi `/api/optimize` trước khi commit state.
+- Cảnh báo/lỗi import có thông điệp EN/VI; lỗi cấu trúc trả `422` với detail actionable (`operations CSV is missing columns: ...`, `[operations] Row 3: ...`).
+- Docs: thêm contract §3.16 vào `DATA_DICTIONARY.md`, template README, cập nhật `README.md`/`ROADMAP.md`.
+- Kiểm chứng: `tests/test_scenario_import.py` 18 test pass. `scripts/verify.ps1` pass — **86 pytest**, coverage **86.67%**, Ruff/format/mypy, ESLint, Prettier, TypeScript, Vite build.
+- Browser 390px: upload đủ bốn file, preview VI hiển thị 40/24/576/23; **Apply & solve** trả `OPTIMAL` trong 22,51 giây, notice `notice.importApplied` hiển thị đúng, kết quả commit vào dashboard (23 công nhân, bottleneck 58,0s, capacity 395,7, target 420 chưa đạt). Ảnh: `scenario-preview-390.png`.
+- Error state: workers CSV có cột `efficiency_factor` bị chặn, preview cũ bị xóa, hiển thị thông điệp VI `scenarioImport.errorEfficiency`; upload lại workers hợp lệ phục hồi preview. Đã sửa thứ tự mapping để lỗi này ưu tiên hơn `errorDetail`.
+- EN/VI: panel, hint, counts, bảng và nút đổi ngôn ngữ đúng; 1440px không tràn ngang trang (`scrollWidth = clientWidth = 1425`), bảng nằm trong `.table-wrap` với `overflow-x: auto`.
+- Giới hạn: import chỉ đảm bảo cấu trúc/tham chiếu; eligibility do optimizer kiểm tra lại. Không persist file/scenario; đây không phải style master/routing editor. Material Excel import chưa làm.
+
+### 2026-11-08 — Phase 3.4 delivered: scenario Excel workbook import (limited)
+
+- Thêm `backend/app/scenario_excel.py`: nhận body `.xlsx`, kiểm tra zip entry/tổng uncompressed, đọc workbook `read_only=True, data_only=True`, tìm bốn sheet `operations`, `workers`, `worker_skills`, `machines` (không phân biệt hoa/thường, chuẩn hóa khoảng trắng/gạch ngang), chuyển từng sheet thành CSV rồi tái dùng `parse_scenario_bundle`.
+- Endpoint `POST /api/import/scenario/excel` với MIME `application/vnd.openxmlformats-officedocument.spreadsheetml.sheet`; trả `415` sai MIME, `413` quá body limit, `422` file/sheet/dữ liệu không hợp lệ.
+- Giới hạn an toàn: 2 MB body, 30 worksheet, 2.000 zip entry, 20.000.000 byte uncompressed, 10.001 dòng/sheet; giữ nguyên giới hạn 200 operations / 100 workers / 10.000 skill rows / 200 machines.
+- Sheet `machines` được phép thiếu khi mọi công đoạn thủ công. Dùng giá trị tĩnh, không dùng công thức; ô công thức không có cached value sẽ thành rỗng.
+- Thêm `scripts/build_scenario_workbook.py` và template `docs/data/scenario_master/scenario_master.xlsx` (4 sheet, 40/24/576/23, 19.960 byte); test đồng bộ template với CSV.
+- UI `ScenarioImportPanel.tsx`: thêm form workbook `.xlsx` dưới form bốn CSV, dùng chung preview/apply; client chặn file > 2 MB; nhãn/hint/empty state EN/VI; lỗi thiếu sheet và file không hợp lệ có thông điệp VI riêng.
+- Docs: `DATA_DICTIONARY.md` §3.17, `docs/data/scenario_master/README.md`, `README.md`, `ROADMAP.md`.
+- Kiểm chứng: `tests/test_scenario_excel.py` 10 test pass; `scripts/verify.ps1` pass — **96 pytest**, coverage **86.45%**, Ruff/format/mypy, ESLint, Prettier, TypeScript, Vite build.
+- Live API: workbook mẫu trả 200 với 40/24/576/23/23; file rác trả 422 `Excel file is not a valid .xlsx workbook.`; sai MIME trả 415.
+- Browser 1440px và 390px: form Excel hiển thị đúng EN/VI, preview 40/24/576/23, **Apply & solve** trả `OPTIMAL`; workbook thiếu `worker_skills` báo `Workbook thiếu các sheet bắt buộc: worker_skills.`; không tràn ngang trang (390/390, 1425/1425), input rộng 295px ở 390px.
+- Giới hạn: đây là adapter Excel cho scenario master data, không phải material Excel import, style master hay routing editor; không persist file/scenario.
+
+### 2026-11-08 — Phase 4.1/4.3 delivered: design + DB-free scenario service/store
+
+- Hoàn tất decision log cho thiết kế Phase 4 tại `docs/POSTGRESQL_PERSISTENCE_DESIGN.md`: schema `scenarios`/`scenario_audit`/`schema_migrations`, API private bearer token, migration forward-only, threat model, runbook và acceptance gate.
+- Thay `ScenarioSaveRequest` bằng `ScenarioCreateRequest` (`name` + `request`, không nhận result từ client) và mở rộng `ScenarioSummary`/`ScenarioDetail`/`ScenarioListResponse` theo contract §6.2. Chưa có endpoint nên không có backward-compatibility burden.
+- Thêm `backend/app/scenario_store.py`: `ScenarioRecord`, `ScenarioAuditEvent`, `ScenarioRepository` protocol và `InMemoryScenarioRepository` thread-safe cho unit test. Fake store **không được expose qua API** vì process memory không phải persistence.
+- Thêm `backend/app/scenario_service.py`: validate request trước khi solve, giới hạn payload 1.500.000 byte, quota 200/workspace, `Idempotency-Key` replay cùng hash → trả row cũ / khác hash → 409, chỉ lưu `OPTIMAL`/`FEASIBLE_LIMIT`, kiểm tra `metadata.input_hash`, cursor base64url `created_at|uuid`, list 1–100 (mặc định 50), delete + audit.
+- Lỗi service có status code nội bộ để API map sau: 400 cursor/idempotency key, 404, 409 conflict/quota, 413 payload, 422 request/solve, 500 metadata mismatch.
+- `tests/test_scenario_service.py` 14 test: create/summary/audit, idempotent replay, idempotency conflict, quota, solver status bị từ chối, metadata hash/missing, invalid request không gọi solver, payload limit, key/name validation, cursor invalid, pagination, workspace isolation + delete audit.
+- Kiểm chứng: `scripts/verify.ps1` pass — **110 pytest**, coverage **87.33%**, Ruff/format/mypy, ESLint, Prettier, TypeScript, Vite build.
+- **Chưa làm (blocked):** không có `DATABASE_URL`, psycopg, migration `001`, `/api/scenarios`, auth middleware, health `scenario_store`, integration test Postgres hay security sign-off. Frontend vẫn lưu snapshot trong `localStorage`. Gate tiếp theo là 4.2 migration + real repository/API khi có DB private/staging và token.
+
+### 2026-11-08 — Phase 4.2/4.3/4.4 delivered: PostgreSQL persistence + private scenario API (private staging)
+
+- Neon PostgreSQL **18.6** (AWS `us-east-2`) được dùng làm private staging. Migration `backend/migrations/001_scenarios.sql` apply thành công qua `scripts/migrate.py`; `--check` idempotent, `schema_migrations.version=001`, checksum `0f3a34e5bef86a935341fadd79dfc3405f9bcc36890562949301e000f1fb06ff`. Bảng `scenarios`, `scenario_audit`, `schema_migrations` và index đã kiểm chứng.
+- Pin `psycopg[binary]==3.3.8` và `psycopg_pool==3.3.3`; không thêm SQLAlchemy/Alembic, không `create_all()` lúc startup.
+- `backend/app/persistence.py`: `ScenarioSettings` đọc env, payload cap 1.500.000 byte, lazy pool, health snapshot, `ScenarioUnavailableError`; `main.py` đóng pool qua lifespan shutdown.
+- API private: `POST/GET/DELETE /api/scenarios` + `GET /api/scenarios/{id}`; bearer token so sánh bằng `compare_digest`, thiếu/sai token `401`, persistence tắt/misconfigured `503`; body limit, rate limit write `429`, CORS cho `Authorization`/`Idempotency-Key`/`DELETE`; `/api/health` trả `scenario_store`.
+- Server re-solve trước khi lưu; chỉ lưu `OPTIMAL`/`FEASIBLE_LIMIT`; kiểm tra `metadata.input_hash`; `Idempotency-Key` 8–64 ký tự `A-Za-z0-9._:-`, replay cùng hash `200`, khác hash `409`; hard delete + audit.
+- Test: `tests/test_scenario_api.py` 13 test (auth, CRUD, pagination, idempotency, quota, 413/429/422/503), `tests/test_scenario_store_postgres.py` 3 integration test opt-in, gồm regression **session timezone `America/New_York`**: `timestamptz` vẫn round-trip UTC (`+00:00`), cursor phân trang đúng khi ngày/giờ địa phương lệch UTC.
+- Kiểm chứng: full pytest **126 test** pass (gồm 3 integration Neon), coverage **86.54%**; Ruff/format/mypy pass. Smoke private staging: health `200` (`mode=postgres`, `ready=true`, `schema_version=1`), unauth `401`, create `201` + `Location`, replay `200`, list/get `200`, delete `204`, get-after-delete `404`; `created_at` là UTC.
+- Rollback drill: `SCENARIO_PERSISTENCE=localStorage` → `/api/health` 200 (`reason=disabled`), `/api/optimize` 200 `OPTIMAL`, `/api/scenarios` 503.
+- **Residual (chưa đạt Phase 4 done):** frontend vẫn lưu scenario trong `localStorage`, chưa có client server; quota đang `count` rồi `insert` (chưa dùng `pg_advisory_xact_lock`); list query còn select `request_json`/`result_json` dù response list không trả; DB role đang là owner `neondb_owner`; chưa deploy Render/public. Neon password đã từng xuất hiện trong chat → phải rotate trước khi coi security sign-off hoàn tất.
+
+### 2026-11-08 — Phase 4.5: rotation + security review + docs sync
+
+- Rotate Neon password bằng `ALTER ROLE neondb_owner` với mật khẩu random 32 byte; `.env.local` (gitignored) được cập nhật, reconnect và `scripts/migrate.py --check` xác nhận schema `001` sạch; 3 integration test PostgreSQL pass lại sau rotation. Không in DSN/mật khẩu ra log.
+- Test integration thêm `_RedactedDatabaseUrl` để pytest không render DSN khi fail; regression timezone `America/New_York` xác nhận `timestamptz` round-trip UTC và cursor đúng.
+- Security review: bearer token so sánh constant-time, `401`/`503` đúng; workspace filter bắt buộc; SQL parameterized; token/DSN không trả qua API/health/log; CORS allowlist; body/payload/rate limit; lifespan đóng pool. Rollback drill pass (persistence tắt → optimize `OPTIMAL`, scenarios `503`).
+- Residual accepted cho private staging: DB role owner `neondb_owner` (chưa tạo role least-privilege); quota count/insert chưa advisory lock; chưa có purge audit; chưa có frontend server-scenario client. Không claim public deployment.
+- Docs sync: `docs/POSTGRESQL_PERSISTENCE_DESIGN.md`, `ROADMAP.md`, `README.md`, `SECURITY.md`, `DEPLOYMENT.md`, `DATA_DICTIONARY.md`.
+- Kiểm chứng cuối: `scripts/verify.ps1` pass — **123 pytest passed, 3 skipped** (Postgres opt-in), coverage **85.39%**, Ruff/format/mypy, ESLint, Prettier, TypeScript, Vite build.
+
+### 2026-11-08 — Phase 4.6: demo accounts + frontend server-scenario client (Model C)
+
+- Chọn **Model C** thay vì anonymous session: tài khoản demo cấu hình bằng env, không lưu user/session trong PostgreSQL; Neon chỉ lưu scenario. Không cần migration `002` và không mở anonymous write.
+- `backend/app/auth.py`: `AUTH_DEMO_PASSWORD`, `AUTH_SESSION_SECRET`, `AUTH_ADMIN_USERS` (mặc định `admin`), `AUTH_VIEWER_USERS` (mặc định `test1`–`test4`), `AUTH_SESSION_TTL_SEC` (mặc định 8 giờ), `AUTH_COOKIE_SECURE=auto|always|never`. Mật khẩu dùng chung cho demo, kiểm tra constant-time; username không hợp lệ và sai mật khẩu đều trả `401`.
+- Session là HMAC-SHA256 token ký stateless trong cookie HttpOnly `lb_session` (HTTPS dùng `__Host-lb_session`), `SameSite=Lax`, `Secure` khi HTTPS/forwarded proto. Token chứa role, hạn dùng và fingerprint mật khẩu, nên đổi mật khẩu thu hồi phiên cũ. Không có refresh token, không lưu session server-side.
+- API: `GET /api/auth/session`, `POST /api/auth/login`, `POST /api/auth/logout`; guard scenario chấp nhận bearer token hoặc session. Viewer chỉ được list/get; admin được create/delete. Cookie write bắt buộc `Origin` hợp lệ (CSRF); bearer write không cần Origin. Hợp đồng lỗi: `401` thiếu/sai phiên, `403` viewer write hoặc Origin bị từ chối, `503` login/persistence tắt hoặc cấu hình sai, `429` vượt rate limit login/write.
+- CORS bật `allow_credentials=True` với allowlist tường minh + regex Netlify; không dùng `*` khi có credentials. Health chỉ trả metadata auth (`enabled`, `mode`, `roles`, TTL), không lộ mật khẩu/secret.
+- Frontend: dialog đăng nhập tối giản, chip user/role + logout trên topbar, panel **Server scenarios** trong section Solver. Admin thấy form lưu/xóa; viewer thấy banner chỉ đọc và không có nút ghi. Client dùng `credentials: "include"` và xử lý `401` bằng cách kết thúc phiên UI. Optimizer, export và snapshot `localStorage` vẫn dùng được khi chưa đăng nhập.
+- Cấu hình local: thêm `AUTH_*` vào `.env.local` (gitignored, không commit); tạo `scripts/run_backend.ps1` nạp `.env.local` rồi chạy uvicorn, biến môi trường có sẵn được ưu tiên. `pytest`/`scripts/verify.ps1` không tự nạp file này.
+- Kiểm chứng backend: `pytest` **138 passed, 3 skipped** (Postgres opt-in; 141 collected), coverage **86.19%**; Ruff check/format, mypy pass. `tests/test_auth_api.py` 15 test cho login, cookie flags, role, CSRF, expiry, tampering, logout, rate limit, login tắt, audit actor và health không lộ secret.
+- Kiểm chứng frontend: ESLint, Prettier check, `tsc --noEmit`, Vite build pass. Browser 1440px và 390px (emulated) không tràn ngang; dialog rộng 420/366px, focus vào username; admin panel và viewer read-only banner hiển thị đúng.
+- Smoke Neon qua backend thật: health `200` (`auth.enabled=true`, `scenario_store.ready=true`), anonymous list `401`, sai mật khẩu `401`, admin login `200` + cookie HttpOnly/SameSite/TTL 8h, cookie write thiếu Origin `403`, admin create `201` (`server-solve`, `OPTIMAL`, 23 workers/23 stations), list/get `200`, viewer login `200`, viewer list `200` nhưng create `403`, delete `204`, get-after-delete `404`, logout `204`, list sau logout `401`. Tổng **29/29 smoke check pass**; scenario smoke đã xóa khỏi Neon.
+- Kiểm chứng cuối sau đồng bộ docs/config: `powershell -ExecutionPolicy Bypass -File scripts/verify.ps1` pass — **138 passed, 3 skipped**, coverage **86.19%**, Ruff check/format, mypy, ESLint, Prettier, `tsc --noEmit` và Vite build. `git diff --check` sạch.
+- **Giới hạn còn lại:** đây là auth demo dùng chung mật khẩu, không phải identity provider/least privilege; admin và viewer dùng chung `SCENARIO_WORKSPACE_ID` nên viewer đọc được mọi scenario trong workspace; chưa có user table, audit theo từng cá nhân (audit chỉ có actor label/username), quota advisory lock, purge audit hay deploy public. Render vẫn mặc định `SCENARIO_PERSISTENCE=localStorage`; bật Neon + auth là bước deploy riêng.

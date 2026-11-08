@@ -4,7 +4,7 @@
 > **Dữ liệu:** 100% synthetic. Không phải dữ liệu thật, lương thật hay năng suất thật của HBI.  
 > **Phạm vi:** `LINE_01`, style `BASIC-TEE-001`, 40 operations, baseline 24 station / 24 worker / 61.0s.  
 > **Liên kết:** `CHECKLIST.md` §0.2, `KPI_SPEC.md` §4 và §8, `docs/IE_OPERATIONS_PLAYBOOK.md` §7.  
-> **File dữ liệu:** `docs/data/kaizen_cost_model.csv`.
+> **File dữ liệu:** `docs/data/kaizen_cost_model.csv` (các giả định không phải tiền như paid hours/working days để trống cột tiền; labor rate có `unit_cost_vnd`, nhưng `total_vnd` để trống).
 
 ---
 
@@ -258,7 +258,9 @@ labor minutes per piece  = 24 × 450 / 376.2 = 28.71 min/pc
 | Working days / month | 26 ngày | Synthetic calendar |
 | Implementation cost | 12,000,000 VND | IE + training + visual aids |
 | Revenue / margin | Không dùng | Không có dữ liệu |
-| Material/energy saving | Không dùng | Không có dữ liệu |
+| Material/energy saving | Không dùng | Không có dữ liệu; material standard là case T13 riêng, không cộng vào case này |
+
+> Material standardization (chỉ/băng keo/viền) được phân tích riêng trong `docs/CASE_STUDY_MATERIAL_STANDARD.md`; không cộng material cost avoidance vào saving của line rebalancing để tránh double count.
 
 **Chi tiết implementation cost:**
 
@@ -268,6 +270,8 @@ labor minutes per piece  = 24 × 450 / 376.2 = 28.71 min/pc
 | Operator training | 92 person-hour | 50,000 VND/h | 4,600,000 |
 | Visual aids + standard work | 1 lot | 1,400,000 | 1,400,000 |
 | **Tổng** | | | **12,000,000** |
+
+**Cách đọc CSV:** `category = ASSUMPTION` chứa labor rate, paid hours/shift và working days/month. Labor rate có `unit_cost_vnd = 60,000` nhưng `total_vnd` để trống; paid hours và working days là giả định phi tiền nên cả hai cột tiền đều để trống. `category = IMPLEMENTATION` chứa ba hạng mục chi phí và dòng tổng 12,000,000 VND. Không cộng các dòng assumption vào implementation cost.
 
 ### 7.2. Estimated saving
 

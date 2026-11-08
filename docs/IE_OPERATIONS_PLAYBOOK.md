@@ -1133,7 +1133,7 @@ Biết dùng DMAIC để giải quyết vấn đề chất lượng/năng suất
 
 ### 6.3. T07 case study — Quality RCA tại OP060
 
-> Chi tiết: `docs/CASE_STUDY_QUALITY_RCA.md`. Dữ liệu: `docs/data/quality_defects.csv`, `docs/data/quality_setup_audit.csv`.
+> Chi tiết: `docs/CASE_STUDY_QUALITY_RCA.md`. Dữ liệu: `docs/data/quality_inspection_summary.csv`, `docs/data/quality_defects.csv`, `docs/data/quality_setup_audit.csv`.
 
 **Tóm tắt kết quả:**
 
@@ -1253,7 +1253,7 @@ Viết được A3 một trang: vấn đề, hiện trạng, nguyên nhân, hàn
 
 ### 7.3. T08 A3 — Line rebalancing
 
-> Chi tiết: `docs/CASE_STUDY_KAIZEN.md`. Chi phí: `docs/data/kaizen_cost_model.csv`.
+> Chi tiết: `docs/CASE_STUDY_KAIZEN.md`. Chi phí: `docs/data/kaizen_cost_model.csv` (paid hours/working days để trống cột tiền; labor rate có `unit_cost_vnd`; dòng `IMPLEMENTATION` mới là chi phí).
 
 | Phần | Nội dung |
 |---|---|
@@ -2188,20 +2188,78 @@ R — Result: output/quality/safety/cost; nêu target đạt/chưa đạt và ca
 | Nội dung | Nguồn chuẩn |
 |---|---|
 | KPI formulas | `KPI_SPEC.md` |
+| Data model / API fields | `DATA_DICTIONARY.md` |
 | Solver / MILP | `MODEL.md` |
 | Trạng thái & quyết định | `CHECKLIST.md` §0.1–0.2 |
 | Roadmap / acceptance | `ROADMAP.md` §9 |
 | T07 Quality RCA | `docs/CASE_STUDY_QUALITY_RCA.md` |
 | T08 Kaizen | `docs/CASE_STUDY_KAIZEN.md` |
+| T13 Material standard | `docs/CASE_STUDY_MATERIAL_STANDARD.md` |
 | Layout & Ergonomics | `docs/CASE_STUDY_LAYOUT_ERGONOMICS.md`, `docs/layout_study_before_after.svg` |
 | Cross-functional case | §11.5; hourly source in `docs/data/hourly_actuals.csv` |
 | Interview preparation | `docs/INTERVIEW_PREP.md` |
 | Hourly data | `docs/data/hourly_actuals.csv` |
 | Waste data | `docs/data/waste_observation.csv` |
-| Quality data | `docs/data/quality_defects.csv`, `docs/data/quality_setup_audit.csv` |
+| Quality data | `docs/data/quality_inspection_summary.csv`, `docs/data/quality_defects.csv`, `docs/data/quality_setup_audit.csv` |
+| Material data | `docs/data/material_consumption.csv` |
 | Kaizen cost | `docs/data/kaizen_cost_model.csv` |
 | OEE log | `docs/data/oee_machine_log.csv` |
 | SMED study | `docs/data/smed_changeover_study.csv` |
 | Layout route study | `docs/data/layout_route_observations.csv` |
 
 > Toàn bộ ví dụ và số liệu trong playbook là synthetic, không phải kết quả của HBI.
+
+---
+
+## Phụ lục C. Material standard — cách tính và kiểm soát <a id="material-standard"></a>
+
+### C.1. Định nghĩa
+
+```text
+standard_qty_per_pc = định mức vật tư cho 1 áo (BOM/tech pack)
+actual_qty_per_pc   = (xuất kho − hoàn trả) / số pcs sản xuất
+usage_variance      = actual_qty_per_pc − standard_qty_per_pc
+cost_variance       = usage_variance × sản lượng × đơn giá
+```
+
+Phân biệt:
+
+- **Usage variance** — dùng nhiều/ít vật tư so với định mức.
+- **Price variance** — giá mua khác giá chuẩn; case study này giữ giá cố định nên không đo price variance.
+- **Cost avoidance** — giảm phần vượt định mức; không phải cash saving nếu chưa có xác nhận của Finance.
+
+### C.2. Ví dụ synthetic
+
+Nguồn: `docs/data/material_consumption.csv`. Ba vật tư: chỉ, băng keo 3M, viền; 1,820 pcs/giai đoạn.
+
+| Vật tư | Standard | Before | After | Before variance | After variance |
+|---|---:|---:|---:|---:|---:|
+| Chỉ (m/pc) | 45.00 | 46.80 | 45.90 | +1.80 | +0.90 |
+| Băng keo (m/pc) | 0.35 | 0.38 | 0.36 | +0.03 | +0.01 |
+| Viền (m/pc) | 0.60 | 0.66 | 0.62 | +0.06 | +0.02 |
+
+| Giai đoạn | Standard cost | Actual cost | Excess |
+|---|---:|---:|---:|
+| Before | 22,222,200 VND | 23,205,000 VND | 982,800 VND (4.42%) |
+| After | 22,222,200 VND | 22,686,300 VND | 464,100 VND (2.09%) |
+
+Excess giảm **518,700 VND (52.8%)**, nhưng cả ba vật tư vẫn cao hơn định mức. Không được gọi là “đạt định mức” hoặc “cash saving”.
+
+### C.3. Control Plan tối thiểu
+
+| KPI | Target | Tần suất | Owner | Reaction |
+|---|---|---|---|---|
+| Usage per pc | ≤ standard + tolerance | Daily | IE + Warehouse | Vượt tolerance 2 ngày → 5 Why |
+| Issue/return accuracy | 100% kit | Daily | Warehouse | Thiếu phiếu → dừng cấp phát |
+| First-piece material check | 100% ca/changeover | Mỗi ca | Quality | Thiếu → không chạy |
+| Cost variance | ≤2.5% standard | Weekly | IE + Finance | >3% trong 2 tuần → review BOM/method |
+
+### C.4. Giới hạn
+
+- Case study chỉ có 3 vật tư, không đại diện toàn bộ BOM.
+- Giá và định mức là synthetic, không phải giá mua/định mức HBI.
+- Actual consumption bao gồm scrap/rework; chưa tách scrap riêng.
+- 5 ngày/giai đoạn chưa đủ để kết luận seasonality hoặc supplier lot variation.
+- Không claim cash saving, không claim quan hệ nhân quả tuyệt đối.
+
+> Chi tiết đầy đủ: `docs/CASE_STUDY_MATERIAL_STANDARD.md`.

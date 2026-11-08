@@ -39,7 +39,7 @@ In scope:
 Out of scope:
 
 - Accuracy of synthetic data or KPI formulas (see [`KPI_SPEC.md`](KPI_SPEC.md)).
-- Missing authentication, authorization, multi-tenancy, and persistence — documented demo limitations.
+- Production identity, enterprise RBAC, multi-tenancy, and public write APIs are out of scope. Phase 4 ships environment-backed **demo accounts** (admin/viewer) over a single shared workspace and a PostgreSQL staging database; it is not a production authorization system.
 - Vulnerabilities in third-party services (Render, Netlify, GitHub) or local browser extensions.
 
 ## Existing controls
@@ -51,6 +51,34 @@ Out of scope:
 - Security headers and `Cache-Control: no-store` on API responses.
 - Secrets only through environment variables; no credentials in the repository.
 - Pinned dependencies, Dependabot updates, and CI quality gates.
+
+## Phase 4 controls (private staging, implemented)
+
+Phase 4 PostgreSQL scenario persistence is enabled on private staging only. Implemented controls:
+
+- Private bearer token (`SCENARIO_API_TOKEN`) with constant-time comparison for admin/ops clients; missing/invalid credentials return `401`; the token is never returned, logged, or shipped to the frontend.
+- Environment-backed demo accounts: `AUTH_DEMO_PASSWORD`, `AUTH_SESSION_SECRET`, `AUTH_ADMIN_USERS`, `AUTH_VIEWER_USERS`. Usernames, roles and password live only in server env; the frontend receives only the username, role, login-enabled flag and session TTL.
+- Stateless HMAC-SHA256 session token in an HttpOnly, `SameSite=Lax` cookie; `Secure` and the `__Host-` prefix under HTTPS; 8-hour default TTL. The token includes a password fingerprint, so rotating the password invalidates existing sessions.
+- Role enforcement: viewers can list/get scenarios; only admins can create/delete. Cookie-authenticated writes also require an allowed `Origin` header (CSRF); bearer-token writes are exempt because a browser does not attach that token automatically.
+- Login and scenario-write rate limits; login failures return a generic `401` without revealing whether the username exists. Logs record success/failure but never the password, session token, DSN, or bearer token.
+- One `SCENARIO_WORKSPACE_ID`; every query filters by workspace and cross-workspace IDs return a generic `404`.
+- Parameterized SQL only; no user input is interpolated into SQL text.
+- Append-only audit rows for create/delete; scenario payloads remain synthetic/demo data.
+- Persistence disabled by default (`SCENARIO_PERSISTENCE=localStorage`); DB/misconfiguration returns `503` while optimize/export stay available. Connection pool closes during app shutdown.
+- Payload cap 1.5 MB inside a 2 MB body limit; write rate limit (default 5/minute); solver time limit still applies.
+- CORS allowlist with explicit origins plus the Netlify preview regex and `allow_credentials=True`; `*` is never used with credentials.
+
+Residual risks before any public deployment:
+
+- Demo accounts share one password; there is no identity provider, MFA, password policy, account lockout, or per-user revocation list. Anyone with the demo password can sign in as any listed account.
+- Admin and viewers share one workspace, so read-only accounts can read every scenario in that workspace. This is intentional for the demo and must be documented before sharing credentials.
+- The app currently connects as the database owner (`neondb_owner`), not a least-privilege scenario role.
+- Scenario quota is enforced with `count` then `insert`, without `pg_advisory_xact_lock`; concurrent writes can briefly exceed the soft quota.
+- `SCENARIO_AUDIT_RETENTION_DAYS` is documented but no purge job exists yet.
+- The Neon password was exposed in chat and was rotated on 2026-11-08; the new DSN is only in the gitignored `.env.local`. The Render secret must be set to the rotated value when a deployment is created.
+- Demo auth is not a substitute for production identity, least privilege, or compliance review.
+
+See [`docs/POSTGRESQL_PERSISTENCE_DESIGN.md`](docs/POSTGRESQL_PERSISTENCE_DESIGN.md) for the threat model and test plan.
 
 ## Data policy
 

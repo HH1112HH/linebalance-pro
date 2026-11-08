@@ -4,7 +4,7 @@ services:
     runtime: python
     plan: free
     buildCommand: pip install -r requirements.txt
-    startCommand: uvicorn app.main:app --host 0.0.0.0 --port $PORT
+    startCommand: uvicorn app.main:app --host 0.0.0.0 --port $PORT --proxy-headers --forwarded-allow-ips="*"
     rootDir: backend
     healthCheckPath: /api/health
     envVars:
@@ -18,5 +18,13 @@ services:
         value: "2"
       - key: SCENARIO_PERSISTENCE
         value: localStorage
+      - key: AUTH_ADMIN_USERS
+        value: admin
+      - key: AUTH_VIEWER_USERS
+        value: test1,test2,test3,test4
+      - key: AUTH_SESSION_TTL_SEC
+        value: "28800"
+      - key: AUTH_COOKIE_SECURE
+        value: auto
       - key: FRONTEND_ORIGINS
         value: http://localhost:5173,http://127.0.0.1:5173

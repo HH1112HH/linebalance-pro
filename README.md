@@ -15,7 +15,7 @@ LineBalance Pro turns a garment style's operation routing, SAM, skill matrix, an
 
 [View mobile dashboard screenshot (390px)](frontend_dashboard_mobile.png)
 
-> **Data policy:** this public demo ships **synthetic data only**. It contains no production data from any manufacturer and is not a substitute for a validated time study.
+> **Data policy:** this local portfolio demo uses **synthetic data only**. It contains no production data from any manufacturer and is not a substitute for a validated time study. The public deployment is not live yet.
 
 ---
 
@@ -30,11 +30,15 @@ LineBalance Pro turns a garment style's operation routing, SAM, skill matrix, an
 | **Baseline comparison** | Synthetic current-state vs. optimized line: workers, stations, bottleneck, LBE, capacity, target achievement |
 | **Production actuals** | Output achievement, actual labor efficiency, downtime by category, loss breakdown |
 | **Time study** | Observed time aggregation with allowance and performance rating — human work only |
+| **Material usage variance** | Standard-vs-actual consumption for a synthetic 3-material T13 case, cost variance, and a what-if calculator; usage variance only, not purchase-price variance |
+| **Material CSV import (API + UI)** | Server-validated `text/csv` upload for material consumption, aggregated by inspected pcs, with a browser file picker and preview |
+| **Scenario master-data CSV/XLSX import (API + UI)** | Validate four synthetic CSVs or one four-sheet `.xlsx` workbook — operations, workers, worker skills, machines — then apply them to the working scenario and rerun the optimizer; previews counts, precedence layers and routing |
 | **Export & snapshots** | XLSX workbook export in the active EN/VI UI language; browser-local scenario snapshots |
+| **Demo accounts & server scenarios** | Environment-backed demo login (`admin` full access, `test1`–`test4` read-only); signed-in admins can save, load and delete synthetic scenarios in the optional Neon-backed workspace while viewers can only load them |
 | **Demo scenarios** | Scenario A (stretch target 420) and Scenario B (feasible target 400) |
 | **Analysis workspace** | English/Vietnamese switch, station load chart with takt references, bottleneck review, and searchable/filterable/sortable station assignment table |
 
-The current sample contains one synthetic line and shift, not dated production history. Line/shift are shown as fixed report context and date-range filtering is intentionally unavailable; scenario A/B selection is interactive. XLSX is the supported report export and follows the active English/Vietnamese language, including sheet names, headers, KPI labels, statuses, warning text, and the file suffix (`_en`/`_vi`).
+The current sample contains one synthetic line and shift. Its five dated daily actual records (2026-10-26 → 2026-10-30) are demo data for the actuals panel, not a production history; date-range filtering is intentionally unavailable. Scenario A/B selection is interactive. XLSX is the supported report export and follows the active English/Vietnamese language, including sheet names, headers, KPI labels, statuses, warning text, and the file suffix (`_en`/`_vi`).
 
 ---
 
@@ -53,6 +57,15 @@ FastAPI · Pydantic v2
         ├─ planning.py    capacity · headcount · machines
         ├─ baseline.py    before/after comparison
         ├─ actuals.py     production actuals · downtime
+        ├─ materials.py   material usage variance · cost avoidance
+        ├─ material_import.py  material CSV validation
+        ├─ scenario_import.py  operations/workers/skills/machines CSV validation
+        ├─ scenario_excel.py  four-sheet .xlsx workbook adapter
+        ├─ auth.py        demo accounts · signed session cookie · roles
+        ├─ scenario_service.py  save/list/get/delete orchestration
+        ├─ scenario_store.py    in-memory + PostgreSQL scenario repository
+        ├─ persistence.py  scenario settings · connection pool · health
+        ├─ style_setup.py  readiness · process flow
         └─ excel.py       XLSX export
 ```
 
@@ -106,6 +119,19 @@ source .venv/bin/activate
 pip install -r backend/requirements-dev.txt   # includes test dependencies
 uvicorn backend.app.main:app --reload --port 8000
 ```
+
+For optional Neon persistence and demo login, put local settings in a
+gitignored `.env.local` and start the backend with the helper script, which
+loads that file without affecting pytest:
+
+```powershell
+powershell -ExecutionPolicy Bypass -File scripts\run_backend.ps1 -Reload
+```
+
+`AUTH_DEMO_PASSWORD` and `AUTH_SESSION_SECRET` enable the demo login. Accounts
+are `admin` and `test1`–`test4`; the password itself is never committed to the
+repository. See [`DEPLOYMENT.md`](DEPLOYMENT.md) for the full variable list.
+Compute endpoints and browser-local snapshots work without an account.
 
 API docs: <http://127.0.0.1:8000/docs>  
 Health check: <http://127.0.0.1:8000/api/health>
@@ -173,6 +199,20 @@ CI (`.github/workflows/ci.yml`) runs two parallel jobs on every push to `main` a
 | `POST` | `/api/export` | Build an XLSX workbook; `language` = `en` or `vi` (default `en`) |
 | `POST` | `/api/actuals/analyze` | Analyze production actuals and downtime |
 | `POST` | `/api/time-study/calculate` | Aggregate a time study |
+| `POST` | `/api/readiness/evaluate` | Evaluate required new-style launch checklist gates |
+| `POST` | `/api/process-flow/build` | Build precedence DAG with optional station/worker assignment |
+| `GET` | `/api/materials/sample` | Synthetic T13 material case: standard, before/after actual, comparison |
+| `POST` | `/api/materials/analyze` | Calculate material usage variance for one phase |
+| `POST` | `/api/materials/import` | Parse a `text/csv` material-consumption file and return an aggregated preview; `phase` query selects `CURRENT`, `BEFORE`, or `AFTER` |
+| `POST` | `/api/import/scenario` | Validate four CSV strings (`operations_csv`, `workers_csv`, `worker_skills_csv`, `machines_csv`) and return a preview of the normalized scenario |
+| `POST` | `/api/import/scenario/excel` | Validate one `.xlsx` workbook with sheets `operations`, `workers`, `worker_skills`, optional `machines`; same preview contract as the CSV endpoint |
+| `POST` | `/api/scenarios` | **Demo admin** (bearer token or session): validate, server-solve, and persist one scenario; optional `Idempotency-Key` |
+| `GET` | `/api/scenarios` | **Demo account**: cursor-paginated scenario summaries (no request/result payloads) |
+| `GET` | `/api/scenarios/{id}` | **Demo account**: full stored request + result |
+| `DELETE` | `/api/scenarios/{id}` | **Demo admin**: hard delete + audit row |
+| `GET` | `/api/auth/session` | Current demo session metadata; anonymous callers get `authenticated=false` |
+| `POST` | `/api/auth/login` | Demo login; sets an HttpOnly signed session cookie |
+| `POST` | `/api/auth/logout` | Clear the session cookie |
 
 ### Solver status contract
 
@@ -212,6 +252,7 @@ mypy.ini              Python type-check config
 frontend/eslint.config.js  ESLint flat config
 frontend/.prettierrc.json  Prettier config
 KPI_SPEC.md           KPI formula and naming contract
+DATA_DICTIONARY.md    Data model, API fields, dataset grains, and data-quality rules
 MODEL.md              MILP formulation and status rules
 ROADMAP.md            Scope, architecture, and Definition of Done
 CHECKLIST.md          Review checklist and decision log
@@ -225,6 +266,7 @@ DEPLOYMENT.md         Render / Netlify deployment and env vars
 | Document | Contents |
 |---|---|
 | [`KPI_SPEC.md`](KPI_SPEC.md) | KPI formulas, units, rounding, naming rules, test checklist |
+| [`DATA_DICTIONARY.md`](DATA_DICTIONARY.md) | Request/response models, API fields, dataset grains, and data-quality rules |
 | [`MODEL.md`](MODEL.md) | Sets, variables, constraints, lexicographic objective |
 | [`ROADMAP.md`](ROADMAP.md) | Scope, architecture, task breakdown, Definition of Done |
 | [`CHECKLIST.md`](CHECKLIST.md) | Audit results, technical decisions, current status |
@@ -234,8 +276,11 @@ DEPLOYMENT.md         Render / Netlify deployment and env vars
 | [`docs/IE_OPERATIONS_PLAYBOOK.md`](docs/IE_OPERATIONS_PLAYBOOK.md) | IE / Lean operating playbook |
 | [`docs/CASE_STUDY_QUALITY_RCA.md`](docs/CASE_STUDY_QUALITY_RCA.md) | Quality RCA case study |
 | [`docs/CASE_STUDY_KAIZEN.md`](docs/CASE_STUDY_KAIZEN.md) | Kaizen / cost-saving case study |
+| [`docs/CASE_STUDY_MATERIAL_STANDARD.md`](docs/CASE_STUDY_MATERIAL_STANDARD.md) | Material standard consumption and variance case study |
 | [`docs/CASE_STUDY_LAYOUT_ERGONOMICS.md`](docs/CASE_STUDY_LAYOUT_ERGONOMICS.md) | Layout, point-of-use flow, and ergonomics case study |
 | [`docs/INTERVIEW_PREP.md`](docs/INTERVIEW_PREP.md) | Shift Line Engineer interview prep, STAR answers, and portfolio demo outline |
+| [`docs/PROTECTION_PAY_POLICY_INTAKE.md`](docs/PROTECTION_PAY_POLICY_INTAKE.md) | HR/Finance policy intake gate; no formula or calculator is implemented |
+| [`docs/POSTGRESQL_PERSISTENCE_DESIGN.md`](docs/POSTGRESQL_PERSISTENCE_DESIGN.md) | Phase 4 scenario persistence: schema, bearer + demo-session auth, migrations, threat model, rollout; PostgreSQL repository + scenario endpoints implemented on private staging |
 
 ---
 
@@ -246,14 +291,14 @@ DEPLOYMENT.md         Render / Netlify deployment and env vars
 | API | Render (Python 3.12) | [`render.yaml`](render.yaml) |
 | UI | Netlify (static Vite build) | [`netlify.toml`](netlify.toml) |
 
-Environment variables, CORS, rate limits, and body limits are documented in [`DEPLOYMENT.md`](DEPLOYMENT.md).
+Environment variables, CORS, rate limits, and body limits are documented in [`DEPLOYMENT.md`](DEPLOYMENT.md). These are deployment configurations; the public demo is not live yet.
 
 ---
 
 ## What this project demonstrates
 
 - **Operations research:** two-stage lexicographic MILP, warm start, time limits, and truthful solver status.
-- **Industrial engineering:** SAM, takt, line balance efficiency, bottleneck capacity, headcount, skill matrix, and machine requirements.
+- **Industrial engineering:** SAM, takt, line balance efficiency, bottleneck capacity, headcount, skill matrix, machine requirements, and a T06 readiness/process-flow viewer for the active sample routing.
 - **Full-stack delivery:** typed FastAPI contracts, React/TypeScript UI, pytest, CI, and deploy configs.
 - **Engineering discipline:** documented KPI contract, MILP model, decision log, and a single local verification gate.
 
@@ -262,7 +307,11 @@ Environment variables, CORS, rate limits, and body limits are documented in [`DE
 ## Limitations
 
 - **Synthetic demo only.** No real factory, payroll, or production data is included.
-- **No authentication, database, multi-plant, real-time MES, or machine integration.**
+- **No SSO/identity provider, multi-plant, real-time MES, or machine integration.** Demo accounts are not a production identity system.
+- **Server-side scenario persistence is optional and demo-grade:** PostgreSQL on Neon staging, migration `001`, four `/api/scenarios` routes, and environment-backed demo accounts. Admins can save/delete; viewers are read-only and share the same demo workspace. Compute paths and local snapshots do not require an account. This is not production identity, least-privilege database security, or multi-tenant isolation. See [`docs/POSTGRESQL_PERSISTENCE_DESIGN.md`](docs/POSTGRESQL_PERSISTENCE_DESIGN.md).
+- **T06 is a limited workflow:** readiness uses editable in-memory checklist state and process flow uses the active optimizer routing/result; no style master, routing editor, persistent launch record, or release approval.
+- **Material analysis is usage variance only:** the T13 sample is synthetic; there is no material master, BOM editing, or persistence. CSV import supports a browser file picker and preview (`text/csv`, synthetic policy). Excess reduction is cost avoidance in the dataset, not a Finance-verified cash saving.
+- **Scenario import is a CSV/XLSX preview/apply, not a style master:** the four-file CSV import or one four-sheet `.xlsx` workbook validates structure, references, precedence and machine coverage, then replaces the in-memory routing/crew/machines and reruns the optimizer. Nothing is persisted, worker-specific `efficiency_factor` is rejected, and .xlsx formulas are not evaluated for import; use plain values.
 - **Capacity is a planning estimate**, constrained by the bottleneck — not verified output.
 - **Machine coverage is not utilization**; runtime, OEE, and breakdown data are out of scope.
 - **The solver is time-limited.** Large instances may return `FEASIBLE_LIMIT` instead of a proof.

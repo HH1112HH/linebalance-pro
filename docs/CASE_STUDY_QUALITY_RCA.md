@@ -4,7 +4,7 @@
 > **Dữ liệu:** 100% synthetic. Không phải dữ liệu thật của HBI.  
 > **Phạm vi:** 1 line / 1 style / 1 operation / 2 giai đoạn 5 ngày.  
 > **Liên kết:** `docs/IE_OPERATIONS_PLAYBOOK.md` §6 (DMAIC), `KPI_SPEC.md` §9 (Time Study), baseline 24/24/61.0s trong `CHECKLIST.md` §0.2.  
-> **File dữ liệu:** `docs/data/quality_defects.csv`, `docs/data/quality_setup_audit.csv`.
+> **File dữ liệu:** `docs/data/quality_inspection_summary.csv`, `docs/data/quality_defects.csv`, `docs/data/quality_setup_audit.csv`.
 
 ---
 
@@ -85,10 +85,31 @@ Target được đặt để **giảm ít nhất 40%**, không phải “zero de
 
 ### 3.1. Nguồn dữ liệu
 
-- End-line inspection: 100% sản lượng, 1,820 pcs.
+- End-line inspection: 100% sản lượng, 1,820 pcs; mẫu số lấy từ `docs/data/quality_inspection_summary.csv`.
 - Rework log: mỗi defect ghi loại lỗi, station, thời điểm.
 - Setup audit: 5 lần changeover, kiểm tra guide có mặt và first-piece check.
 - Dữ liệu synthetic, không có tên công nhân; không dùng dữ liệu cá nhân.
+
+#### 3.1.1. Denominator theo ngày
+
+`quality_inspection_summary.csv` ghi 364 pcs/ngày cho cả hai giai đoạn. Đây là mẫu số dùng để tính defect rate và FPY; không lấy 1,820 pcs từ câu chuyện mà không có bảng kiểm tra đi kèm.
+
+| Giai đoạn | Ngày | Inspected | Defects | Defect rate | Rework min |
+|---|---|---:|---:|---:|---:|
+| BEFORE | 2026-10-26 | 364 | 10 | 2.747% | 30 |
+| BEFORE | 2026-10-27 | 364 | 10 | 2.747% | 30 |
+| BEFORE | 2026-10-28 | 364 | 8 | 2.198% | 24 |
+| BEFORE | 2026-10-29 | 364 | 10 | 2.747% | 30 |
+| BEFORE | 2026-10-30 | 364 | 7 | 1.923% | 21 |
+| **BEFORE total** |  | **1,820** | **45** | **2.473%** | **135** |
+| AFTER | 2026-11-02 | 364 | 4 | 1.099% | 12 |
+| AFTER | 2026-11-03 | 364 | 4 | 1.099% | 12 |
+| AFTER | 2026-11-04 | 364 | 3 | 0.824% | 9 |
+| AFTER | 2026-11-05 | 364 | 4 | 1.099% | 12 |
+| AFTER | 2026-11-06 | 364 | 3 | 0.824% | 9 |
+| **AFTER total** |  | **1,820** | **18** | **0.989%** | **54** |
+
+> Tổng defect theo ngày trong bảng này khớp với `quality_defects.csv` (45 trước, 18 sau). Defect rate tổng dùng 45/1,820 = 2.47% và 18/1,820 = 0.99% như các mục sau; chênh 0.001 điểm % là do làm tròn hiển thị.
 
 ### 3.2. Defect Pareto trước
 
@@ -218,6 +239,8 @@ Rework time = 45 defect × 3.0 phút/defect
 | Cổ không đều | 12 | 6 | −6 (−50.0%) | Pareto |
 | Nhăn đường may | 9 | 4 | −5 (−55.6%) | Pareto |
 | Bỏ mũi | 6 | 3 | −3 (−50.0%) | Pareto |
+
+> Nguồn inspected/defect/rework: `quality_inspection_summary.csv`; nguồn defect type: `quality_defects.csv`. Tổng theo ngày khớp nhau (45 trước, 18 sau).
 
 ### 5.4. Pareto sau
 

@@ -17,7 +17,7 @@
 | OEE tính từ log máy synthetic, nếu pacer assumption đúng | OEE là utilization hoặc OEE production đã được xác nhận |
 | Approach hypothetical, có decision boundary và safety gate | Tự nhận đã làm những việc chưa từng làm |
 
-**Tóm tắt đúng về project:** LineBalance Pro là portfolio demo dùng synthetic data, có optimizer, dashboard và case study; public deployment đang chờ. Kết quả mô hình không phải production evidence.
+**Tóm tắt đúng về project:** LineBalance Pro là local portfolio demo dùng synthetic data, có optimizer/dashboard, readiness scoring và process-flow viewer cho routing đang chọn, cùng các case study. T06 chưa có style master, routing editor, checklist persistence hay release approval; public deployment đang chờ. Kết quả mô hình không phải production evidence.
 
 ---
 
@@ -53,7 +53,7 @@ Không mở đầu dài. Nêu kết quả/decision trước, sau đó giải th�
 
 ---
 
-## 4. Năm STAR case — model answers tiếng Anh
+## 4. Sáu STAR case — model answers tiếng Anh
 
 | Case | S — Situation | T — Task | A — Action | R — Result / limit |
 |---|---|---|---|---|
@@ -62,6 +62,7 @@ Không mở đầu dài. Nêu kết quả/decision trước, sau đó giải th�
 | New style | Hypothetical: new garment style enters line | Readiness trước release | Approved routing/SAM, machine/skill/material, quality/EHS gates, pilot | Release only after sign-off; no claim of launch achieved |
 | Quality | Synthetic OP060: 45/1,820 defects | Reduce collar defects without blame or false causality | Pareto, 4M, setup audit, guide/checklist/first-piece pilot | 18/1,820 after; synthetic evidence, not production causality |
 | Line move | Hypothetical style/line transfer | Cut over safely and protect delivery | Readiness checklist, staged move, EHS/Maintenance/Quality/Planning sign-off, rollback | Go/no-go evidence; no move pilot claimed in portfolio |
+| Material standard | Synthetic 3 materials, 1,820 pcs/phase | Reduce usage variance without claiming cash saving | BOM standard, issue/return, jig/guide, first-piece check | Excess over standard −52.8%; still above standard |
 
 ### Case 1 — Bottleneck / line not meeting target
 
@@ -102,6 +103,14 @@ Không mở đầu dài. Nêu kết quả/decision trước, sau đó giải th�
 > Before moving a line or transferring a style, I would define the scope, cutover window, customer priority, and rollback criteria with Production and Planning. I would verify the approved routing, SAM revision, machine and attachment list, qualified headcount, material lots, quality checkpoints, and required utilities at the destination. I would walk the new material and people flow with Warehouse, Maintenance, Quality, and EHS, checking guarding, aisle clearance, ergonomics, and FIFO/WIP locations before equipment is moved. Maintenance would perform machine work under the site’s safety procedure; Quality would approve the first piece and any required validation; Planning would confirm the revised schedule. I would use a readiness checklist with one owner and due time per open item, then run a controlled trial and monitor hourly output, defects, downtime, and WIP. If a critical machine, material, safety, or quality gate failed, I would pause the cutover and use the agreed rollback or replan. I would not treat a layout drawing as proof that the new line is ready.
 
 **Điểm phải nhớ:** move là cross-functional cutover, không chỉ là di chuyển máy; dùng go/no-go criteria và rollback.
+
+### Case 6 — Material standard / usage variance
+
+**Loại:** T13 portfolio case; synthetic data; không phải định mức/giá mua của HBI.
+
+> In my synthetic material case, I compared standard and actual consumption for three materials on one garment line: thread, 3M tape, and binding. The standard was 45 meters of thread, 0.35 meters of tape, and 0.60 meters of binding per piece. Before the pilot, actual usage was 46.8, 0.38, and 0.66, so material cost was 4.42% above standard. I checked issue/return records, the BOM, the cutting method, and the first-piece check. The main causes were no standard issue quantity, manual tape cutting without a jig, and no binding length check. I updated the BOM, issued material by kit, added a cutting jig and binding guide, and put material usage into the daily control plan. After five days, usage was 45.9, 0.36, and 0.62. The excess over standard fell by 52.8%, but all three materials were still above standard. I present this as a partial improvement and cost avoidance, not a cash saving or a claim that the norm was achieved.
+
+**Điểm phải nhớ:** standard consumption chỉ có giá trị khi có issue/return measurement; tách usage variance khỏi price variance; không claim “đạt định mức” khi actual vẫn cao hơn standard.
 
 ---
 
@@ -162,13 +171,14 @@ Không mở đầu dài. Nêu kết quả/decision trước, sau đó giải th�
 | Thời gian | Nội dung | Bằng chứng |
 |---|---|---|
 | 0:00–0:45 | Vấn đề line balancing và data policy synthetic | README, synthetic badge |
-| 0:45–1:30 | Input: routing, SAM, workers/skills, machine, shift config | UI hoặc sample request |
+| 0:45–1:30 | Xem cấu trúc routing, SAM, workers/skills, machine, shift config | Sample request + `DATA_DICTIONARY.md`; không claim CSV import/UI editor |
 | 1:30–2:30 | Model: constraints và 2-stage lexicographic solver | `MODEL.md`, run metadata/status |
 | 2:30–3:45 | Scenario A: 58s, 23 used/24 available, 395.7 capacity, 420 chưa đạt | Result + baseline comparison |
 | 3:45–4:30 | Scenario B / KPI naming: demand takt, effective takt, capacity | Dashboard/sample result |
-| 4:30–5:30 | Operational case studies: hourly Red, quality RCA, layout/SMED | Playbook + synthetic CSV/SVG |
-| 5:30–6:30 | Validation, tests, CI, honest limitations | CI + `scripts/verify.ps1` |
-| 6:30–7:00 | Một điều học được và next step | Cross-functional action/control plan |
+| 4:30–5:15 | Operational case studies: hourly Red, quality RCA, layout/SMED | Playbook + synthetic CSV/SVG |
+| 5:15–6:00 | T06 readiness score và routing-only / optimized flow | UI/API trên style sample; không phải release approval |
+| 6:00–6:40 | Validation, tests, CI, honest limitations | CI + `scripts/verify.ps1` |
+| 6:40–7:00 | Một điều học được và next step | Cross-functional action/control plan |
 
 Nếu app không chạy trực tiếp, dùng screenshot và sample JSON, rồi nói rõ đây là local portfolio build. **Không nói public demo đã live** cho đến khi URL được triển khai và `/api/health` được nghiệm thu.
 

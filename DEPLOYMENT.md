@@ -8,6 +8,8 @@
 > - **Netlify:** `base = "frontend"`, `publish = "dist"` (Netlify resolve relative to base, không phải `frontend/dist`).
 > - **Kết quả đo thật:** 40 operations / 24 workers → `OPTIMAL` 58.0s, 23 stations, ~28s; 26 workers / target 400 → `OPTIMAL` 56.0s, 25 stations, ~42s. Không dùng heuristic làm kết quả cuối.
 > - **Dữ liệu:** synthetic demo only; không có dữ liệu HBI thật.
+>
+> **Trạng thái 2026-11-08:** các file cấu hình đã có trong repo nhưng **chưa deploy public** — chưa có Netlify/Render URL đang chạy. PostgreSQL Phase 4 đã chạy trên **private staging Neon** (không phải Render); các số solver trong tài liệu là đo local. Checklist §8 và CV bullet §9 là kế hoạch/mẫu, không phải thành tích đã xác nhận.
 
 > **Kết luận nhanh:** Netlify **không chạy được Streamlit** và không phải môi trường phù hợp để chạy PuLP/HiGHS dạng server Python liên tục. Với 8 ngày, có 3 hướng:
 >
@@ -470,15 +472,15 @@ Dù chọn A hay B, scope nên là:
 - Workload chart + assignment table + warnings.
 - Skill matrix heatmap + skill gap.
 - What-if 2–3 kịch bản.
-- Export CSV/Excel.
-- Public URL.
+- Export XLSX (CSV import/export là roadmap).
+- Public URL (mục tiêu; hiện chưa deploy).
 - README + demo video.
 
 ### Không làm
 
 - Full 3 pivot.
 - Multi-line/multi-plant.
-- Auth/database.
+- Auth production/SSO (chỉ có demo accounts admin/viewer) — optional PostgreSQL scenario persistence đã có trên private staging.
 - MES integration.
 - Real-time.
 - CAD layout.
@@ -535,9 +537,50 @@ Dù chọn A hay B, scope nên là:
 - [ ] Demo video 3 phút.
 - [ ] CV bullet cập nhật.
 
+### 8.1. Phase 4 persistence + demo accounts — private staging, not public
+
+> **Trạng thái 2026-11-08:** PostgreSQL Phase 4 đã chạy trên **private staging Neon** (PostgreSQL 18.6, AWS `us-east-2`): migration `001` applied, bốn endpoint `/api/scenarios`, demo accounts admin/viewer và frontend server-scenario client đã có test/smoke. Chưa cấu hình secret trên Render, chưa deploy public. Local `.env.local` (gitignored) giữ DSN/token/mật khẩu demo; không commit.
+
+Env chính (đầy đủ ở design doc §9):
+
+| Env | Bắt buộc | Mặc định | Ghi chú |
+|---|---|---|---|
+| `SCENARIO_PERSISTENCE` | Không | `localStorage` | Chỉ đổi `postgres` khi migration sẵn sàng |
+| `DATABASE_URL` | Khi postgres | — | **Secret**; `sslmode=require` |
+| `SCENARIO_API_TOKEN` | Khi postgres | — | **Secret**; ≥ 32 byte random; dành cho admin/ops |
+| `SCENARIO_WORKSPACE_ID` | Không | `demo` | Một workspace dùng chung cho admin + viewer |
+| `SCENARIO_MAX_PER_WORKSPACE` | Không | `200` | Soft quota |
+| `SCENARIO_MAX_PAYLOAD_BYTES` | Không | `1500000` | ≤ `MAX_BODY_BYTES` |
+| `SCENARIO_SAVE_RATE_LIMIT_MAX` | Không | `5` | Write/phút |
+| `AUTH_DEMO_PASSWORD` | Để bật login | — | **Secret**; ≥ 8 ký tự, nên ≥ 12; không đưa vào frontend |
+| `AUTH_SESSION_SECRET` | Để bật login | — | **Secret**; ≥ 32 byte random |
+| `AUTH_ADMIN_USERS` | Không | `admin` | Danh sách phẩy; quyền create/delete |
+| `AUTH_VIEWER_USERS` | Không | `test1,test2,test3,test4` | Danh sách phẩy; chỉ list/get |
+| `AUTH_SESSION_TTL_SEC` | Không | `28800` | 8 giờ |
+| `AUTH_COOKIE_SECURE` | Không | `auto` | `auto` bật `Secure` khi HTTPS/forwarded proto |
+| `AUTH_LOGIN_RATE_LIMIT_MAX` | Không | `10` | Login attempts / 5 phút |
+| `FRONTEND_ORIGINS` | Khi CORS trực tiếp | localhost | Thêm origin Netlify nếu không dùng proxy |
+
+Khi triển khai thật:
+
+- Dùng secret env của Render cho `DATABASE_URL`, `SCENARIO_API_TOKEN`, `AUTH_DEMO_PASSWORD`, `AUTH_SESSION_SECRET`; không commit, không đưa các giá trị này vào frontend/Netlify.
+- Giữ `SCENARIO_PERSISTENCE=localStorage` làm mặc định; chỉ đổi sang `postgres` sau khi migration `001` apply và `--check` sạch.
+- Chạy `scripts/migrate.py --check` trước deploy, `--apply` có kiểm soát; không auto-migrate lúc app startup.
+- Xác nhận `/api/health` báo `scenario_store.ready=true` và `auth.enabled=true`; smoke create/list/get/delete; DB lỗi phải trả `503` nhưng `/api/optimize` vẫn chạy.
+- Giữ route `/api/*` qua proxy same-origin (Netlify → Render) để cookie `SameSite=Lax` hoạt động. Nếu gọi API khác origin trực tiếp, cookie phiên sẽ không được gửi; khi đó cần thiết kế lại `SameSite`/CSRF thay vì nới lỏng cookie.
+- Render phải chạy uvicorn với `--proxy-headers --forwarded-allow-ips="*"` để `AUTH_COOKIE_SECURE=auto` thấy HTTPS từ proxy. `render.yaml` đã đặt start command này.
+- Rollback: đặt lại `SCENARIO_PERSISTENCE=localStorage`, restart, kiểm tra optimize/export và snapshot localStorage vẫn hoạt động; login demo vẫn dùng được nhưng không có scenario server.
+- Đã rotate Neon password ngày 2026-11-08; cập nhật secret Render khi tạo deployment.
+- Cân nhắc DB role giới hạn quyền thay vì owner `neondb_owner`; quota hiện chưa có advisory lock; demo accounts dùng chung mật khẩu và workspace, không phải production identity.
+- Không hứa public URL cho đến khi Render/Netlify thực sự được cấu hình và `/api/health` trả 200.
+
+Chi tiết schema, env, runbook và acceptance gate: [`docs/POSTGRESQL_PERSISTENCE_DESIGN.md`](docs/POSTGRESQL_PERSISTENCE_DESIGN.md).
+
 ---
 
 ## 9. Câu chuyện CV theo từng phương án
+
+> **Cảnh báo:** đây là các mẫu để chọn hướng, không phải thành tích đã xác nhận. Phương án B/C chưa được xây; Phương án A chưa deploy public. Chỉ dùng các bullet có “deployed/public URL” sau khi thực sự deploy và kiểm tra `/api/health` trả 200.
 
 ### Phương án A
 

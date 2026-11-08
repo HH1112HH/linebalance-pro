@@ -18,6 +18,11 @@
 > - Quyết định: dùng **HiGHS** làm solver chính; CBC chỉ là fallback.  
 > - Baseline đã rebuild **24 station/24 worker/61.0s**; before/after A: 24→23 station, 61.0→58.0s, LBE 72.34%→79.39%.  
 > - T07/T08 case study đã có tại **`docs/CASE_STUDY_QUALITY_RCA.md`** và **`docs/CASE_STUDY_KAIZEN.md`**; dữ liệu synthetic trong `docs/data/`.  
+> - T13 material standardization case study đã có tại **`docs/CASE_STUDY_MATERIAL_STANDARD.md`**; từ 2026-11-08 có thêm **usage-variance API/UI + what-if** trên dữ liệu synthetic T13, chưa phải material master/BOM module.
+>
+> **Trạng thái thực tế 2026-11-08:** phần lõi T01–T05 (validation, MILP, KPI, planning, actuals, time study, dashboard, export) đã chạy local. **T06 đã có readiness API/UI và process-flow API/UI cho style/routing đang chọn**; chưa có style master, routing editor, checklist persistence hoặc release approval. **T13 đã có case study và một module usage-variance giới hạn**, kèm CSV import API/UI cho material; chưa có material master/BOM editor. **Phase 3.3 đã có import CSV tổng quát cho operations/workers/skills/machines qua API/UI; Phase 3.4 đã có import workbook .xlsx bốn sheet**, validate cấu trúc và chạy lại optimizer. **Public deploy chưa triển khai; Phase 4 đã có PostgreSQL private staging (Neon) + migration `001` + bốn endpoint `/api/scenarios`, demo accounts admin/viewer và panel server scenarios trong UI, kiểm chứng bằng integration test + smoke Neon.** Frontend vẫn mặc định lưu snapshot trong `localStorage`. T07/T08 là case study/docs-only.
+>
+> **Quyết định triển khai theo phase — người dùng phê duyệt 2026-11-08:** Phase 1 T06 readiness/process flow; Phase 2 material standard module; Phase 3 CSV/Excel import; Phase 4 PostgreSQL scenario persistence; Phase 5 public deploy khi có quyền/tài khoản. Protection pay chỉ chuẩn bị yêu cầu nghiệp vụ; không viết công thức trước khi có policy HR chính thức. Chi tiết ở `CHECKLIST.md` §12.
 >
 > **Các thay đổi lớn so với v1.0:**
 > - Load dùng **SAM cố định**, không dùng effective time phụ thuộc worker.
@@ -26,7 +31,7 @@
 > - Before/after chỉ có khi có **baseline assignment**; không tự tạo số liệu.
 > - SAM/allowance/efficiency mỗi yếu tố chỉ tính **một lần**.
 > - KPI đổi tên: **Planned Labor Utilization**, **Machine Capacity Coverage**, **Machine Demand Ratio**.
-> - Public demo dùng **localStorage**; API ghi/xóa scenario bị tắt mặc định.
+> - Bản demo local dùng **localStorage**; API ghi/xóa scenario là opt-in và yêu cầu admin (bearer token hoặc tài khoản demo).
 > - Bổ sung **T09–T16** với ưu tiên P0/P1/P2 rõ ràng.
 > **Mục tiêu:** Demo/CV cho vị trí **Shift Line Engineer (IE)** tại HBI Phú Bài  
 > **Nguyên tắc xuyên suốt:** Mô hình đúng → Dữ liệu đúng → KPI đúng → API đúng → Dashboard đẹp → Deploy ổn định → Case study thuyết phục.
@@ -44,10 +49,11 @@ LineBalance Pro là một web app quản trị và tối ưu hóa chuyền may, 
 5. Dashboard KPI và báo cáo sản xuất: production achievement, labor efficiency, LBE, workload, bottleneck, capacity.
 6. Chuẩn bị mã hàng mới: routing, SAM, kiểm tra máy/công nhân, process flow, readiness checklist.
 
-Hai case study bổ sung để tạo lợi thế phỏng vấn:
+Ba case study bổ sung để tạo lợi thế phỏng vấn:
 
 7. Quality Improvement & Root Cause Analysis — Pareto, fishbone, corrective action, before/after.
 8. Kaizen & Cost Saving — before/after line balance, HC, bottleneck, capacity, verified saving.
+9. Material Standardization — định mức vs tiêu hao thực tế, usage variance, control plan (docs-only).
 
 **Stack MVP:**
 
@@ -55,18 +61,18 @@ Hai case study bổ sung để tạo lợi thế phỏng vấn:
 React + Vite + TypeScript + Tailwind
         │
         ▼
-Netlify (static + /api proxy)
+Netlify (static + /api proxy; deploy config, chưa live)
         │
         ▼
 FastAPI + PuLP 4.2 + HiGHS
         │
-        ├── PostgreSQL 16 (scenarios)
-        └── CSV/XLSX export
+        ├── PostgreSQL 18 (scenarios, private staging) — Phase 4 API + demo auth; frontend mặc định localStorage
+        └── XLSX export
 ```
 
 **Ngoài critical path của MVP:** Qdrant, MinIO, auth, multi-line, MES, real-time, ML/DL, layout CAD, full quality/kaizen/safety/payroll modules.
 
-**Kết quả cam kết sau 8 ngày:**
+**Kết quả mục tiêu ban đầu sau 8 ngày (chưa đạt đủ — xem trạng thái thực tế ở đầu file):**
 
 - Một public URL HTTPS chạy được.
 - Import dữ liệu CSV/Excel và validation rõ ràng.
@@ -84,9 +90,9 @@ FastAPI + PuLP 4.2 + HiGHS
 |---|---|
 | Chứng minh hiểu bài toán IE | Giải thích được SAM, takt, LBE, HC standard, capacity, bottleneck |
 | Chứng minh năng lực OR | MILP có biến, ràng buộc, objective, trạng thái solver rõ ràng |
-| Chứng minh năng lực full-stack | React → API → solver → PostgreSQL → deploy |
+| Chứng minh năng lực full-stack | React → API → solver (local); PostgreSQL Phase 4 đã có private staging + API auth; public deploy chưa triển khai |
 | Chứng minh khả năng triển khai | Public URL, test, benchmark, README, demo script |
-| Không tạo dữ liệu giả thuyết | Public demo chỉ dùng dữ liệu synthetic, ghi rõ nguồn |
+| Không tạo dữ liệu giả thuyết | Demo chỉ dùng dữ liệu synthetic, ghi rõ nguồn |
 
 ### 1.2. Nguyên tắc thiết kế
 
@@ -114,6 +120,8 @@ MVP đạt khi:
 - Export CSV/XLSX hoạt động.
 - Benchmark 50 ops / 25 workers được ghi lại.
 - README ghi rõ kiến trúc, cách chạy, dữ liệu synthetic.
+
+> **Trạng thái 2026-11-08:** T06 mới hoàn thành một phần (readiness checklist + process-flow viewer trên routing hiện có). T13 có thêm usage-variance API/UI + what-if và material CSV import API/UI, nhưng chưa có material master/BOM hoặc material Excel import. Scenario master data đã có CSV và workbook .xlsx import. Public URL **chưa đạt**; Phase 4 đã có PostgreSQL private staging, migration `001`, `/api/scenarios` và demo accounts, nhưng chưa deploy public. Không mô tả style master, launch approval, material master/BOM hay các mục roadmap khác như đã hoàn thành.
 
 ### 1.4. Ngoài phạm vi MVP
 
@@ -145,18 +153,18 @@ MVP đạt khi:
 | Production planning | T03 | Có |
 | Hiring / manpower planning | T03, T04 | Có |
 | Machinery planning | T02, T03 | Có |
-| Line moving | T06 + roadmap T15 | Một phần |
+| Line moving | T06 + roadmap T15 | Một phần — layout case study; chưa có module line moving |
 | Line balancing | T02 | Có — trọng tâm |
 | Maintain HC standard | T04 | Có |
-| Operator protection pay | Roadmap T22 | Chỉ hiểu nghiệp vụ |
-| Improve layout | Roadmap | Chỉ hiểu nghiệp vụ |
-| Material standard norms | Roadmap T18 | Roadmap |
+| Operator protection pay | Roadmap T22 | Chỉ hiểu nghiệp vụ; chờ policy HR, không có công thức |
+| Improve layout | Case study layout + roadmap T15 | Case study docs-only; không phải module phần mềm |
+| Material standard norms | T13 case study + roadmap T18 | Một phần — usage variance + what-if API/UI, CSV import API/UI; chưa có material master/BOM |
 | Collect data / IE reports | T01, T05 | Có |
-| New style setup | T06 | Có |
+| New style setup | T06 | Một phần — readiness API/UI cho active style; chưa có style master/routing editor/release approval |
 | Quality problem analysis | T07 case study | Case study |
 | Safety improvement | Roadmap T21 | Chỉ hiểu nghiệp vụ |
 | Kaizen projects | T08 case study | Case study |
-| Process flow charts | T06 | Có |
+| Process flow charts | T06 | Một phần — DAG theo precedence có API/UI; chưa có editor hoặc flow theo layout vật lý |
 | Cost savings | T08 case study | Case study |
 
 ### 2.2. Sáu task trọng tâm
@@ -170,12 +178,15 @@ MVP đạt khi:
 | T05 | IE KPI Dashboard & Production Reporting | Chứng minh biết đo lường, phân tích và báo cáo |
 | T06 | New Style Setup & Process Flow | Chứng minh hiểu quy trình chuẩn bị mã hàng mới |
 
-### 2.3. Hai case study
+> **Trạng thái:** T06 checklist và precedence DAG đã có API/UI cho routing đang chọn. Chưa có style master, nhập routing mới, lưu launch record hay phê duyệt release; không mô tả đây là full new-style launch workflow.
+
+### 2.3. Các case study
 
 | Task | Tên | Sản phẩm |
 |---|---|---|
 | T07 | Quality Improvement & Root Cause Analysis | Báo cáo Pareto + fishbone + corrective action + before/after |
 | T08 | Kaizen & Cost Saving | Báo cáo before/after + verified saving + phương pháp xác nhận |
+| T13 | Material Standardization | Định mức vs tiêu hao thực tế, material variance, countermeasure + control plan |
 
 ---
 
@@ -186,16 +197,16 @@ MVP đạt khi:
 ```text
 ┌──────────────────────────────────────────────────────────────┐
 │ Browser                                                      │
-│ React + Vite + TypeScript + Tailwind                         │
-│ Recharts · PapaParse · SheetJS · lucide-react                │
+│ React 19 + Vite + TypeScript + custom CSS                     │
+│ Inline SVG · custom CSS charts                                │
 │                                                              │
-│  Tabs: Data · Optimize · Planning · Workforce · Dashboard    │
-│        New Style · Case Studies                              │
+│  Tabs: Overview · Line balance · Capacity & people            │
+│        Actuals · Time study · New style · Solver & data      │
 └───────────────────────────┬──────────────────────────────────┘
                             │ fetch("/api/*")
                             ▼
 ┌──────────────────────────────────────────────────────────────┐
-│ Netlify                                                      │
+│ Netlify (deploy config; chưa live)                           │
 │ - Static build (base = frontend, publish = dist)             │
 │ - Proxy /api/* → Render API                                  │
 │ - SPA fallback /* → /index.html                              │
@@ -203,18 +214,19 @@ MVP đạt khi:
                             │ HTTPS
                             ▼
 ┌──────────────────────────────────────────────────────────────┐
-│ Render Web Service                                           │
+│ Render Web Service (deploy config; chưa live)                │
 │ FastAPI + Uvicorn                                            │
 │ - /api/health                                                │
-│ - /api/sample                                                │
+│ - /api/sample, /api/sample/feasible, /api/samples            │
 │ - /api/optimize                                              │
-│ - /api/plan                                                  │
 │ - /api/export                                                │
-│ - /api/readiness                                             │
-│ - /api/scenarios                                             │
+│ - /api/actuals/analyze                                       │
+│ - /api/time-study/calculate                                  │
+│ - /api/readiness/evaluate                                     │
+│ - /api/process-flow/build                                    │
 │                                                              │
 │ PuLP 4.2 + HiGHS (pulp.HiGHS)                                │
-│ PostgreSQL 16 (scenarios, optimization runs)                 │
+│ PostgreSQL 18 (Phase 4 opt-in; localStorage mặc định)       │
 └──────────────────────────────────────────────────────────────┘
 ```
 
@@ -222,18 +234,20 @@ MVP đạt khi:
 
 | Layer | Công nghệ | Ghi chú |
 |---|---|---|
-| Frontend | React 18/19, Vite, TypeScript, Tailwind CSS | SPA, responsive |
-| Charts | Recharts | Workload bar, KPI trend, scenario compare |
-| CSV/Excel | PapaParse, SheetJS | Import/export |
-| Icons | lucide-react | Nhẹ, nhất quán |
+| Frontend | React 19, Vite, TypeScript, custom CSS | SPA, responsive |
+| Charts | SVG + CSS | Workload and process-flow views; no chart library |
+| CSV/Excel | `openpyxl` backend | XLSX export; material CSV import; scenario master-data CSV (4 file) và workbook `.xlsx` (4 sheet) đã có; material Excel import chưa triển khai |
+| Icons | Inline SVG | No icon-library dependency |
 | Backend | FastAPI, Uvicorn, Pydantic 2 | API + validation |
 | Optimization | PuLP 4.2, HiGHS qua `pulp.HiGHS` | CBC chỉ là fallback tùy chọn qua `SOLVER_BACKEND=cbc` |
-| Persistence | PostgreSQL 16 + SQLAlchemy 2 + psycopg 3 | Chỉ bảng scenarios/runs |
-| Deploy | Netlify + Render | Free tier cho demo |
+| Persistence | localStorage là mặc định; PostgreSQL 18 + psycopg 3 là opt-in Phase 4 | Snapshot cá nhân trong browser; server-side scenario có demo accounts admin/viewer |
+| Deploy | Netlify + Render configs (chưa live) | Free tier cho demo; public URL chưa có |
 | Testing | pytest, httpx/TestClient | Unit + API |
-| Docs | Markdown | SCOPE, DATA_DICTIONARY, MODEL, KPI_SPEC, ARCHITECTURE |
+| Docs | Markdown | DATA_DICTIONARY, MODEL, KPI_SPEC, ROADMAP, CHECKLIST |
 
 ### 3.3. Repo structure
+
+> **Lưu ý:** cây dưới đây là cấu trúc **mục tiêu ban đầu**, không phải trạng thái hiện tại. Các path như `frontend/src/lib/`, `backend/app/readiness.py`, `backend/app/db.py`, `infra/` và thư mục `data/` cấp root chưa tồn tại. Cấu trúc thực tế dùng `frontend/src/api.ts`, `frontend/src/types.ts`, `frontend/src/components/`, `frontend/src/data/`, `backend/app/`, `tests/`, `benchmarks/`, `docs/data/`.
 
 ```text
 linebalance-pro/
@@ -318,38 +332,32 @@ HiGHS solve → OPTIMAL / FEASIBLE_LIMIT / INFEASIBLE / ERROR
 Assignment + Station + KPI + Planning + Warnings
         │
         ├── Dashboard / Workload chart / Skill matrix
-        ├── CSV/XLSX export
-        └── PostgreSQL scenario save/load
+        ├── XLSX export
+        └── PostgreSQL scenario save/load (Phase 4 opt-in; localStorage mặc định)
 ```
 
 ### 3.5. Môi trường
 
 | Môi trường | Frontend | Backend | Database |
 |---|---|---|---|
-| Local | `npm run dev` (Vite, proxy `/api` → `localhost:8000`) | `uvicorn app.main:app --reload` | PostgreSQL local/Docker hoặc fallback |
+| Local | `npm run dev` (Vite, proxy `/api` → `localhost:8000`) | `uvicorn app.main:app --reload` hoặc `scripts/run_backend.ps1` | `localStorage` mặc định; PostgreSQL opt-in qua `.env.local` |
 | Preview | Netlify deploy preview | Render staging (nếu có) | Neon/Supabase branch (nếu có) |
-| Production | Netlify production | Render production | Neon/Supabase PostgreSQL 16 |
+| Production | Netlify production | Render production | Neon/Supabase PostgreSQL (chưa deploy) |
 
 ### 3.6. Persistence strategy
 
-**MVP:** PostgreSQL 16 chỉ để lưu scenario.
+> **Trạng thái 2026-11-08:** PostgreSQL Phase 4 **đã triển khai trên private staging** (Neon PostgreSQL 18.6): migration `001` applied, repository PostgreSQL, bốn endpoint `/api/scenarios` (bearer token hoặc demo session), demo accounts admin/viewer và panel server scenarios trong UI. Default frontend vẫn `localStorage`; chưa deploy public.
 
-```sql
-CREATE TABLE scenarios (
-    id UUID PRIMARY KEY,
-    name TEXT NOT NULL,
-    line_name TEXT,
-    style_code TEXT,
-    request_json JSONB NOT NULL,
-    result_json JSONB NOT NULL,
-    kpis_json JSONB,
-    created_at TIMESTAMPTZ NOT NULL DEFAULT now()
-);
-```
+**Thiết kế đề xuất (tóm tắt):**
 
-- Không auth. Dùng `demo_workspace` cố định.
-- Nếu `DATABASE_URL` không có hoặc DB lỗi: fallback localStorage ở frontend; API scenario trả 503 nhưng optimize vẫn chạy.
-- Không dùng Alembic trong MVP; `Base.metadata.create_all()` khi startup.
+- Chỉ bật khi `SCENARIO_PERSISTENCE=postgres`, có `DATABASE_URL` và `SCENARIO_API_TOKEN`; API yêu cầu admin (bearer) hoặc tài khoản demo, một `workspace_id` từ env.
+- Demo login bật khi có `AUTH_DEMO_PASSWORD` + `AUTH_SESSION_SECRET`; accounts `admin`/`test1`–`test4`, role admin/viewer.
+- `POST /api/scenarios` nhận `name` + `request`; server tự chạy lại optimizer; chỉ lưu `OPTIMAL`/`FEASIBLE_LIMIT`.
+- Bảng `scenarios` (JSONB request/result + cột summary), `scenario_audit`, `schema_migrations`; hard delete.
+- Migration SQL forward-only + `scripts/migrate.py`; không `create_all()` lúc startup.
+- DB lỗi/tắt → scenario API `503`; optimize/export vẫn chạy.
+
+Chi tiết schema, API, threat model, test plan và rollback nằm trong tài liệu thiết kế.
 
 **Deferred:**
 
@@ -357,7 +365,7 @@ CREATE TABLE scenarios (
 |---|---|---|
 | Qdrant | T19 Quality RCA semantic search, T18 material specs, T20 kaizen lessons | MVP chưa có vector data |
 | MinIO | Upload CSV/XLSX, tài liệu style, layout file, ảnh defect | MVP sinh export trực tiếp, không cần object storage |
-| Auth | Khi có multi-user/real data | Public demo chỉ synthetic, không có dữ liệu nhạy cảm |
+| Auth | Demo accounts Phase 4.6 | Demo chỉ dùng synthetic; auth production/RBAC vẫn là roadmap |
 
 `infra/docker-compose.yml` sẽ có Postgres + Qdrant + MinIO để thể hiện stack và phục vụ Phase 2, nhưng MVP deploy chỉ cần Postgres.
 
@@ -603,6 +611,8 @@ Capacity achievement % = period_capacity / period_target * 100
 
 ### 4.6. T06 — New Style Setup & Process Flow
 
+> **Trạng thái 2026-11-08:** Phase 1 đã triển khai readiness API/UI và process-flow API/UI cho `style_code`, operations và optimized result đang hoạt động. Đây là **subset T06**; chưa có style master, routing editor/import, checklist persistence hoặc release approval.
+
 **Mục tiêu:** Mô phỏng quy trình chuẩn bị mã hàng mới và tạo process flow từ routing.
 
 **New Style Setup:**
@@ -628,8 +638,10 @@ Capacity achievement % = period_capacity / period_target * 100
 
 ```text
 Readiness % = Completed required items / Total required items × 100%
-Ready = tất cả required items COMPLETED và không có BLOCKED
+Ready = có ít nhất một required item; tất cả required items COMPLETED; không item nào BLOCKED
 ```
+
+API: `POST /api/readiness/evaluate`. Checklist UI hiện có 8 nhóm mặc định, trạng thái/required/note chỉnh sửa được trong phiên hiện tại. Chưa lưu thành launch record hoặc đồng bộ giữa trình duyệt.
 
 **Process Flow:**
 
@@ -639,11 +651,15 @@ Ready = tất cả required items COMPLETED và không có BLOCKED
 - Node màu theo station; edge thể hiện precedence.
 - Không được tạo edge làm sai precedence.
 
+API: `POST /api/process-flow/build`. Chế độ **Routing only** ẩn station/worker; **With assignment** hiển thị station/worker từ kết quả optimizer hiện tại. Trên mobile, DAG hiển thị thành danh sách dọc có quan hệ predecessor để tránh tràn ngang.
+
 **Acceptance:**
 
 - Readiness không cho “Ready” nếu còn required item chưa completed.
 - Process flow phản ánh đúng routing.
 - Flow sau tối ưu khớp assignment table.
+- Input lỗi (duplicate ID, missing predecessor, cycle, assignment thiếu/trùng) bị từ chối với lỗi 422 actionable.
+- Không claim launch/release approval; checklist là công cụ hỗ trợ.
 
 ---
 
@@ -651,7 +667,7 @@ Ready = tất cả required items COMPLETED và không có BLOCKED
 
 **Không xây module phần mềm đầy đủ.** Chỉ cần một case study có số liệu synthetic và phân tích đúng.
 
-**Deliverable:** `docs/CASE_STUDY_QUALITY_RCA.md` (đã có), `docs/data/quality_defects.csv`, `docs/data/quality_setup_audit.csv`.
+**Deliverable:** `docs/CASE_STUDY_QUALITY_RCA.md` (đã có), `docs/data/quality_inspection_summary.csv`, `docs/data/quality_defects.csv`, `docs/data/quality_setup_audit.csv`.
 
 **Nội dung:**
 
@@ -675,7 +691,7 @@ Ready = tất cả required items COMPLETED và không có BLOCKED
 
 **Không xây module phần mềm đầy đủ.** Chỉ cần một case study before/after.
 
-**Deliverable:** `docs/CASE_STUDY_KAIZEN.md` (đã có), `docs/data/kaizen_cost_model.csv`.
+**Deliverable:** `docs/CASE_STUDY_KAIZEN.md` (đã có), `docs/data/kaizen_cost_model.csv` (paid hours/working days để trống cột tiền; labor rate có `unit_cost_vnd`; dòng `IMPLEMENTATION` cộng 12,000,000 VND).
 
 **Nội dung:**
 
@@ -699,6 +715,37 @@ Net saving = Baseline cost - Post-improvement cost - Implementation cost
 
 ---
 
+### 4.9. T13 — Material Standardization (case study + limited usage-variance module)
+
+**Phạm vi:** case study docs-only cộng một module **usage variance** giới hạn trên dữ liệu synthetic T13. Không phải material master/BOM đầy đủ.
+
+**Deliverable:** `docs/CASE_STUDY_MATERIAL_STANDARD.md`, `docs/data/material_consumption.csv`, `backend/app/materials.py`, `backend/app/sample_materials.py`, `frontend/src/components/MaterialsPanel.tsx`.
+
+**API/UI đã có:**
+
+- `GET /api/materials/sample`: standard, trước/sau actual, comparison.
+- `POST /api/materials/analyze`: tính usage variance cho một phase.
+- `POST /api/materials/import?phase=BEFORE`: đọc CSV material, aggregate theo pcs, trả preview + analysis.
+- UI “Materials”: bảng case T13, CSV import có chọn file/phase và preview, what-if calculator; EN/VI.
+
+**Chưa có:** material master, BOM editor, material Excel import, persistence, purchase-price variance, Finance approval workflow.
+
+**Nội dung:**
+
+- Standard consumption vs actual consumption cho chỉ, băng keo 3M, viền.
+- Material usage variance theo lượng và theo tiền; giữ đơn giá cố định.
+- Root cause 5 Why/4M, countermeasure, control plan.
+- Phân biệt cost avoidance với cash saving; nêu điều kiện verified trong production.
+
+**Acceptance:**
+
+- Cùng style, line, sản lượng 1,820 pcs/giai đoạn và đơn giá.
+- Tổng standard/actual cost khớp CSV.
+- Không claim đạt định mức khi actual vẫn cao hơn standard.
+- Không claim cash saving hoặc kết quả HBI.
+
+---
+
 ## 5. Data model và API contract
 
 ### 5.1. Entities
@@ -706,31 +753,38 @@ Net saving = Baseline cost - Post-improvement cost - Implementation cost
 | Entity | Khóa | Trường chính |
 |---|---|---|
 | Operation | operation_id | name, sam_sec, predecessor_ids, machine_type, skill_code, skill_required, is_quality_gate, sequence |
-| Worker | worker_id | name, skills, efficiency_factor, machine_types, available, worker_status |
+| Worker | worker_id | name, skills, machine_types, available, worker_status |
 | Machine | machine_id | machine_type, available, capacity |
 | LineConfig | shift_id | shift_minutes, break_minutes, target_qty, working_days, allowance_pct, planned_efficiency, max_workers, objective |
-| ProductionActuals | — | actual_output, actual_work_minutes, downtime_minutes, attendance_hc |
+| ProductionActuals | — | actual_output, actual_direct_labor_minutes, downtime_minutes, attendance_hc |
+| DailyProductionActual | date + line + shift | target_output, actual_output, actual_direct_labor_minutes, downtime_minutes, attendance_hc |
+| DowntimeEvent | — | start_time, end_time, loss_category, duration_minutes |
 | HeadcountStandard | — | line_id, work_center, standard_hc, planned_hc, actual_hc |
-| ReadinessItem | key | label, required, status, note |
-| Scenario | id | name, request_json, result_json, created_at |
+| BaselineAssignment | — | items, source_note |
+| ReadinessItem | key | label, required, status, note — **schema only, chưa dùng** |
+| Scenario | id | **roadmap; hiện tại chỉ có snapshot localStorage** |
 
 ### 5.2. CSV/Excel schemas
+
+> **Lưu ý:** Material CSV import API/UI đã có (`POST /api/materials/import`); scenario master-data CSV import đã có (`POST /api/import/scenario`, bốn file) và workbook `.xlsx` bốn sheet đã có (`POST /api/import/scenario/excel`). Material Excel import vẫn chưa triển khai; `shift_config.json` chưa có endpoint riêng và được gửi trong `OptimizeRequest.config`. API optimizer nhận JSON theo `OptimizeRequest`.
 
 **operations.csv**
 
 ```csv
-operation_id,operation_name,sam_sec,predecessor_ids,machine_type,skill_code,skill_required,is_quality_gate,sequence
-OP010,Kiểm tra nguyên phụ liệu,20,,MANUAL,INSPECTION,1,true,10
-OP020,Ép mex cổ,28,OP010,IRON,FINISHING,2,false,20
+data_policy,line_name,style_code,operation_id,operation_name,sam_sec,predecessor_ids,machine_type,skill_code,skill_required,is_quality_gate,sequence
+SYNTHETIC,Line A — Basic Tee,BASIC-TEE-001,OP010,Kiểm tra nguyên phụ liệu,20,,MANUAL,INSPECTION,1,true,10
+SYNTHETIC,Line A — Basic Tee,BASIC-TEE-001,OP020,Ép mex cổ,28,OP010,IRON,FINISHING,2,false,20
 ```
 
 **workers.csv**
 
 ```csv
-worker_id,worker_name,available,worker_status,efficiency_factor,machine_types
-W01,Nguyễn Thu Hà,true,ACTIVE,1.00,IRON
-W03,Lê Hoàng Yến,true,ACTIVE,0.95,OVERLOCK|COVERSTITCH|SINGLE
+data_policy,worker_id,worker_name,available,worker_status,machine_types
+SYNTHETIC,W01,Nguyễn Thu Hà,true,ACTIVE,IRON
+SYNTHETIC,W03,Lê Hoàng Yến,true,ACTIVE,OVERLOCK|COVERSTITCH|SINGLE
 ```
+
+`efficiency_factor` không được hỗ trợ và bị từ chối; SAM đã duyệt theo công đoạn là cơ sở hiệu suất duy nhất.
 
 **worker_skills.csv**
 
@@ -767,18 +821,27 @@ CS-01,COVERSTITCH,true,1
 
 ### 5.3. API endpoints
 
+**Đã triển khai:**
+
 | Method | Endpoint | Chức năng |
 |---|---|---|
 | GET | `/api/health` | Health + solver availability + data policy |
 | GET | `/api/sample` | Sample OptimizeRequest |
+| GET | `/api/sample/feasible` | Sample OptimizeRequest cho target 400 |
+| GET | `/api/samples` | Cả hai sample request |
 | POST | `/api/optimize` | Chạy MILP, trả assignment + KPI + planning |
-| POST | `/api/plan` | Capacity/HC planning (có thể gọi optimizer nội bộ) |
 | POST | `/api/export` | Xuất XLSX |
-| POST | `/api/readiness` | Tính readiness từ checklist |
-| GET | `/api/scenarios` | Danh sách scenario |
-| POST | `/api/scenarios` | Lưu scenario |
-| GET | `/api/scenarios/{id}` | Load scenario |
-| DELETE | `/api/scenarios/{id}` | Xóa scenario |
+| POST | `/api/actuals/analyze` | Phân tích actuals và downtime |
+| POST | `/api/time-study/calculate` | Tính time study aggregate |
+| POST | `/api/readiness/evaluate` | Tính readiness từ checklist |
+| POST | `/api/process-flow/build` | Tạo DAG từ routing và optional assignment |
+| GET | `/api/materials/sample` | Case T13 synthetic: standard, before/after, comparison |
+| POST | `/api/materials/analyze` | Tính usage variance cho một phase |
+| POST | `/api/materials/import` | Preview material CSV (`text/csv`) |
+| POST | `/api/import/scenario` | Validate bốn CSV operations/workers/skills/machines và trả preview |
+| POST | `/api/import/scenario/excel` | Validate một workbook `.xlsx` bốn sheet và trả preview |
+
+**Roadmap, chưa triển khai:** `/api/plan`, style master/routing edit, material Excel upload. `/api/scenarios` (GET/POST/GET id/DELETE) đã có trên private staging với auth; frontend vẫn lưu snapshot trong `localStorage`. Contract đầy đủ ở `DATA_DICTIONARY.md`.
 
 ### 5.4. Solver statuses
 
@@ -859,22 +922,25 @@ CS-01,COVERSTITCH,true,1
 
 ### 7.1. Task table
 
+> **Đây là kế hoạch ban đầu, không phải trạng thái hiện tại.** T06 đã hoàn thành một phần; Phase 3.3 CSV import và Phase 3.4 Excel workbook import cho operations/workers/skills/machines đã xong; D01 public deploy và PostgreSQL chưa hoàn thành. Xem `CHECKLIST.md` để biết trạng thái và phase tiếp theo.
+
 | ID | Task | Priority | Phụ thuộc | Output | Acceptance | Estimate |
 |---|---|---|---|---|---|---|
 | F01 | Repo, môi trường, CI skeleton | P0 | — | Repo chạy local | `npm run dev`, `uvicorn` chạy | 2h |
-| F02 | Docs skeleton | P0 | — | SCOPE, DATA_DICTIONARY, MODEL, KPI_SPEC | Review được | 2h |
-| T01 | Data Management | P0 | F01, F02 | Import + validation + sample CSV | Import 40/24/23, chặn dữ liệu sai | 1 ngày |
+| F02 | Docs skeleton | P0 | — | DATA_DICTIONARY, MODEL, KPI_SPEC | Review được | 2h |
+| T01 | Data Management | P0 | F01, F02 | Validation + sample JSON; CSV/XLSX import cho scenario master data đã có | API validation 40/24/23, chặn dữ liệu sai | 1 ngày |
 | T02a | MILP formulation | P0 | T01 | MODEL.md + small example | Hand-check khớp | 0.5 ngày |
 | T02b | Optimizer PuLP/HiGHS | P0 | T02a | Solver + tests | Sample solve, constraints pass | 1.5 ngày |
 | T03 | Capacity Planning | P0 | T02b | Capacity plan + machine gap | Formula test khớp | 0.5 ngày |
 | T04 | HC & Skill Management | P0 | T02b | HC control + skill matrix + transfer | Gap/adherence/coverage đúng | 0.5 ngày |
 | T05 | KPI Dashboard | P0 | T02b, T03, T04 | KPI cards + charts + export | KPI khớp backend | 1 ngày |
-| T06 | New Style & Process Flow | P0 | T01, T02b | Readiness + DAG | Flow khớp assignment | 1 ngày |
-| D01 | Integration & Deploy | P0 | T05, T06 | Netlify + Render + Postgres | Public URL + health 200 | 1 ngày |
+| T06 | New Style & Process Flow | P0 | T01, T02b | Readiness + process-flow API/UI cho active sample; **partial** | API/UI + tests; style master/editor/persistence còn roadmap | 1 ngày |
+| D01 | Integration & Deploy | P0 | T05, T06 | Netlify/Render configs; **chưa live** | Config review, health local | 1 ngày |
 | D02 | Testing & benchmark | P0 | D01 | Test suite + RESULTS.md | Acceptance checklist pass | 0.5 ngày |
 | D03 | Interview package | P1 | D02 | 5 deliverables + demo script | Demo 7 phút chạy được | 0.5 ngày |
 | C07 | Quality RCA case study | P1 | T02 | Report | Pareto + fishbone + before/after | 0.5 ngày |
 | C08 | Kaizen case study | P1 | T02 | Report | Before/after + verified saving | 0.5 ngày |
+| C13 | Material standardization case study | P2 | T02 | Report + CSV | Standard vs actual + variance | 0.5 ngày |
 
 ### 7.2. Chi tiết task T01–T06
 
@@ -930,6 +996,8 @@ CS-01,COVERSTITCH,true,1
 ---
 
 ## 8. Kế hoạch 8 ngày
+
+> **Đây là kế hoạch ban đầu, không phải nhật ký đã hoàn thành.** T06 mới có checklist/process-flow subset (xem §4.6); không có nghĩa toàn bộ Day 6 đã hoàn thành. Scenario CSV/XLSX import đã có; PostgreSQL Phase 4 đã có private staging + API, material Excel import và public deploy vẫn chưa triển khai. Trạng thái thực tế nằm trong `CHECKLIST.md`.
 
 ### 8.1. Day-by-day
 
@@ -1057,9 +1125,11 @@ Nếu trễ, cắt theo thứ tự:
 
 ### 9.4. Acceptance checklist
 
+> **Đây là checklist MVP đầy đủ, không phải trạng thái hiện tại.** Public URL và PostgreSQL scenario **chưa đạt**; CSV và workbook `.xlsx` cho operations/workers/skills/machines đã đạt ở Phase 3.3–3.4. Trạng thái thực tế ở `CHECKLIST.md` và phần đầu file này.
+
 - [ ] Public URL HTTPS.
 - [ ] `/api/health` 200 + solver available.
-- [ ] Import CSV/Excel operations/workers/skills/machines.
+- [x] Import CSV/Excel operations/workers/skills/machines. _(CSV và .xlsx đã có; material Excel chưa)_
 - [ ] Validation chặn dữ liệu sai.
 - [ ] Mỗi operation gán đúng 1 station.
 - [ ] Worker không ở 2 station.
@@ -1125,12 +1195,13 @@ services:
         sync: false
 ```
 
-### 10.3. PostgreSQL 16
+### 10.3. PostgreSQL 18 (private staging — Phase 4 API)
 
-- Provider: Neon/Supabase/Render Postgres.
-- `DATABASE_URL` dạng `postgresql+psycopg://...`.
-- Startup: `Base.metadata.create_all()`.
-- Table: `scenarios`.
+- Trạng thái 2026-11-08: Phase 4.2–4.6 đã triển khai trên Neon PostgreSQL 18.6 (private staging) — migration `001`, repository, bốn endpoint `/api/scenarios` (bearer token hoặc demo session), ba endpoint `/api/auth/*` và panel server scenarios. Frontend vẫn mặc định lưu snapshot trong `localStorage`; public deploy chưa triển khai.
+- Provider đề xuất: Neon/Supabase/Render Postgres.
+- `DATABASE_URL` dạng `postgresql://...` (psycopg 3 direct; không SQLAlchemy/Alembic ở v1).
+- Schema: `scenarios`, `scenario_audit`, `schema_migrations`; migration runner `scripts/migrate.py`.
+- Không `create_all()` lúc startup; app kiểm tra schema và trả 503 nếu chưa sẵn sàng.
 - Fallback: nếu không có DB, optimize vẫn chạy; scenario lưu localStorage.
 
 ### 10.4. Env vars
@@ -1138,7 +1209,16 @@ services:
 | Biến | Nơi dùng | Giá trị |
 |---|---|---|
 | `FRONTEND_ORIGINS` | Backend CORS | `http://localhost:5173,https://your-site.netlify.app` |
-| `DATABASE_URL` | Backend | PostgreSQL connection string |
+| `SCENARIO_PERSISTENCE` | Backend | `localStorage` (default) hoặc `postgres` |
+| `DATABASE_URL` | Backend | PostgreSQL connection string (secret) |
+| `SCENARIO_API_TOKEN` | Backend | Bearer token admin/ops cho `/api/scenarios` (secret) |
+| `SCENARIO_WORKSPACE_ID` | Backend | `demo`; dùng chung cho admin + viewer |
+| `AUTH_DEMO_PASSWORD` | Backend | Mật khẩu demo dùng chung (secret; ≥ 8 ký tự) |
+| `AUTH_SESSION_SECRET` | Backend | Ký session cookie (secret; ≥ 32 byte) |
+| `AUTH_ADMIN_USERS` | Backend | `admin`; create/delete |
+| `AUTH_VIEWER_USERS` | Backend | `test1,test2,test3,test4`; list/get |
+| `AUTH_SESSION_TTL_SEC` | Backend | `28800` (8 giờ) |
+| `AUTH_COOKIE_SECURE` | Backend | `auto`/`always`/`never` |
 | `VITE_API_BASE` | Frontend | `/api` (mặc định) |
 | `ENABLE_QDRANT` | Backend | `false` (MVP) |
 | `ENABLE_MINIO` | Backend | `false` (MVP) |
@@ -1151,7 +1231,7 @@ services:
 4. `POST /api/export` → file XLSX mở được.
 5. `GET /` Netlify → app load.
 6. Netlify `/api/health` → proxy đúng.
-7. Postgres scenario save/load.
+7. Postgres scenario save/load **khi bật persistence**: login demo → create/list/get/delete; viewer chỉ list/get; logout → `401`.
 
 ### 10.6. Rollback
 
@@ -1165,30 +1245,32 @@ services:
 
 ### 11.1. Năm deliverables
 
-| # | Deliverable | File/URL | Trạng thái |
+| # | Deliverable | File/URL | Trạng thái thực tế 2026-11-08 |
 |---|---|---|---|
-| 1 | Public demo | Netlify URL | Bắt buộc |
-| 2 | Technical documentation | `SCOPE.md`, `DATA_DICTIONARY.md`, `MODEL.md`, `KPI_SPEC.md`, `ARCHITECTURE.md` | Bắt buộc |
-| 3 | Before/After Line Balancing Report | `docs/BEFORE_AFTER_REPORT.md` | Bắt buộc |
-| 4 | Production Planning Case Study | `docs/CASE_STUDY_PRODUCTION_PLANNING.md` | Bắt buộc |
-| 5 | IE Improvement Case Study | `docs/CASE_STUDY_QUALITY_RCA.md`, `docs/CASE_STUDY_KAIZEN.md` | Lợi thế |
+| 1 | Public demo | Netlify URL | **Chưa live**; đã có `netlify.toml`, `render.yaml` |
+| 2 | Technical documentation | `DATA_DICTIONARY.md`, `MODEL.md`, `KPI_SPEC.md`, `ROADMAP.md`, `CHECKLIST.md` | Có; `SCOPE.md`/`ARCHITECTURE.md` chưa tạo |
+| 3 | Before/After Line Balancing Report | `docs/BEFORE_AFTER_REPORT.md` | **Chưa có file riêng**; số liệu nằm trong README và `CASE_STUDY_KAIZEN.md` |
+| 4 | Production Planning Case Study | `docs/CASE_STUDY_PRODUCTION_PLANNING.md` | **Chưa có** |
+| 5 | IE Improvement Case Study | `docs/CASE_STUDY_QUALITY_RCA.md`, `CASE_STUDY_KAIZEN.md`, `CASE_STUDY_MATERIAL_STANDARD.md`, `CASE_STUDY_LAYOUT_ERGONOMICS.md` | Có, docs-only/synthetic |
 
-### 11.2. Demo script 7 phút
+### 11.2. Demo script 7 phút (theo UI hiện tại)
 
-1. **Bài toán (1 phút):** chuyền may 40 operations, 24 workers, 23 machines; mục tiêu 420 pcs/shift.
-2. **Data (1 phút):** import CSV, validation bắt lỗi thiếu skill/machine.
-3. **Optimize (2 phút):** chạy MILP, xem trước/sau, workload chart, bottleneck, solver status.
-4. **Planning (1 phút):** required HC, capacity, HC gap, machine gap.
-5. **Workforce (1 phút):** standard HC vs actual, skill heatmap, transfer suggestion.
-6. **New style (1 phút):** readiness checklist, process flow.
-7. **Case study (30 giây):** quality RCA/kaizen before/after.
+1. **Bài toán (45 giây):** chuyền may 40 operations, 24 workers, 23 machines; mục tiêu 420 pcs/shift; dữ liệu synthetic.
+2. **Line balance (1 phút):** scenario A, station loads, bottleneck, before/after, solver status.
+3. **Capacity & people (1 phút):** required HC, capacity, HC gap, machine coverage, skill coverage/transfer.
+4. **Actuals & time study (45 giây):** daily actual records, downtime by category, time-study aggregate.
+5. **New style (45 giây):** tính readiness và chuyển Routing only / With assignment; nhắc đây không phải release approval.
+6. **Solver & data (45 giây):** metadata, warnings, XLSX export, localStorage snapshot.
+7. **Case study (1 phút):** quality RCA, kaizen, material standard, layout; nói rõ synthetic.
+8. **Giới hạn (30 giây):** target 420 chưa đạt; public deploy/PostgreSQL/import/material module chưa có; protection pay chờ HR policy.
 
 ### 11.3. CV bullets
 
-- Built a MILP-based garment line balancing web app (React/FastAPI/PuLP-HiGHS) that assigns 40+ operations to stations under precedence, skill, and machine constraints.
-- Designed KPI engine for takt, line balancing efficiency, bottleneck workload, capacity, and manpower gap; validated with pytest and benchmarked 50 operations / 25 workers.
-- Deployed a public demo on Netlify + Render + PostgreSQL; documented data dictionary, MILP formulation, and before/after line balancing report.
-- Added capacity planning and standard HC control modules to connect line balancing with production planning and manpower decisions.
+- Built a MILP-based garment line balancing web app (React/FastAPI/PuLP-HiGHS) that assigns 40 operations to stations under precedence, skill, and machine constraints; the sample run proved 23 stations / 23 workers / 58.0 s bottleneck.
+- Designed a KPI and planning layer for takt, line balance efficiency, bottleneck-constrained capacity, manpower gap, skill coverage, and machine requirements; validated with pytest and benchmarked 50 operations / 25 workers.
+- Added required-gate readiness scoring and a precedence-based process-flow viewer with optimized station/worker annotations for the active sample; not a persistent style-launch approval system.
+- Documented the data dictionary, MILP formulation, KPI contract, and before/after case studies; the demo is **local** with Netlify/Render deployment configs, not a live public deployment.
+- Added production actuals, time study, and synthetic case studies for quality RCA, kaizen, material standardization, and layout/ergonomics — explicitly labeled as portfolio simulations, not HBI production results.
 
 ### 11.4. Câu hỏi phỏng vấn cần chuẩn bị
 
@@ -1228,13 +1310,13 @@ services:
 - Một station một machine type.
 - Không có parallel workers/machines cho cùng operation.
 - Dữ liệu public là synthetic.
-- Không có auth/HR/MES integration trong MVP.
+- Không có HR/MES integration trong MVP; auth chỉ là demo accounts admin/viewer, không phải production identity.
 - PostgreSQL chỉ lưu scenario, không phải system of record.
 
 ### 12.2. Open questions
 
 - Có cần multi-line trong demo không?
-- Có cần Excel import thật hay CSV đủ?
+- ~~Có cần Excel import thật hay CSV đủ?~~ Đã trả lời: có, thêm workbook `.xlsx` bốn sheet ở Phase 3.4.
 - Có cần tiếng Việt + tiếng Anh không?
 - Có cần lưu scenario bằng Postgres trong demo hay localStorage đủ?
 - Có cần process flow interactive (zoom/drag) hay static SVG đủ?
@@ -1244,13 +1326,26 @@ services:
 
 ## 13. Roadmap mở rộng sau MVP
 
+### 13.0. Thứ tự đóng các khoảng trống đã được duyệt (2026-11-08)
+
+| Phase | Phạm vi | Trạng thái |
+|---:|---|---|
+| 1 | T06 readiness checklist + process-flow API/UI trên routing hiện có | Đã triển khai và verify; không gồm style master/release approval |
+| 2 | T18 material standard/BOM/usage module | Đã triển khai một phần: usage-variance API/UI + what-if và CSV import API/UI trên synthetic T13; chưa có material master/BOM/persistence; không claim cash saving |
+| 3 | CSV/Excel import và schema validation | Đã có material CSV import; scenario master-data CSV (4 file) và workbook `.xlsx` (4 sheet) cho operations/workers/skills/machines, backend + UI + validation/test. Material Excel import chưa triển khai |
+| 4 | Optional PostgreSQL scenario persistence | Phase 4.2–4.6 đã có private staging (Neon PostgreSQL 18.6), migration `001`, repository, bốn endpoint `/api/scenarios`, demo accounts admin/viewer và panel server scenarios; frontend vẫn mặc định localStorage. Còn public deploy, secret Render, DB role giới hạn quyền và security sign-off public |
+| 5 | Public deploy Netlify/Render | Chưa live; chờ quyền/tài khoản và nghiệm thu public `/api/health` |
+| — | Protection pay | Chờ policy HR/Finance; chỉ intake template, không có công thức/calculator |
+
 ### 13.1. Phase 2 — Planning & standardization (2–3 tuần)
 
 | Task | Nội dung | Data cần | Architecture impact | Estimate |
 |---|---|---|---|---|
 | T15 | Machine Capacity & Line Moving | Machine master, line config, changeover | Scenario compare, machine gap | 1–1.5 tuần |
-| T16 | New Style Readiness | Checklist, style master | Có thể localStorage hoặc Postgres | 3–5 ngày |
+| T16 | Full New Style Readiness | Style master, routing editor, launch record, approval | Persistence + workflow; extends partial T06 | 3–5 ngày |
 | T18 | Material Standard Consumption | Material master, BOM, actual usage | Bảng material, import CSV | 1–1.5 tuần |
+
+> T13 đã có case study (`docs/CASE_STUDY_MATERIAL_STANDARD.md`), module usage-variance giới hạn và material CSV import API/UI; T18 đầy đủ (material master/BOM/material Excel import) vẫn nằm trong roadmap, chưa triển khai.
 
 ### 13.2. Phase 3 — Quality, kaizen, safety, protection pay (3–4 tuần)
 
@@ -1277,10 +1372,10 @@ services:
 
 | Service | Phase | Use case |
 |---|---|---|
-| PostgreSQL 16 | MVP | Scenarios, runs |
+| PostgreSQL | Private staging (Neon 18.6) + demo auth đã có; public deploy chưa | Scenarios, audit |
 | Qdrant | Phase 2/3 | Semantic search quality/material/kaizen |
 | MinIO | Phase 2/3 | CSV/XLSX, documents, layout files, defect images |
-| Auth | Phase 3 | Multi-user, real data |
+| Auth | Demo accounts Phase 4.6 | Production multi-user/SSO cho real data |
 | Redis | Phase 4 | Cache, job queue |
 | Worker queue | Phase 4 | Long optimization jobs |
 
@@ -1335,7 +1430,7 @@ MVP Done khi:
 - Netlify build configuration và redirects/proxies.
 - Render Blueprint YAML và free tier limitations.
 - HBI Shift Line Engineer JD (do người dùng cung cấp).
-- Nội bộ: `PROPOSAL.md`, `DEPLOYMENT.md`, `SCOPE.md`, `DATA_DICTIONARY.md`, `MODEL.md`, `KPI_SPEC.md`.
+- Nội bộ: `PROPOSAL.md`, `DEPLOYMENT.md`, `DATA_DICTIONARY.md`, `MODEL.md`, `KPI_SPEC.md`, `docs/CASE_STUDY_MATERIAL_STANDARD.md`.
 
 ### 15.3. Nguyên tắc cập nhật roadmap
 
@@ -1346,4 +1441,4 @@ MVP Done khi:
 
 ---
 
-> **Kết luận:** Giá trị của LineBalance Pro không nằm ở số lượng module, mà ở chỗ nó chứng minh được một chuỗi hoàn chỉnh: dữ liệu sản xuất → mô hình MILP → phương án cân bằng → KPI → kế hoạch năng lực → định biên → báo cáo → triển khai. Đây là câu chuyện phù hợp nhất với vị trí Shift Line Engineer tại HBI.
+> **Kết luận:** Giá trị của LineBalance Pro không nằm ở số lượng module, mà ở chỗ nó chứng minh được một chuỗi hoàn chỉnh: dữ liệu sản xuất → mô hình MILP → phương án cân bằng → KPI → kế hoạch năng lực → định biên → báo cáo → kiểm chứng local. Public deployment và các module mở rộng vẫn là roadmap; đây là câu chuyện phù hợp nhất với vị trí Shift Line Engineer tại HBI.
