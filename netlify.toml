@@ -5,7 +5,7 @@
 
 [[redirects]]
   from = "/api/*"
-  to = "https://linebalance-api.onrender.com/api/:splat"
+  to = "https://linebalance-pro.onrender.com/api/:splat"
   status = 200
   force = true
 
