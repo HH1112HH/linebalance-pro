@@ -439,11 +439,54 @@ def test_authenticate_demo_user_roles() -> None:
     assert authenticate_demo_user(auth, "nobody", TEST_PASSWORD) is None
 
 
+def test_authenticate_demo_user_uses_role_specific_passwords() -> None:
+    auth = _auth_settings(
+        password=None,
+        admin_password="admin-pass-123",
+        viewer_password="viewer-pass-123",
+    )
+
+    assert authenticate_demo_user(auth, "admin", "admin-pass-123") == "admin"
+    assert authenticate_demo_user(auth, "admin", "viewer-pass-123") is None
+    assert authenticate_demo_user(auth, "test1", "viewer-pass-123") == "test1"
+    assert authenticate_demo_user(auth, "test1", "admin-pass-123") is None
+    assert authenticate_demo_user(auth, "nobody", "viewer-pass-123") is None
+
+
+def test_role_password_rotation_revokes_only_that_role() -> None:
+    now = datetime(2026, 11, 9, 10, 0, tzinfo=UTC)
+    base = _auth_settings(
+        password=None,
+        admin_password="admin-pass-123",
+        viewer_password="viewer-pass-123",
+    )
+    admin_token, _ = issue_session_token(base, "admin", now=now)
+    viewer_token, _ = issue_session_token(base, "test1", now=now)
+
+    rotated_admin = _auth_settings(
+        password=None,
+        admin_password="admin-pass-456",
+        viewer_password="viewer-pass-123",
+    )
+    assert verify_session_token(rotated_admin, admin_token, now=now) is None
+    assert verify_session_token(rotated_admin, viewer_token, now=now) is not None
+
+    rotated_viewer = _auth_settings(
+        password=None,
+        admin_password="admin-pass-123",
+        viewer_password="viewer-pass-456",
+    )
+    assert verify_session_token(rotated_viewer, viewer_token, now=now) is None
+    assert verify_session_token(rotated_viewer, admin_token, now=now) is not None
+
+
 def test_auth_settings_from_env_validates_configuration(
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
     for name in (
         "AUTH_DEMO_PASSWORD",
+        "AUTH_ADMIN_PASSWORD",
+        "AUTH_VIEWER_PASSWORD",
         "AUTH_SESSION_SECRET",
         "AUTH_ADMIN_USERS",
         "AUTH_VIEWER_USERS",
@@ -478,3 +521,40 @@ def test_auth_settings_from_env_validates_configuration(
     overlap = build_auth_settings()
     assert overlap.config_error is not None
     assert "must not overlap" in overlap.config_error
+
+
+def test_auth_settings_from_env_role_passwords(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    for name in (
+        "AUTH_DEMO_PASSWORD",
+        "AUTH_ADMIN_PASSWORD",
+        "AUTH_VIEWER_PASSWORD",
+        "AUTH_SESSION_SECRET",
+        "AUTH_ADMIN_USERS",
+        "AUTH_VIEWER_USERS",
+        "AUTH_SESSION_TTL_SEC",
+        "AUTH_COOKIE_SECURE",
+    ):
+        monkeypatch.delenv(name, raising=False)
+    monkeypatch.setenv("AUTH_ADMIN_PASSWORD", "admin-pass-123")
+    monkeypatch.setenv("AUTH_VIEWER_PASSWORD", "viewer-pass-123")
+    monkeypatch.setenv("AUTH_SESSION_SECRET", TEST_SECRET)
+
+    auth = build_auth_settings()
+    assert auth.configured is True
+    assert auth.password_for("admin") == "admin-pass-123"
+    assert auth.password_for("viewer") == "viewer-pass-123"
+    assert auth.password_fingerprint_for("admin") != auth.password_fingerprint_for(
+        "viewer"
+    )
+
+    monkeypatch.setenv("AUTH_VIEWER_PASSWORD", "admin-pass-123")
+    duplicate = build_auth_settings()
+    assert duplicate.config_error is not None
+    assert "must differ" in duplicate.config_error
+
+    monkeypatch.setenv("AUTH_VIEWER_PASSWORD", "short")
+    short_viewer = build_auth_settings()
+    assert short_viewer.config_error is not None
+    assert "AUTH_VIEWER_PASSWORD" in short_viewer.config_error

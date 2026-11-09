@@ -66,10 +66,12 @@ class AuthSettings:
     session_ttl_sec: int
     cookie_secure: CookieSecureMode
     config_error: str | None = None
+    admin_password: str | None = None
+    viewer_password: str | None = None
 
     @property
     def enabled(self) -> bool:
-        return bool(self.password)
+        return bool(self.password or self.admin_password or self.viewer_password)
 
     @property
     def configured(self) -> bool:
@@ -93,6 +95,19 @@ class AuthSettings:
             return "viewer"
         return None
 
+    def password_for(self, role: Role) -> str | None:
+        """Return the configured password for a role, with shared fallback."""
+        if role == "admin":
+            return self.admin_password or self.password
+        return self.viewer_password or self.password
+
+    def password_fingerprint_for(self, role: Role) -> str:
+        password = self.password_for(role)
+        if not password:
+            return ""
+        digest = hashlib.sha256(password.encode("utf-8")).hexdigest()
+        return digest[:16]
+
     @property
     def password_fingerprint(self) -> str:
         if not self.password:
@@ -103,6 +118,8 @@ class AuthSettings:
     @classmethod
     def from_env(cls) -> AuthSettings:
         password = os.getenv("AUTH_DEMO_PASSWORD") or None
+        admin_password = os.getenv("AUTH_ADMIN_PASSWORD") or None
+        viewer_password = os.getenv("AUTH_VIEWER_PASSWORD") or None
         session_secret = os.getenv("AUTH_SESSION_SECRET") or None
         admin_users = _parse_users(os.getenv("AUTH_ADMIN_USERS"), DEFAULT_ADMIN_USERS)
         viewer_users = _parse_users(
@@ -112,12 +129,18 @@ class AuthSettings:
             os.getenv("AUTH_COOKIE_SECURE", "auto").strip().lower() or "auto"
         )
 
+        configured_passwords = {
+            "AUTH_DEMO_PASSWORD": password,
+            "AUTH_ADMIN_PASSWORD": admin_password,
+            "AUTH_VIEWER_PASSWORD": viewer_password,
+        }
         errors: list[str] = []
-        if password is not None and len(password) < MIN_PASSWORD_LENGTH:
-            errors.append(
-                f"AUTH_DEMO_PASSWORD must be at least {MIN_PASSWORD_LENGTH} characters."
-            )
-        if password is not None:
+        for name, value in configured_passwords.items():
+            if value is not None and len(value) < MIN_PASSWORD_LENGTH:
+                errors.append(
+                    f"{name} must be at least {MIN_PASSWORD_LENGTH} characters."
+                )
+        if any(configured_passwords.values()):
             if not session_secret:
                 errors.append("AUTH_SESSION_SECRET is required when login is enabled.")
             elif len(session_secret.encode("utf-8")) < MIN_SESSION_SECRET_BYTES:
@@ -125,6 +148,8 @@ class AuthSettings:
                     "AUTH_SESSION_SECRET must be at least "
                     f"{MIN_SESSION_SECRET_BYTES} bytes."
                 )
+        if admin_password is not None and admin_password == viewer_password:
+            errors.append("AUTH_ADMIN_PASSWORD and AUTH_VIEWER_PASSWORD must differ.")
         if cookie_secure not in COOKIE_SECURE_MODES:
             errors.append("AUTH_COOKIE_SECURE must be auto, always or never.")
         if not admin_users:
@@ -135,11 +160,13 @@ class AuthSettings:
         for username in admin_users + viewer_users:
             if not USERNAME_PATTERN.fullmatch(username):
                 errors.append(f"Invalid auth username: {username!r}.")
-        if password is not None and len(password) < 12:
-            logger.warning(
-                "AUTH_DEMO_PASSWORD is a short demo password; change it before "
-                "any public deployment."
-            )
+        for name, value in configured_passwords.items():
+            if value is not None and len(value) < 12:
+                logger.warning(
+                    "%s is a short demo password; change it before any public "
+                    "deployment.",
+                    name,
+                )
 
         cookie_mode = cast(
             CookieSecureMode,
@@ -158,6 +185,8 @@ class AuthSettings:
             ),
             cookie_secure=cookie_mode,
             config_error="; ".join(errors) or None,
+            admin_password=admin_password,
+            viewer_password=viewer_password,
         )
 
 
@@ -194,7 +223,7 @@ def session_cookie_names() -> tuple[str, ...]:
 def authenticate_demo_user(
     settings: AuthSettings, username: str, password: str
 ) -> str | None:
-    """Return the normalized username when the shared demo password matches."""
+    """Return the normalized username when the role-specific password matches."""
 
     if not settings.configured:
         raise AuthUnavailableError(
@@ -202,10 +231,12 @@ def authenticate_demo_user(
         )
 
     normalized = username.strip().lower()
-    expected = (settings.password or "").encode("utf-8")
+    role = settings.role_for(normalized)
+    expected_password = settings.password_for(role) if role is not None else None
+    expected = (expected_password or "").encode("utf-8")
     provided = password.encode("utf-8")
     password_matches = hmac.compare_digest(provided, expected)
-    if settings.role_for(normalized) is None or not password_matches:
+    if role is None or expected_password is None or not password_matches:
         return None
     return normalized
 
@@ -232,7 +263,7 @@ def issue_session_token(
         "role": role,
         "iat": int(issued_at.timestamp()),
         "exp": int(expires_at.timestamp()),
-        "pwd": settings.password_fingerprint,
+        "pwd": settings.password_fingerprint_for(role),
     }
     payload_b64 = _b64encode(
         json.dumps(payload, separators=(",", ":"), sort_keys=True).encode("utf-8")
@@ -292,12 +323,12 @@ def verify_session_token(
     now_ts = int(current_time.timestamp())
     if version != TOKEN_VERSION or expires_at <= now_ts or issued_at > now_ts + 60:
         return None
-    if password_fingerprint != settings.password_fingerprint:
-        return None
     current_role = settings.role_for(username)
     if current_role is None or current_role != role:
         return None
     if role not in {"admin", "viewer"}:
+        return None
+    if password_fingerprint != settings.password_fingerprint_for(current_role):
         return None
     return Principal(
         username=username,

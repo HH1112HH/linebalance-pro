@@ -512,8 +512,9 @@ def auth_login(
         raise HTTPException(
             status_code=503,
             detail=(
-                "Demo login is disabled or misconfigured. Set AUTH_DEMO_PASSWORD "
-                "and AUTH_SESSION_SECRET on the server."
+                "Demo login is disabled or misconfigured. Set "
+                "AUTH_ADMIN_PASSWORD, AUTH_VIEWER_PASSWORD and "
+                "AUTH_SESSION_SECRET on the server."
             ),
         )
     _check_origin(request, require_origin=False)
