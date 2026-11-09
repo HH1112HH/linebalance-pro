@@ -1,5 +1,7 @@
 # Next session checklist — Neon + demo login + login UI
 
+> **Cập nhật 2026-11-09:** `/login`, frontend fail-closed gate, Netlify Edge Function `auth-gate` và nút Sign out đã hoàn thành trên public. **Render auth/Neon vẫn chưa bật**; các mục §2 (Render env, postgres persistence) vẫn là việc tiếp theo. Các mục nhắc `AuthDialog`/modal trong tài liệu này là lịch sử — `AuthDialog` đã bị xóa, `/login` là bề mặt duy nhất. Xem `DEPLOYMENT.md` §8.2 và `CHECKLIST.md` entry 2026-11-09.
+
 > **Ngày dự kiến:** 2026-11-09
 > **Mục tiêu:** bật Neon/demo auth trên public demo, hoàn thiện giao diện đăng nhập, kiểm chứng end-to-end và cập nhật docs.
 > **Nguyên tắc:** synthetic data only; không commit secret; không claim production identity; `OPTIMAL` chỉ khi solver chứng minh.
@@ -8,15 +10,14 @@
 
 ## 0. Baseline đã xác nhận (2026-11-08)
 
-- [x] UI public: `https://linebalance-pro.netlify.app` — `GET /` 200.
-- [x] API public: `https://linebalance-pro.onrender.com` — `GET /api/health` 200.
-- [x] Netlify proxy `/api/*` → Render hoạt động; SPA fallback hoạt động.
+- [x] Public root `https://linebalance-pro.netlify.app` hiện `302 /login` qua Netlify Edge Function `auth-gate`; workspace không mount trước khi có session.
+- [x] Netlify proxy `/api/*` → Render hoạt động; SPA fallback hoạt động; edge gate trả `401` cho `/api/*` không session.
 - [x] Render: `rootDir=backend`, health check `/api/health`, `SOLVER_BACKEND=highs`, deploy `live`.
-- [x] Public hiện tại: `SCENARIO_PERSISTENCE=localStorage`, `auth.enabled=false`, login button bị disabled.
-- [x] Login UI đã có sẵn trong code: `frontend/src/components/AuthDialog.tsx`, mở từ `Topbar` và `ServerSnapshotsPanel`.
+- [x] Public hiện tại: `SCENARIO_PERSISTENCE=localStorage`, `auth.enabled=false` trên Render; public login dùng `LB_AUTH_*` của Netlify edge gate, không dùng Render auth.
+- [x] Login UI đã hoàn thiện: `frontend/src/components/LoginPage.tsx` + `LoginForm.tsx`; `AuthDialog` đã bị xóa, `/login` là bề mặt duy nhất; nút Sign out nằm trong chip tài khoản topbar.
 - [x] Backend auth đã có: `/api/auth/session`, `/api/auth/login`, `/api/auth/logout`; cookie HttpOnly/SameSite=Lax; role admin/viewer.
-- [x] Neon private staging đã có migration `001`; `.env.local` (gitignored) đã có `DATABASE_URL`, `SCENARIO_API_TOKEN`, `AUTH_DEMO_PASSWORD`, `AUTH_SESSION_SECRET`.
-- [x] `scripts/verify.ps1` pass — 138 passed, 3 skipped, coverage 86.19%.
+- [x] Neon private staging đã có migration `001`; `.env.local` (gitignored) đã có `DATABASE_URL`, `SCENARIO_API_TOKEN`, `AUTH_ADMIN_PASSWORD`, `AUTH_VIEWER_PASSWORD`, `AUTH_SESSION_SECRET`.
+- [x] `scripts/verify.ps1` pass — 141 passed, 3 skipped, coverage 86.16%.
 
 **Kết luận:** không cần viết lại login từ đầu. Việc chính là **bật auth/Neon trên Render** và **thêm trang `/login` full-screen** dùng chung form với modal hiện có.
 
@@ -24,9 +25,10 @@
 
 | Hạng mục | Chốt |
 |---|---|
-| Giao diện đăng nhập | Trang full-screen `/login` + giữ modal quick sign-in |
+| Giao diện đăng nhập | Trang full-screen `/login` là bề mặt duy nhất; `AuthDialog` đã bỏ |
 | Mật khẩu demo | Tách `AUTH_ADMIN_PASSWORD` (private) / `AUTH_VIEWER_PASSWORD` (public demo), fallback `AUTH_DEMO_PASSWORD` |
-| Neon | Bật `SCENARIO_PERSISTENCE=postgres` trên Render |
+| Public gate hiện tại | Netlify Edge Function `auth-gate` + `LB_AUTH_*` (Functions scope) |
+| Neon | Bật `SCENARIO_PERSISTENCE=postgres` trên Render — **vẫn pending** |
 
 ---
 
@@ -149,6 +151,8 @@ AUTH_COOKIE_SECURE=auto
 
 ### 3.1. Component / state
 
+> **Trạng thái 2026-11-09:** `LoginForm`, `LoginPage`, auth gate trong `App.tsx`, i18n và CSS đã xong. `AuthDialog` đã bị xóa; bỏ qua các mục modal bên dưới. Sign out hiện nằm trong chip tài khoản topbar và panel `/login` khi đã đăng nhập.
+
 - [ ] Tạo `frontend/src/components/LoginForm.tsx` dùng chung: username, password, show/hide, chips, error, submit.
 - [ ] `frontend/src/components/AuthDialog.tsx`: bọc `LoginForm` trong modal; giữ ESC/focus trap/trả focus.
 - [ ] `frontend/src/components/LoginPage.tsx`: full-screen, branding + `LoginForm` + link quay lại; trạng thái đã đăng nhập.
@@ -215,18 +219,21 @@ AUTH_COOKIE_SECURE=auto
   - `docs: document public Neon auth rollout`
 - [ ] Push `main`.
 - [ ] Kiểm tra Render auto-deploy; nếu không trigger, trigger thủ công bằng Render API/dashboard.
-- [ ] Build + deploy Netlify:
+- [ ] Build + deploy Netlify **từ thư mục `frontend`** để edge function được đóng gói:
   ```powershell
   npm --prefix frontend run build
-  npx --yes netlify-cli@latest deploy --prod --no-build --dir frontend/dist --site a5ab6684-ddb0-4fff-aeb8-c1db1d572841
+  Push-Location frontend
+  npx --yes netlify-cli@latest deploy --prod --no-build --dir dist --site a5ab6684-ddb0-4fff-aeb8-c1db1d572841
+  Pop-Location
   ```
 - [ ] Warm up API trước smoke: `GET /api/health`.
 
 ### Public smoke bắt buộc
 
-- [ ] `GET https://linebalance-pro.netlify.app/` → 200.
+- [ ] `GET https://linebalance-pro.netlify.app/` anonymous → `302 /login` (edge gate).
 - [ ] `GET https://linebalance-pro.netlify.app/login` → 200 (SPA fallback) và mở đúng trang login.
-- [ ] `GET https://linebalance-pro.netlify.app/api/health` → 200, `scenario_store.mode=postgres`, `auth.enabled=true`.
+- [ ] `GET https://linebalance-pro.netlify.app/api/auth/session` → `login_enabled=true` (edge gate).
+- [ ] `GET https://linebalance-pro.netlify.app/api/health` → 200, `scenario_store.mode=postgres`, `auth.enabled=true` (**Render — vẫn pending**).
 - [ ] Mở UI → `/login` → admin login → URL về `/` → save scenario → list → load → delete.
 - [ ] Modal quick sign-in vẫn hoạt động từ Topbar.
 - [ ] Logout → refresh → vẫn logged out.
@@ -259,7 +266,7 @@ AUTH_COOKIE_SECURE=auto
   - restart Render;
   - xác nhận `/api/optimize` + export + localStorage vẫn chạy; `/api/scenarios` trả `503`.
 - [ ] UI lỗi: Netlify → Deploys → restore deploy trước.
-- [ ] Auth lỗi: giữ login disabled, public vẫn dùng compute/local snapshots.
+- [ ] Auth edge lỗi: Netlify → Deploys → restore deploy trước; nếu `LB_AUTH_*` thiếu, giữ fail-closed (login disabled, workspace không mount), không tắt gate để lộ dữ liệu.
 - [ ] Ghi lại rollback drill + health JSON vào `CHECKLIST.md`.
 
 ---

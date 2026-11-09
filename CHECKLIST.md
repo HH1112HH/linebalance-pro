@@ -955,3 +955,13 @@ Mỗi lần chạy phải có `RunMetadata`:
 - Đăng nhập thành công: đóng login page, `replaceState` về `/`, mount workspace. Nếu auth bị tắt (`login_enabled=false`) thì workspace vẫn mở để demo local, đúng fallback của backend.
 - Kiểm chứng local bằng browser context sạch: `GET /` → `/login` (không có `.app-shell` trong DOM), viewer login → `/` + workspace, logout → `/login` + app unmounted; `scripts/verify.ps1` pass (141 passed, 3 skipped, coverage 86.16%).
 - Deploy Netlify production `6af19ed8588f38aa7b53bbf9`. **Lưu ý:** public root vẫn mở workspace vì Render đang trả `auth.enabled=false`; auth gate chỉ kích hoạt sau khi Render được set `AUTH_*` + persistence. Không thể bật từ repo nếu không có quyền Render.
+
+### 2026-11-09 — Public login gate + sign out rõ ràng (Netlify Edge Function)
+
+- Vì Render vẫn chưa bật `AUTH_*`, public root trước đây mở workspace. Đã thêm `frontend/netlify/edge-functions/auth-gate.ts` làm lớp gate công khai: chưa có cookie `lb_edge_session` → `302 /login`; `/api/*` (trừ health) → `401`; viewer bị `403` khi `POST/DELETE /api/scenarios*`; admin được phép. Session HMAC-SHA256, HttpOnly, SameSite=Lax, TTL 8h.
+- Frontend fail-closed: `requiresLogin = authChecked && !authSession?.authenticated`; không mount `.app-shell` trước khi session xác thực. Nếu session check lỗi vẫn hiện login và cho thử lại, không fallback mở dữ liệu.
+- Sign out: chip tài khoản ở topbar giờ có nút **Sign out** dạng pill viền + icon, tooltip `user · role`; vẫn có nút Sign out trong panel `/login` khi đã đăng nhập. Mobile 390×844: chip 160px, nút 76px, không horizontal scroll.
+- Netlify env `LB_AUTH_ADMIN_USERS`, `LB_AUTH_VIEWER_USERS`, `LB_AUTH_ADMIN_PASSWORD`, `LB_AUTH_VIEWER_PASSWORD`, `LB_AUTH_SESSION_SECRET` đặt bằng CLI (Functions scope, secret; không commit). Viewer password public `12345678`; admin password lấy từ `.env.local`, không ghi vào repo/log.
+- Deploy phải chạy từ `frontend` để CLI đóng gói edge function: `npx netlify-cli deploy --prod --no-build --dir dist --site <site-id>`. `netlify.toml`: `base = "frontend"`, `publish = "dist"`, `[[edge_functions]] auth-gate path = "/*"`. Deploy production cuối `6af1aaaa3ad1e235cea075bc`.
+- Smoke public: `/` 302 `/login`; session `login_enabled=true`; viewer login 200; admin login 200 role admin; viewer `POST /api/scenarios` 403; logout 204 → `/` 302; browser context sạch login → workspace → sign out → `/login`, app unmounted. `scripts/verify.ps1` pass: 141 passed, 3 skipped, coverage 86.16%.
+- **Giới hạn:** gate chỉ bảo vệ URL Netlify; API Render trực tiếp vẫn mở với dữ liệu synthetic, persistence `localStorage`. Khi bật auth Render phải gỡ/điều chỉnh edge gate để tránh double auth.

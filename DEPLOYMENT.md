@@ -9,7 +9,7 @@
 > - **Kết quả đo thật:** 40 operations / 24 workers → `OPTIMAL` 58.0s, 23 stations, ~28s; 26 workers / target 400 → `OPTIMAL` 56.0s, 25 stations, ~42s. Không dùng heuristic làm kết quả cuối.
 > - **Dữ liệu:** synthetic demo only; không có dữ liệu HBI thật.
 >
-> **Trạng thái 2026-11-08 (public demo deployed):** UI `https://linebalance-pro.netlify.app`, API `https://linebalance-pro.onrender.com`; `GET /api/health` trả `200` cả trực tiếp lẫn qua proxy Netlify. Render service `linebalance-pro` dùng `rootDir=backend`, health check `/api/health`, build/start command trong `render.yaml`, `SOLVER_BACKEND=highs`. Public chạy **`SCENARIO_PERSISTENCE=localStorage` + demo auth tắt**; PostgreSQL Phase 4 vẫn chỉ là **private staging Neon**, không phải public persistence. Các số solver trong tài liệu là đo local; trên Render free CPU, sample 40 operations trả `FEASIBLE_LIMIT` sau ~61s trong budget 60s — không claim `OPTIMAL`. Checklist §8 và CV bullet §9 chỉ dùng sau khi đối chiếu đúng môi trường.
+> **Trạng thái 2026-11-09 (public demo deployed + login gate):** UI `https://linebalance-pro.netlify.app`, API `https://linebalance-pro.onrender.com`; `GET /api/health` trả `200` cả trực tiếp lẫn qua proxy Netlify. Render service `linebalance-pro` dùng `rootDir=backend`, health check `/api/health`, build/start command trong `render.yaml`, `SOLVER_BACKEND=highs`. Public chạy **`SCENARIO_PERSISTENCE=localStorage`**; PostgreSQL Phase 4 vẫn chỉ là **private staging Neon**, không phải public persistence. Public root hiện **bắt buộc đăng nhập** qua Netlify Edge Function `auth-gate` (session cookie `lb_edge_session`), vì Render vẫn chưa bật `AUTH_*`. Các số solver trong tài liệu là đo local; trên Render free CPU, sample 40 operations trả `FEASIBLE_LIMIT` sau ~61s trong budget 60s — không claim `OPTIMAL`. Checklist §8 và CV bullet §9 chỉ dùng sau khi đối chiếu đúng môi trường.
 
 > **Kết luận nhanh:** Netlify **không chạy được Streamlit** và không phải môi trường phù hợp để chạy PuLP/HiGHS dạng server Python liên tục. Với 8 ngày, có 3 hướng:
 >
@@ -539,7 +539,7 @@ Dù chọn A hay B, scope nên là:
 
 ### 8.1. Phase 4 persistence + demo accounts — private staging, not public
 
-> **Trạng thái 2026-11-08:** PostgreSQL Phase 4 đã chạy trên **private staging Neon** (PostgreSQL 18.6, AWS `us-east-2`): migration `001` applied, bốn endpoint `/api/scenarios`, demo accounts admin/viewer và frontend server-scenario client đã có test/smoke. Public demo đã deploy nhưng **chưa cấu hình secret/Neon trên Render** — persistence vẫn `localStorage`, login tắt. Local `.env.local` (gitignored) giữ DSN/token/mật khẩu demo; không commit.
+> **Trạng thái 2026-11-09:** PostgreSQL Phase 4 đã chạy trên **private staging Neon** (PostgreSQL 18.6, AWS `us-east-2`): migration `001` applied, bốn endpoint `/api/scenarios`, demo accounts admin/viewer và frontend server-scenario client đã có test/smoke. Public demo đã deploy; **Render vẫn chưa cấu hình secret/Neon** nên persistence vẫn `localStorage` và `auth.enabled=false`. Từ 2026-11-09, public root được bảo vệ bởi **Netlify Edge Function `auth-gate`** (xem §8.2), không phải auth của Render. Local `.env.local` (gitignored) giữ DSN/token/mật khẩu demo; không commit.
 
 Env chính (đầy đủ ở design doc §9):
 
@@ -563,7 +563,7 @@ Env chính (đầy đủ ở design doc §9):
 
 Khi triển khai thật:
 
-- Dùng secret env của Render cho `DATABASE_URL`, `SCENARIO_API_TOKEN`, `AUTH_DEMO_PASSWORD`, `AUTH_SESSION_SECRET`; không commit, không đưa các giá trị này vào frontend/Netlify.
+- Dùng secret env của Render cho `DATABASE_URL`, `SCENARIO_API_TOKEN`, `AUTH_DEMO_PASSWORD`, `AUTH_SESSION_SECRET`; không commit và không đưa các giá trị Render này vào frontend. Public gate hiện dùng bộ `LB_AUTH_*` riêng trong Netlify (Functions scope) và một session secret riêng; không dùng chung `AUTH_SESSION_SECRET` của Render.
 - Giữ `SCENARIO_PERSISTENCE=localStorage` làm mặc định; chỉ đổi sang `postgres` sau khi migration `001` apply và `--check` sạch.
 - Chạy `scripts/migrate.py --check` trước deploy, `--apply` có kiểm soát; không auto-migrate lúc app startup.
 - Xác nhận `/api/health` báo `scenario_store.ready=true` và `auth.enabled=true`; smoke create/list/get/delete; DB lỗi phải trả `503` nhưng `/api/optimize` vẫn chạy.
@@ -576,12 +576,14 @@ Khi triển khai thật:
 
 Chi tiết schema, env, runbook và acceptance gate: [`docs/POSTGRESQL_PERSISTENCE_DESIGN.md`](docs/POSTGRESQL_PERSISTENCE_DESIGN.md).
 
-### 8.2. Public demo verified — 2026-11-08
+### 8.2. Public demo verified — 2026-11-09
 
-- **Render:** service `linebalance-pro` (`srv-dbo7n3psrm7s73b6jf6g`, owner HBICV, region Ohio, plan free), deploy `live`. Cấu hình: `rootDir=backend`, build `pip install -r requirements.txt`, start `uvicorn app.main:app --host 0.0.0.0 --port $PORT --proxy-headers --forwarded-allow-ips="*"`, health check `/api/health`. Env đặt qua Render API: `PYTHON_VERSION=3.12.8`, `SOLVER_BACKEND=highs`, `SOLVER_THREADS=2`, `MAX_CONCURRENT_SOLVES=2`, `SCENARIO_PERSISTENCE=localStorage`, `AUTH_*` (không có `AUTH_DEMO_PASSWORD`/`AUTH_SESSION_SECRET` nên login tắt).
-- **Netlify:** project `linebalance-pro` (`a5ab6684-ddb0-4fff-aeb8-c1db1d572841`), deploy thủ công từ `frontend/dist` bằng `npx netlify-cli deploy --prod --no-build --dir frontend/dist --site <site-id>`. `netlify.toml` proxy `/api/*` sang `https://linebalance-pro.onrender.com/api/:splat`; SPA fallback `/*` → `/index.html`.
+- **Render:** service `linebalance-pro` (`srv-dbo7n3psrm7s73b6jf6g`, owner HBICV, region Ohio, plan free), deploy `live`. Cấu hình: `rootDir=backend`, build `pip install -r requirements.txt`, start `uvicorn app.main:app --host 0.0.0.0 --port $PORT --proxy-headers --forwarded-allow-ips="*"`, health check `/api/health`. Env đặt qua Render API: `PYTHON_VERSION=3.12.8`, `SOLVER_BACKEND=highs`, `SOLVER_THREADS=2`, `MAX_CONCURRENT_SOLVES=2`, `SCENARIO_PERSISTENCE=localStorage`; **Render auth vẫn tắt** vì chưa có `AUTH_*`/`AUTH_SESSION_SECRET` trên Render.
+- **Netlify public login gate:** `frontend/netlify/edge-functions/auth-gate.ts` chặn `/*` trước khi trả workspace. Chưa có cookie `lb_edge_session` → `302 /login`; `/api/*` không có session → `401`; viewer không được `POST /api/scenarios` hoặc `DELETE /api/scenarios/:id` (`403`). Session là HMAC-SHA256, HttpOnly, SameSite=Lax, TTL 8h; mật khẩu và secret nằm trong Netlify env `LB_AUTH_*` (Functions scope, không commit). `login_enabled=true` lấy từ edge session, không phụ thuộc `auth.enabled` của Render.
+- **Netlify:** project `linebalance-pro` (`a5ab6684-ddb0-4fff-aeb8-c1db1d572841`), deploy thủ công **từ thư mục `frontend`** để CLI đóng gói edge function: `npx netlify-cli deploy --prod --no-build --dir dist --site <site-id>`. `netlify.toml` đặt `base = "frontend"`, `publish = "dist"` (tương đối theo base), `[[edge_functions]] function = "auth-gate" path = "/*"`; proxy `/api/*` sang `https://linebalance-pro.onrender.com/api/:splat`; SPA fallback `/*` → `/index.html`.
 - **Team protection:** Netlify teams tạo từ 2026-07-28 mặc định project mới là **Private** (team login). Site này đặt `sso_login=true`, `sso_login_context=non_production` để production public, deploy preview vẫn được bảo vệ. Nếu production trả `401` kèm redirect `app.netlify.com/edge-access`, kiểm tra lại cặp field này trước khi debug ứng dụng.
-- **Kiểm chứng:** `GET /` Netlify `200`; `GET /api/health` qua Render và qua Netlify đều `200`, `solver_available=true`, `scenario_persistence=localStorage`, `auth.enabled=false`; UI load dashboard và gọi health qua proxy thành công. `POST /api/optimize` với sample 40 operations trả `200` nhưng `FEASIBLE_LIMIT` sau 60,9s trên CPU free — status trung thực, không hạ chuẩn `OPTIMAL`.
+- **Kiểm chứng 2026-11-09:** `GET /` → `302 /login`; `GET /api/auth/session` → `login_enabled=true`; viewer `test1/12345678` → `200`, role `viewer`, cookie session; admin login → `200`, role `admin`; `POST /api/scenarios` bằng viewer → `403`; logout → `204`, session false, `GET /` → `302 /login`; mobile 390×844 không horizontal scroll và nút **Sign out** hiển thị trong chip tài khoản. `GET /api/health` vẫn `200`, `auth.enabled=false` (Render).
+- **Giới hạn:** gate bảo vệ URL Netlify công khai; API Render trực tiếp vẫn mở và chỉ chứa dữ liệu synthetic, scenario persistence đang tắt. Khi bật auth trên Render, phải gỡ hoặc điều chỉnh edge gate để tránh hai lớp auth chồng nhau.
 - **Cold start:** Render free ngủ sau 15 phút không dùng; request đầu có thể mất 30–60s. Warm up `/api/health` trước demo.
 - **Rollback:** Netlify giữ các deploy trước để restore; Render có thể rollback về deploy `live` gần nhất trong dashboard. Không cần đổi env khi rollback UI.
 
