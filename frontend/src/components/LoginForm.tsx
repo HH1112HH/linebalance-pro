@@ -10,7 +10,6 @@ interface Props {
   busy: boolean;
   error: string | null;
   loginEnabled: boolean;
-  autoFocus?: boolean;
   onSubmit: (username: string, password: string) => void;
 }
 
@@ -24,13 +23,7 @@ function roleForUsername(username: string): AuthRole | null {
   return null;
 }
 
-export default function LoginForm({
-  busy,
-  error,
-  loginEnabled,
-  autoFocus = false,
-  onSubmit,
-}: Props) {
+export default function LoginForm({ busy, error, loginEnabled, onSubmit }: Props) {
   const { t } = useLanguage();
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
@@ -108,7 +101,6 @@ export default function LoginForm({
           autoCapitalize="none"
           autoCorrect="off"
           spellCheck={false}
-          autoFocus={autoFocus}
           disabled={busy || !loginEnabled}
           aria-invalid={Boolean(error)}
           aria-describedby={error ? errorId : undefined}

@@ -766,16 +766,10 @@ const EN = {
     "Worker {worker} has no qualified operation with the current skill and machine data.",
   "warning.generic": "An additional optimization warning is available.",
 
-  "auth.eyebrow": "Demo account",
-  "auth.title": "Sign in",
-  "auth.intro":
-    "Sign in to save and load scenarios on the server. The optimizer and browser-local snapshots still work without an account.",
   "auth.username": "Username",
   "auth.password": "Password",
   "auth.submit": "Sign in",
   "auth.submitting": "Signing in…",
-  "auth.cancel": "Cancel",
-  "auth.close": "Close sign-in dialog",
   "auth.disabled":
     "Demo login is not configured on this server. Set AUTH_ADMIN_PASSWORD, AUTH_VIEWER_PASSWORD and AUTH_SESSION_SECRET before using accounts.",
   "auth.demoAccounts":
@@ -785,7 +779,6 @@ const EN = {
   "auth.hide": "Hide",
   "auth.showPassword": "Show password",
   "auth.hidePassword": "Hide password",
-  "auth.openPage": "Open full sign-in page",
   "auth.page.kicker": "Garment line engineering",
   "auth.page.titleLine1": "Balance every second.",
   "auth.page.titleLine2": "Protect every shift.",
@@ -949,16 +942,10 @@ const VI: Record<MessageKey, string> = {
   "topbar.loginHelp":
     "Đăng nhập để lưu kịch bản lên máy chủ demo. Tối ưu hóa và bản lưu trong trình duyệt vẫn dùng được khi chưa có tài khoản.",
 
-  "auth.eyebrow": "Tài khoản demo",
-  "auth.title": "Đăng nhập",
-  "auth.intro":
-    "Đăng nhập để lưu và mở kịch bản trên máy chủ. Bộ tối ưu hóa và bản lưu trong trình duyệt vẫn hoạt động khi chưa có tài khoản.",
   "auth.username": "Tên đăng nhập",
   "auth.password": "Mật khẩu",
   "auth.submit": "Đăng nhập",
   "auth.submitting": "Đang đăng nhập…",
-  "auth.cancel": "Hủy",
-  "auth.close": "Đóng hộp đăng nhập",
   "auth.disabled":
     "Máy chủ chưa bật đăng nhập demo. Cần đặt AUTH_ADMIN_PASSWORD, AUTH_VIEWER_PASSWORD và AUTH_SESSION_SECRET trước khi dùng tài khoản.",
   "auth.demoAccounts":
@@ -968,7 +955,6 @@ const VI: Record<MessageKey, string> = {
   "auth.hide": "Ẩn",
   "auth.showPassword": "Hiện mật khẩu",
   "auth.hidePassword": "Ẩn mật khẩu",
-  "auth.openPage": "Mở trang đăng nhập đầy đủ",
   "auth.page.kicker": "Kỹ thuật chuyền may",
   "auth.page.titleLine1": "Cân bằng từng giây.",
   "auth.page.titleLine2": "Bảo toàn từng ca.",

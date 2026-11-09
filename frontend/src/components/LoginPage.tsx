@@ -143,7 +143,6 @@ export default function LoginPage({
                 busy={busy}
                 error={error}
                 loginEnabled={loginEnabled}
-                autoFocus
                 onSubmit={onLogin}
               />
             </>

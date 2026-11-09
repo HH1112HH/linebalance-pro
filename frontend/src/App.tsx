@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
 import ActualsPanel from "./components/ActualsPanel";
-import AuthDialog from "./components/AuthDialog";
 import LoginPage from "./components/LoginPage";
 import BalanceSection from "./components/BalanceSection";
 import FormsPanel from "./components/FormsPanel";
@@ -106,7 +105,6 @@ export default function App() {
   const [activeSnapshot, setActiveSnapshot] = useState<Snapshot | null>(null);
   const [activeServerName, setActiveServerName] = useState<string | null>(null);
   const [authSession, setAuthSession] = useState<AuthSession | null>(null);
-  const [authDialogOpen, setAuthDialogOpen] = useState(false);
   const [loginPageOpen, setLoginPageOpen] = useState(isLoginPath);
   const [authBusy, setAuthBusy] = useState(false);
   const [authError, setAuthError] = useState<string | null>(null);
@@ -145,8 +143,11 @@ export default function App() {
     return () => window.removeEventListener("popstate", syncPath);
   }, []);
 
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: "auto" });
+  }, [loginPageOpen]);
+
   function openLoginPage() {
-    setAuthDialogOpen(false);
     setAuthError(null);
     setLoginPageOpen(true);
     if (!isLoginPath()) {
@@ -183,7 +184,6 @@ export default function App() {
     try {
       const session = await login(username, password);
       setAuthSession(session);
-      setAuthDialogOpen(false);
       if (loginPageOpen) closeLoginPage();
       setNotice(t("notice.login", { user: session.username ?? username }));
     } catch (caught) {
@@ -431,11 +431,7 @@ export default function App() {
 
   return (
     <>
-      <div
-        className="app-shell"
-        inert={loginPageOpen}
-        aria-hidden={loginPageOpen || undefined}
-      >
+      <div className="app-shell" hidden={loginPageOpen}>
         <Sidebar
           active={section}
           health={health}
@@ -460,10 +456,6 @@ export default function App() {
             exporting={exporting}
             hasSolution={result.has_solution}
             onSelectScenario={selectScenario}
-            onOpenLogin={() => {
-              setAuthError(null);
-              setAuthDialogOpen(true);
-            }}
             onLogout={() => void handleLogout()}
             onRerun={handleRerun}
             onExport={handleExport}
@@ -654,10 +646,7 @@ export default function App() {
                   key={authSession?.username ?? "anonymous"}
                   session={authSession}
                   request={request}
-                  onOpenLogin={() => {
-                    setAuthError(null);
-                    setAuthDialogOpen(true);
-                  }}
+                  onOpenLogin={openLoginPage}
                   onLoad={handleServerLoad}
                   onNotice={(message) => setNotice(message)}
                   onSessionExpired={handleSessionExpired}
@@ -703,22 +692,6 @@ export default function App() {
             </div>
           </footer>
         </div>
-
-        {authDialogOpen ? (
-          <AuthDialog
-            busy={authBusy}
-            error={authError}
-            loginEnabled={authSession?.login_enabled ?? false}
-            onClose={() => {
-              if (!authBusy) {
-                setAuthDialogOpen(false);
-                setAuthError(null);
-              }
-            }}
-            onOpenPage={openLoginPage}
-            onSubmit={(username, password) => void handleLogin(username, password)}
-          />
-        ) : null}
       </div>
 
       {loginPageOpen ? (

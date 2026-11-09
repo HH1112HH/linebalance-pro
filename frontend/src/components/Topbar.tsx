@@ -33,7 +33,6 @@ interface Props {
   exporting: boolean;
   hasSolution: boolean;
   onSelectScenario: (key: ScenarioKey) => void;
-  onOpenLogin: () => void;
   onLogout: () => void;
   onRerun: () => void;
   onExport: () => void;
@@ -55,7 +54,6 @@ export default function Topbar({
   exporting,
   hasSolution,
   onSelectScenario,
-  onOpenLogin,
   onLogout,
   onRerun,
   onExport,
@@ -100,17 +98,7 @@ export default function Topbar({
                 {t("topbar.logout")}
               </button>
             </div>
-          ) : (
-            <button
-              type="button"
-              className="secondary-button is-compact auth-login-button"
-              onClick={onOpenLogin}
-              disabled={authSession?.login_enabled === false}
-              title={t("topbar.loginHelp")}
-            >
-              {t("topbar.login")}
-            </button>
-          )}
+          ) : null}
 
           <div
             className="language-switch"
