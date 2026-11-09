@@ -62,8 +62,6 @@ const EN = {
   "topbar.admin": "Admin",
   "topbar.viewer": "Read-only",
   "topbar.signedIn": "{user} · {role}",
-  "topbar.loginHelp":
-    "Sign in to save scenarios to the demo server. Compute and local snapshots work without an account.",
   "topbar.line": "Line",
   "topbar.shift": "Shift",
   "topbar.period": "Report period",
@@ -771,6 +769,8 @@ const EN = {
   "auth.submit": "Sign in",
   "auth.submitting": "Signing in…",
   "auth.checking": "Checking session…",
+  "auth.sessionError":
+    "Could not check the session. Sign in again or retry in a moment.",
   "auth.disabled":
     "Demo login is not configured on this server. Set AUTH_ADMIN_PASSWORD, AUTH_VIEWER_PASSWORD and AUTH_SESSION_SECRET before using accounts.",
   "auth.demoAccounts":
@@ -940,14 +940,14 @@ const VI: Record<MessageKey, string> = {
   "topbar.admin": "Quản trị",
   "topbar.viewer": "Chỉ đọc",
   "topbar.signedIn": "{user} · {role}",
-  "topbar.loginHelp":
-    "Đăng nhập để lưu kịch bản lên máy chủ demo. Tối ưu hóa và bản lưu trong trình duyệt vẫn dùng được khi chưa có tài khoản.",
 
   "auth.username": "Tên đăng nhập",
   "auth.password": "Mật khẩu",
   "auth.submit": "Đăng nhập",
   "auth.submitting": "Đang đăng nhập…",
   "auth.checking": "Đang kiểm tra phiên đăng nhập…",
+  "auth.sessionError":
+    "Không kiểm tra được phiên đăng nhập. Hãy đăng nhập lại hoặc thử lại sau.",
   "auth.disabled":
     "Máy chủ chưa bật đăng nhập demo. Cần đặt AUTH_ADMIN_PASSWORD, AUTH_VIEWER_PASSWORD và AUTH_SESSION_SECRET trước khi dùng tài khoản.",
   "auth.demoAccounts":

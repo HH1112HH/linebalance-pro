@@ -9,6 +9,10 @@
   status = 200
   force = true
 
+[[edge_functions]]
+  function = "auth-gate"
+  path = "/*"
+
 [[redirects]]
   from = "/*"
   to = "/index.html"

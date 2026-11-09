@@ -24,10 +24,19 @@ export default defineConfig([
       "react-refresh": refresh,
     },
     rules: {
-      "react-refresh/only-export-components": [
-        "warn",
-        { allowConstantExport: true },
-      ],
+      "react-refresh/only-export-components": ["warn", { allowConstantExport: true }],
+    },
+  },
+  {
+    files: ["netlify/edge-functions/**/*.ts"],
+    languageOptions: {
+      globals: {
+        ...globals.browser,
+        Netlify: "readonly",
+      },
+    },
+    rules: {
+      "react-refresh/only-export-components": "off",
     },
   },
 ]);

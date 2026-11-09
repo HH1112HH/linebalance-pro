@@ -79,7 +79,14 @@ export default function Topbar({
 
         <div className="topbar-actions">
           {authSession?.authenticated ? (
-            <div className="auth-chip" title={t("topbar.loginHelp")}>
+            <div
+              className="auth-chip"
+              title={t("topbar.signedIn", {
+                user: authSession.username ?? "",
+                role:
+                  authSession.role === "admin" ? t("topbar.admin") : t("topbar.viewer"),
+              })}
+            >
               <i aria-hidden="true" />
               <span className="auth-chip-copy">
                 <strong>{authSession.username}</strong>
@@ -94,8 +101,24 @@ export default function Topbar({
                 className="auth-chip-logout"
                 onClick={onLogout}
                 disabled={authBusy}
+                aria-label={t("topbar.logout")}
               >
-                {t("topbar.logout")}
+                <svg
+                  className="auth-chip-logout-icon"
+                  viewBox="0 0 16 16"
+                  aria-hidden="true"
+                  focusable="false"
+                >
+                  <path
+                    d="M6.5 2H3.75A1.75 1.75 0 0 0 2 3.75v8.5A1.75 1.75 0 0 0 3.75 14H6.5M10 5l3 3-3 3M13 8H6"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="1.4"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  />
+                </svg>
+                <span>{t("topbar.logout")}</span>
               </button>
             </div>
           ) : null}

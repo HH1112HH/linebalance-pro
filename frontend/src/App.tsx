@@ -109,8 +109,11 @@ export default function App() {
   const [loginPageOpen, setLoginPageOpen] = useState(isLoginPath);
   const [authBusy, setAuthBusy] = useState(false);
   const [authError, setAuthError] = useState<string | null>(null);
-  const requiresLogin =
-    authChecked && authSession?.login_enabled === true && !authSession.authenticated;
+  const [sessionError, setSessionError] = useState(false);
+  // Fail closed: never render workspace data until the session endpoint
+  // confirms an authenticated user. If the check fails, authSession stays
+  // null and the login page is shown instead of sample data.
+  const requiresLogin = authChecked && !authSession?.authenticated;
   const loginVisible = loginPageOpen || requiresLogin;
 
   useEffect(() => {
@@ -133,12 +136,14 @@ export default function App() {
       .then((session) => {
         if (!cancelled) {
           setAuthSession(session);
+          setSessionError(false);
           setAuthChecked(true);
         }
       })
       .catch(() => {
         if (!cancelled) {
           setAuthSession(null);
+          setSessionError(true);
           setAuthChecked(true);
         }
       });
@@ -166,6 +171,7 @@ export default function App() {
 
   function openLoginPage() {
     setAuthError(null);
+    setSessionError(false);
     setLoginPageOpen(true);
     if (!isLoginPath()) {
       window.history.pushState({}, "", "/login");
@@ -199,9 +205,11 @@ export default function App() {
   async function handleLogin(username: string, password: string) {
     setAuthBusy(true);
     setAuthError(null);
+    setSessionError(false);
     try {
       const session = await login(username, password);
       setAuthSession(session);
+      setSessionError(false);
       setLoginPageOpen(false);
       if (isLoginPath()) {
         window.history.replaceState({}, "", "/");
@@ -453,8 +461,8 @@ export default function App() {
   const loginPage = (
     <LoginPage
       busy={authBusy}
-      error={authError}
-      loginEnabled={authSession?.login_enabled ?? false}
+      error={authError ?? (sessionError ? t("auth.sessionError") : null)}
+      loginEnabled={authSession?.login_enabled ?? true}
       session={authSession}
       canLeave={!requiresLogin}
       onLogin={(username, password) => void handleLogin(username, password)}
