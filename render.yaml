@@ -17,14 +17,28 @@ services:
       - key: MAX_CONCURRENT_SOLVES
         value: "2"
       - key: SCENARIO_PERSISTENCE
-        value: localStorage
+        value: postgres
+      - key: SCENARIO_WORKSPACE_ID
+        value: demo
+      - key: SCENARIO_ACTOR_LABEL
+        value: admin
+      - key: DATABASE_URL
+        sync: false
+      - key: SCENARIO_API_TOKEN
+        sync: false
       - key: AUTH_ADMIN_USERS
         value: admin
       - key: AUTH_VIEWER_USERS
         value: test1,test2,test3,test4
+      - key: AUTH_ADMIN_PASSWORD
+        sync: false
+      - key: AUTH_VIEWER_PASSWORD
+        sync: false
+      - key: AUTH_SESSION_SECRET
+        sync: false
       - key: AUTH_SESSION_TTL_SEC
         value: "28800"
       - key: AUTH_COOKIE_SECURE
         value: auto
       - key: FRONTEND_ORIGINS
-        value: http://localhost:5173,http://127.0.0.1:5173
+        value: http://localhost:5173,http://127.0.0.1:5173,https://linebalance-pro.netlify.app

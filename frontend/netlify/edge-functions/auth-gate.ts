@@ -274,6 +274,18 @@ function isViewerWrite(request: Request, path: string): boolean {
   );
 }
 
+function isScenarioPath(path: string): boolean {
+  return path === "/api/scenarios" || path.startsWith("/api/scenarios/");
+}
+
+function withScenarioToken(request: Request): Request {
+  const token = env("LB_SCENARIO_API_TOKEN");
+  if (!token) return request;
+  const headers = new Headers(request.headers);
+  headers.set("authorization", `Bearer ${token}`);
+  return new Request(request, { headers });
+}
+
 export default async (request: Request, context: Context): Promise<Response> => {
   const url = new URL(request.url);
   const path = url.pathname;
@@ -300,7 +312,9 @@ export default async (request: Request, context: Context): Promise<Response> => 
     if (session.role !== "admin" && isViewerWrite(request, path)) {
       return jsonResponse({ detail: "Admin access is required for this action." }, 403);
     }
-    return context.next();
+    return context.next(
+      isScenarioPath(path) ? withScenarioToken(request) : request,
+    );
   }
 
   if (path === "/login" || path.startsWith("/assets/") || path.includes(".")) {
