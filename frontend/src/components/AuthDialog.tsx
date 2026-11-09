@@ -1,45 +1,71 @@
-import { useEffect, useRef, useState } from "react";
-import type { FormEvent } from "react";
+import { useEffect, useRef } from "react";
 import { useLanguage } from "../i18n";
+import LoginForm from "./LoginForm";
 
 interface Props {
   busy: boolean;
   error: string | null;
   loginEnabled: boolean;
   onClose: () => void;
+  onOpenPage: () => void;
   onSubmit: (username: string, password: string) => void;
 }
+
+const FOCUSABLE_SELECTOR = [
+  "a[href]",
+  "button:not([disabled])",
+  "input:not([disabled])",
+  "select:not([disabled])",
+  "textarea:not([disabled])",
+  '[tabindex]:not([tabindex="-1"])',
+].join(",");
 
 export default function AuthDialog({
   busy,
   error,
   loginEnabled,
   onClose,
+  onOpenPage,
   onSubmit,
 }: Props) {
   const { t } = useLanguage();
-  const [username, setUsername] = useState("");
-  const [password, setPassword] = useState("");
+  const dialogRef = useRef<HTMLElement>(null);
   const onCloseRef = useRef(onClose);
+  const returnFocusRef = useRef<HTMLElement | null>(null);
 
   useEffect(() => {
     onCloseRef.current = onClose;
   }, [onClose]);
 
   useEffect(() => {
+    returnFocusRef.current =
+      document.activeElement instanceof HTMLElement ? document.activeElement : null;
+    return () => returnFocusRef.current?.focus();
+  }, []);
+
+  useEffect(() => {
     const handleKey = (event: KeyboardEvent) => {
-      if (event.key === "Escape" && !busy) onCloseRef.current();
+      if (event.key === "Escape" && !busy) {
+        onCloseRef.current();
+        return;
+      }
+      if (event.key !== "Tab") return;
+      const focusable =
+        dialogRef.current?.querySelectorAll<HTMLElement>(FOCUSABLE_SELECTOR);
+      if (!focusable || focusable.length === 0) return;
+      const first = focusable[0];
+      const last = focusable[focusable.length - 1];
+      if (event.shiftKey && document.activeElement === first) {
+        event.preventDefault();
+        last.focus();
+      } else if (!event.shiftKey && document.activeElement === last) {
+        event.preventDefault();
+        first.focus();
+      }
     };
     window.addEventListener("keydown", handleKey);
     return () => window.removeEventListener("keydown", handleKey);
   }, [busy]);
-
-  function submit(event: FormEvent<HTMLFormElement>) {
-    event.preventDefault();
-    const trimmed = username.trim();
-    if (!trimmed || !password) return;
-    onSubmit(trimmed, password);
-  }
 
   return (
     <div
@@ -50,6 +76,7 @@ export default function AuthDialog({
       }}
     >
       <section
+        ref={dialogRef}
         className="auth-dialog"
         role="dialog"
         aria-modal="true"
@@ -73,62 +100,32 @@ export default function AuthDialog({
 
         <p className="auth-intro">{t("auth.intro")}</p>
 
-        {!loginEnabled ? (
-          <p className="form-error" role="alert">
-            {t("auth.disabled")}
-          </p>
-        ) : null}
+        <LoginForm
+          busy={busy}
+          error={error}
+          loginEnabled={loginEnabled}
+          autoFocus
+          onSubmit={onSubmit}
+        />
 
-        <form className="auth-form" onSubmit={submit}>
-          <label className="auth-field">
-            <span>{t("auth.username")}</span>
-            <input
-              value={username}
-              maxLength={32}
-              autoComplete="username"
-              autoFocus
-              disabled={busy || !loginEnabled}
-              onChange={(event) => setUsername(event.target.value)}
-            />
-          </label>
-          <label className="auth-field">
-            <span>{t("auth.password")}</span>
-            <input
-              type="password"
-              value={password}
-              maxLength={200}
-              autoComplete="current-password"
-              disabled={busy || !loginEnabled}
-              onChange={(event) => setPassword(event.target.value)}
-            />
-          </label>
-
-          {error ? (
-            <p className="form-error" role="alert">
-              {error}
-            </p>
-          ) : null}
-
-          <p className="auth-hint">{t("auth.demoAccounts")}</p>
-
-          <div className="auth-actions">
-            <button
-              type="button"
-              className="secondary-button"
-              onClick={onClose}
-              disabled={busy}
-            >
-              {t("auth.cancel")}
-            </button>
-            <button
-              type="submit"
-              className="primary-button"
-              disabled={busy || !loginEnabled || !username.trim() || !password}
-            >
-              {busy ? t("auth.submitting") : t("auth.submit")}
-            </button>
-          </div>
-        </form>
+        <div className="auth-dialog-foot">
+          <button
+            type="button"
+            className="auth-page-link"
+            onClick={onOpenPage}
+            disabled={busy}
+          >
+            {t("auth.openPage")}
+          </button>
+          <button
+            type="button"
+            className="secondary-button is-compact"
+            onClick={onClose}
+            disabled={busy}
+          >
+            {t("auth.cancel")}
+          </button>
+        </div>
       </section>
     </div>
   );

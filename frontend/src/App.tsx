@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import ActualsPanel from "./components/ActualsPanel";
 import AuthDialog from "./components/AuthDialog";
+import LoginPage from "./components/LoginPage";
 import BalanceSection from "./components/BalanceSection";
 import FormsPanel from "./components/FormsPanel";
 import MetadataPanel from "./components/MetadataPanel";
@@ -60,6 +61,10 @@ import { clone, cx, downloadBlob, formatNumber } from "./utils";
 const STORAGE_KEY = "linebalance.snapshots.v1";
 const MAX_SNAPSHOTS = 8;
 
+function isLoginPath(): boolean {
+  return window.location.pathname.replace(/\/+$/, "") === "/login";
+}
+
 const SCENARIO_META: Record<ScenarioKey, ScenarioMeta> = {
   A: {
     code: "A",
@@ -102,6 +107,7 @@ export default function App() {
   const [activeServerName, setActiveServerName] = useState<string | null>(null);
   const [authSession, setAuthSession] = useState<AuthSession | null>(null);
   const [authDialogOpen, setAuthDialogOpen] = useState(false);
+  const [loginPageOpen, setLoginPageOpen] = useState(isLoginPath);
   const [authBusy, setAuthBusy] = useState(false);
   const [authError, setAuthError] = useState<string | null>(null);
 
@@ -133,6 +139,28 @@ export default function App() {
     };
   }, []);
 
+  useEffect(() => {
+    const syncPath = () => setLoginPageOpen(isLoginPath());
+    window.addEventListener("popstate", syncPath);
+    return () => window.removeEventListener("popstate", syncPath);
+  }, []);
+
+  function openLoginPage() {
+    setAuthDialogOpen(false);
+    setAuthError(null);
+    setLoginPageOpen(true);
+    if (!isLoginPath()) {
+      window.history.pushState({}, "", "/login");
+    }
+  }
+
+  function closeLoginPage() {
+    setLoginPageOpen(false);
+    if (isLoginPath()) {
+      window.history.replaceState({}, "", "/");
+    }
+  }
+
   function selectSection(next: SectionKey) {
     setSection(next);
     window.scrollTo({ top: 0, behavior: "auto" });
@@ -156,6 +184,7 @@ export default function App() {
       const session = await login(username, password);
       setAuthSession(session);
       setAuthDialogOpen(false);
+      if (loginPageOpen) closeLoginPage();
       setNotice(t("notice.login", { user: session.username ?? username }));
     } catch (caught) {
       setAuthError(
@@ -401,287 +430,309 @@ export default function App() {
   const formKey = `${view}-${activeSnapshot?.id ?? "working"}`;
 
   return (
-    <div className="app-shell">
-      <Sidebar
-        active={section}
-        health={health}
-        healthError={healthError}
-        onSelect={selectSection}
-      />
-
-      <div className="workspace">
-        <Topbar
-          section={section}
-          view={view}
-          snapshotName={activeSnapshot?.name ?? activeServerName}
-          lineName={result.line_name}
-          shiftName={displayShiftName(request.config.shift_name, t)}
-          shiftId={result.shift_id}
-          scenarios={SCENARIO_META}
+    <>
+      <div
+        className="app-shell"
+        inert={loginPageOpen}
+        aria-hidden={loginPageOpen || undefined}
+      >
+        <Sidebar
+          active={section}
           health={health}
           healthError={healthError}
-          authSession={authSession}
-          authBusy={authBusy}
-          solving={solving}
-          exporting={exporting}
-          hasSolution={result.has_solution}
-          onSelectScenario={selectScenario}
-          onOpenLogin={() => {
-            setAuthError(null);
-            setAuthDialogOpen(true);
-          }}
-          onLogout={() => void handleLogout()}
-          onRerun={handleRerun}
-          onExport={handleExport}
+          onSelect={selectSection}
         />
 
-        <main className={`page page-${section}`}>
-          {notice || solveError ? (
-            <div className="content-alerts">
-              {notice ? (
-                <div className="notice">
-                  <span>{notice}</span>
-                  <button
-                    type="button"
-                    className="alert-close"
-                    aria-label={t("app.dismissNotice")}
-                    onClick={() => setNotice(null)}
-                  >
-                    ×
-                  </button>
+        <div className="workspace">
+          <Topbar
+            section={section}
+            view={view}
+            snapshotName={activeSnapshot?.name ?? activeServerName}
+            lineName={result.line_name}
+            shiftName={displayShiftName(request.config.shift_name, t)}
+            shiftId={result.shift_id}
+            scenarios={SCENARIO_META}
+            health={health}
+            healthError={healthError}
+            authSession={authSession}
+            authBusy={authBusy}
+            solving={solving}
+            exporting={exporting}
+            hasSolution={result.has_solution}
+            onSelectScenario={selectScenario}
+            onOpenLogin={() => {
+              setAuthError(null);
+              setAuthDialogOpen(true);
+            }}
+            onLogout={() => void handleLogout()}
+            onRerun={handleRerun}
+            onExport={handleExport}
+          />
+
+          <main className={`page page-${section}`}>
+            {notice || solveError ? (
+              <div className="content-alerts">
+                {notice ? (
+                  <div className="notice">
+                    <span>{notice}</span>
+                    <button
+                      type="button"
+                      className="alert-close"
+                      aria-label={t("app.dismissNotice")}
+                      onClick={() => setNotice(null)}
+                    >
+                      ×
+                    </button>
+                  </div>
+                ) : null}
+                {solveError ? (
+                  <div className="error-banner" role="alert">
+                    <span>{solveError}</span>
+                    <button
+                      type="button"
+                      className="alert-close"
+                      aria-label={t("app.dismissError")}
+                      onClick={() => setSolveError(null)}
+                    >
+                      ×
+                    </button>
+                  </div>
+                ) : null}
+              </div>
+            ) : null}
+
+            {section === "overview" ? (
+              <div className="section-stack">
+                <PageHeader
+                  eyebrow={t("app.shiftDashboard", {
+                    shift: displayShiftName(request.config.shift_name, t),
+                  })}
+                  title={
+                    <>
+                      {displayLineName(result.line_name, t)}{" "}
+                      <span className="h1-dot">·</span> {result.style_code}
+                    </>
+                  }
+                  description={t("app.shiftSummary", {
+                    shiftId: result.shift_id,
+                    minutes: formatNumber(request.config.shift_minutes, 0),
+                    break: formatNumber(request.config.break_minutes, 0),
+                    days: request.config.working_days,
+                    samBasis: samBasisLabel,
+                  })}
+                  actions={
+                    <span className={cx("status-pill status-large", statusTone)}>
+                      {optimizationStatusLabel(result.status, t)}
+                    </span>
+                  }
+                />
+
+                <OverviewMetrics result={result} />
+
+                <div className="overview-grid">
+                  <TaktPanel result={result} compact />
+                  <TargetHealthPanel result={result} />
                 </div>
-              ) : null}
-              {solveError ? (
-                <div className="error-banner" role="alert">
-                  <span>{solveError}</span>
-                  <button
-                    type="button"
-                    className="alert-close"
-                    aria-label={t("app.dismissError")}
-                    onClick={() => setSolveError(null)}
-                  >
-                    ×
-                  </button>
+
+                <div className="balance-analysis-grid overview-balance-grid">
+                  <WorkloadPanel
+                    result={result}
+                    baselineStations={BASELINE_STATIONS}
+                    compact
+                    onViewAll={() => selectSection("balance")}
+                  />
+                  <BottleneckPanel result={result} compact />
                 </div>
-              ) : null}
-            </div>
-          ) : null}
-
-          {section === "overview" ? (
-            <div className="section-stack">
-              <PageHeader
-                eyebrow={t("app.shiftDashboard", {
-                  shift: displayShiftName(request.config.shift_name, t),
-                })}
-                title={
-                  <>
-                    {displayLineName(result.line_name, t)}{" "}
-                    <span className="h1-dot">·</span> {result.style_code}
-                  </>
-                }
-                description={t("app.shiftSummary", {
-                  shiftId: result.shift_id,
-                  minutes: formatNumber(request.config.shift_minutes, 0),
-                  break: formatNumber(request.config.break_minutes, 0),
-                  days: request.config.working_days,
-                  samBasis: samBasisLabel,
-                })}
-                actions={
-                  <span className={cx("status-pill status-large", statusTone)}>
-                    {optimizationStatusLabel(result.status, t)}
-                  </span>
-                }
-              />
-
-              <OverviewMetrics result={result} />
-
-              <div className="overview-grid">
-                <TaktPanel result={result} compact />
-                <TargetHealthPanel result={result} />
               </div>
+            ) : null}
 
-              <div className="balance-analysis-grid overview-balance-grid">
-                <WorkloadPanel
-                  result={result}
-                  baselineStations={BASELINE_STATIONS}
-                  compact
-                  onViewAll={() => selectSection("balance")}
+            {section === "balance" ? (
+              <div className="section-stack">
+                <PageHeader
+                  eyebrow={t("page.balance.eyebrow")}
+                  title={t("page.balance.title")}
+                  description={t("page.balance.description")}
                 />
-                <BottleneckPanel result={result} compact />
+                <BalanceSection result={result} baselineStations={BASELINE_STATIONS} />
               </div>
-            </div>
-          ) : null}
+            ) : null}
 
-          {section === "balance" ? (
-            <div className="section-stack">
-              <PageHeader
-                eyebrow={t("page.balance.eyebrow")}
-                title={t("page.balance.title")}
-                description={t("page.balance.description")}
-              />
-              <BalanceSection result={result} baselineStations={BASELINE_STATIONS} />
-            </div>
-          ) : null}
+            {section === "capacity" ? (
+              <div className="section-stack">
+                <PageHeader
+                  eyebrow={t("page.capacity.eyebrow")}
+                  title={t("page.capacity.title")}
+                  description={t("page.capacity.description")}
+                />
+                <PlanningPanel result={result} />
+              </div>
+            ) : null}
 
-          {section === "capacity" ? (
-            <div className="section-stack">
-              <PageHeader
-                eyebrow={t("page.capacity.eyebrow")}
-                title={t("page.capacity.title")}
-                description={t("page.capacity.description")}
-              />
-              <PlanningPanel result={result} />
-            </div>
-          ) : null}
+            {section === "actuals" ? (
+              <div className="section-stack">
+                <PageHeader
+                  eyebrow={t("page.actuals.eyebrow")}
+                  title={t("page.actuals.title")}
+                  description={t("page.actuals.description")}
+                />
+                <div className="page-grid wide-left">
+                  <ActualsPanel actuals={result.actuals_analysis} />
+                  <FormsPanel
+                    key={`actuals-${formKey}`}
+                    mode="actuals"
+                    request={request}
+                    operations={request.operations}
+                    currentAnalysis={result.actuals_analysis}
+                    onApply={handleApply}
+                  />
+                </div>
+              </div>
+            ) : null}
 
-          {section === "actuals" ? (
-            <div className="section-stack">
-              <PageHeader
-                eyebrow={t("page.actuals.eyebrow")}
-                title={t("page.actuals.title")}
-                description={t("page.actuals.description")}
-              />
-              <div className="page-grid wide-left">
-                <ActualsPanel actuals={result.actuals_analysis} />
-                <FormsPanel
-                  key={`actuals-${formKey}`}
-                  mode="actuals"
+            {section === "time-study" ? (
+              <div className="section-stack">
+                <PageHeader
+                  eyebrow={t("page.timeStudy.eyebrow")}
+                  title={t("page.timeStudy.title")}
+                  description={t("page.timeStudy.description")}
+                />
+                <div className="page-grid wide-left">
+                  <FormsPanel
+                    key={`time-study-${formKey}`}
+                    mode="time-study"
+                    request={request}
+                    operations={request.operations}
+                    currentAnalysis={result.actuals_analysis}
+                    onApply={handleApply}
+                  />
+                  <TimeStudyGuide />
+                </div>
+              </div>
+            ) : null}
+
+            {section === "style-setup" ? (
+              <div className="section-stack">
+                <PageHeader
+                  eyebrow={t("page.styleSetup.eyebrow")}
+                  title={t("page.styleSetup.title")}
+                  description={t("page.styleSetup.description")}
+                />
+                <StyleSetupPanel request={request} result={result} />
+              </div>
+            ) : null}
+
+            {section === "materials" ? (
+              <div className="section-stack">
+                <PageHeader
+                  eyebrow={t("page.materials.eyebrow")}
+                  title={t("page.materials.title")}
+                  description={t("page.materials.description")}
+                />
+                <MaterialsPanel />
+              </div>
+            ) : null}
+
+            {section === "solver" ? (
+              <div className="section-stack">
+                <PageHeader
+                  eyebrow={t("page.solver.eyebrow")}
+                  title={t("page.solver.title")}
+                  description={t("page.solver.description")}
+                />
+                <div className="solver-top-grid">
+                  <MetadataPanel result={result} request={request} />
+                  <RunInputSummary request={request} result={result} />
+                </div>
+                <SnapshotsPanel
+                  snapshots={snapshots}
+                  activeId={activeSnapshot?.id ?? null}
+                  onSave={handleSaveSnapshot}
+                  onLoad={handleLoadSnapshot}
+                  onDelete={handleDeleteSnapshot}
+                />
+                <ServerSnapshotsPanel
+                  key={authSession?.username ?? "anonymous"}
+                  session={authSession}
                   request={request}
-                  operations={request.operations}
-                  currentAnalysis={result.actuals_analysis}
-                  onApply={handleApply}
+                  onOpenLogin={() => {
+                    setAuthError(null);
+                    setAuthDialogOpen(true);
+                  }}
+                  onLoad={handleServerLoad}
+                  onNotice={(message) => setNotice(message)}
+                  onSessionExpired={handleSessionExpired}
                 />
-              </div>
-            </div>
-          ) : null}
-
-          {section === "time-study" ? (
-            <div className="section-stack">
-              <PageHeader
-                eyebrow={t("page.timeStudy.eyebrow")}
-                title={t("page.timeStudy.title")}
-                description={t("page.timeStudy.description")}
-              />
-              <div className="page-grid wide-left">
-                <FormsPanel
-                  key={`time-study-${formKey}`}
-                  mode="time-study"
-                  request={request}
-                  operations={request.operations}
-                  currentAnalysis={result.actuals_analysis}
-                  onApply={handleApply}
+                <ScenarioImportPanel
+                  onApply={handleScenarioImport}
+                  applying={solving}
                 />
-                <TimeStudyGuide />
+                <section className="policy-strip" aria-label={t("policy.aria")}>
+                  <article>
+                    <span className="eyebrow">{t("policy.data.eyebrow")}</span>
+                    <strong>{t("policy.data.title")}</strong>
+                    <p>{t("policy.data.body")}</p>
+                  </article>
+                  <article>
+                    <span className="eyebrow">{t("policy.status.eyebrow")}</span>
+                    <strong>{t("policy.status.title")}</strong>
+                    <p>{t("policy.status.body")}</p>
+                  </article>
+                  <article>
+                    <span className="eyebrow">{t("policy.snapshot.eyebrow")}</span>
+                    <strong>{t("policy.snapshot.title")}</strong>
+                    <p>{t("policy.snapshot.body")}</p>
+                  </article>
+                </section>
               </div>
-            </div>
-          ) : null}
+            ) : null}
+          </main>
 
-          {section === "style-setup" ? (
-            <div className="section-stack">
-              <PageHeader
-                eyebrow={t("page.styleSetup.eyebrow")}
-                title={t("page.styleSetup.title")}
-                description={t("page.styleSetup.description")}
-              />
-              <StyleSetupPanel request={request} result={result} />
+          <footer className="site-footer">
+            <div className="footer-credit">
+              <span className="footer-author-label">{t("footer.authorLabel")}</span>
+              <strong>Hồ Văn Thiên Hoàng</strong>
+              <span className="footer-note">{t("footer.left")}</span>
             </div>
-          ) : null}
-
-          {section === "materials" ? (
-            <div className="section-stack">
-              <PageHeader
-                eyebrow={t("page.materials.eyebrow")}
-                title={t("page.materials.title")}
-                description={t("page.materials.description")}
-              />
-              <MaterialsPanel />
+            <div className="footer-meta">
+              <span>
+                {t("footer.right", {
+                  operations: request.operations.length,
+                  workers: request.workers.length,
+                })}
+              </span>
             </div>
-          ) : null}
+          </footer>
+        </div>
 
-          {section === "solver" ? (
-            <div className="section-stack">
-              <PageHeader
-                eyebrow={t("page.solver.eyebrow")}
-                title={t("page.solver.title")}
-                description={t("page.solver.description")}
-              />
-              <div className="solver-top-grid">
-                <MetadataPanel result={result} request={request} />
-                <RunInputSummary request={request} result={result} />
-              </div>
-              <SnapshotsPanel
-                snapshots={snapshots}
-                activeId={activeSnapshot?.id ?? null}
-                onSave={handleSaveSnapshot}
-                onLoad={handleLoadSnapshot}
-                onDelete={handleDeleteSnapshot}
-              />
-              <ServerSnapshotsPanel
-                key={authSession?.username ?? "anonymous"}
-                session={authSession}
-                request={request}
-                onOpenLogin={() => {
-                  setAuthError(null);
-                  setAuthDialogOpen(true);
-                }}
-                onLoad={handleServerLoad}
-                onNotice={(message) => setNotice(message)}
-                onSessionExpired={handleSessionExpired}
-              />
-              <ScenarioImportPanel onApply={handleScenarioImport} applying={solving} />
-              <section className="policy-strip" aria-label={t("policy.aria")}>
-                <article>
-                  <span className="eyebrow">{t("policy.data.eyebrow")}</span>
-                  <strong>{t("policy.data.title")}</strong>
-                  <p>{t("policy.data.body")}</p>
-                </article>
-                <article>
-                  <span className="eyebrow">{t("policy.status.eyebrow")}</span>
-                  <strong>{t("policy.status.title")}</strong>
-                  <p>{t("policy.status.body")}</p>
-                </article>
-                <article>
-                  <span className="eyebrow">{t("policy.snapshot.eyebrow")}</span>
-                  <strong>{t("policy.snapshot.title")}</strong>
-                  <p>{t("policy.snapshot.body")}</p>
-                </article>
-              </section>
-            </div>
-          ) : null}
-        </main>
-
-        <footer className="site-footer">
-          <div className="footer-credit">
-            <span className="footer-author-label">{t("footer.authorLabel")}</span>
-            <strong>Hồ Văn Thiên Hoàng</strong>
-            <span className="footer-note">{t("footer.left")}</span>
-          </div>
-          <div className="footer-meta">
-            <span>
-              {t("footer.right", {
-                operations: request.operations.length,
-                workers: request.workers.length,
-              })}
-            </span>
-          </div>
-        </footer>
+        {authDialogOpen ? (
+          <AuthDialog
+            busy={authBusy}
+            error={authError}
+            loginEnabled={authSession?.login_enabled ?? false}
+            onClose={() => {
+              if (!authBusy) {
+                setAuthDialogOpen(false);
+                setAuthError(null);
+              }
+            }}
+            onOpenPage={openLoginPage}
+            onSubmit={(username, password) => void handleLogin(username, password)}
+          />
+        ) : null}
       </div>
 
-      {authDialogOpen ? (
-        <AuthDialog
+      {loginPageOpen ? (
+        <LoginPage
           busy={authBusy}
           error={authError}
           loginEnabled={authSession?.login_enabled ?? false}
-          onClose={() => {
-            if (!authBusy) {
-              setAuthDialogOpen(false);
-              setAuthError(null);
-            }
-          }}
-          onSubmit={(username, password) => void handleLogin(username, password)}
+          session={authSession}
+          onLogin={(username, password) => void handleLogin(username, password)}
+          onLogout={() => void handleLogout()}
+          onBack={closeLoginPage}
         />
       ) : null}
-    </div>
+    </>
   );
 }
 
