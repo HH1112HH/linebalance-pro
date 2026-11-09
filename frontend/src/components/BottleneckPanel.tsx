@@ -1,4 +1,4 @@
-import type { OptimizeResult, StationResult } from "../types";
+import type { OptimizeResult } from "../types";
 import { displayOperationName, stationStatusLabel, useLanguage } from "../i18n";
 import { cx, formatNumber, formatPct } from "../utils";
 
@@ -28,10 +28,6 @@ export default function BottleneckPanel({ result, compact = false }: Props) {
     );
   }
 
-  const reviewStations = result.stations
-    .filter((station) => station.status === "bottleneck" || station.status === "watch")
-    .sort((left, right) => right.standard_load_sec - left.standard_load_sec)
-    .slice(0, compact ? 3 : 5);
   const focusTone =
     focusStation.status === "bottleneck" && focusStation.overload_sec <= 0
       ? "status-watch"
@@ -112,57 +108,6 @@ export default function BottleneckPanel({ result, compact = false }: Props) {
           {focusStation.operation_ids.join(" · ")}
         </div>
       </div>
-
-      <div className="bottleneck-review">
-        <div className="subhead">
-          <h3>{t("bottleneck.priority")}</h3>
-          <span className="tiny-note">
-            {t("bottleneck.showing", {
-              shown: reviewStations.length,
-              total: result.stations.length,
-            })}
-          </span>
-        </div>
-        {reviewStations.length > 0 ? (
-          <ul>
-            {reviewStations.map((station) => (
-              <ReviewStation key={station.station} station={station} t={t} />
-            ))}
-          </ul>
-        ) : (
-          <p className="muted-text">{t("bottleneck.noPriority")}</p>
-        )}
-      </div>
-
-      <p className="panel-footnote">{t("bottleneck.reviewLimit")}</p>
     </section>
-  );
-}
-
-function ReviewStation({
-  station,
-  t,
-}: {
-  station: StationResult;
-  t: ReturnType<typeof useLanguage>["t"];
-}) {
-  return (
-    <li>
-      <span
-        className={cx("status-dot", `status-${station.status}`)}
-        aria-hidden="true"
-      />
-      <span className="bottleneck-review-id">
-        <strong>ST{station.station.toString().padStart(2, "0")}</strong>
-        <small>{station.worker_id}</small>
-      </span>
-      <span className="bottleneck-review-status">
-        {stationStatusLabel(station.status, t)}
-      </span>
-      <strong className="bottleneck-review-load">
-        {formatNumber(station.standard_load_sec, 1)}
-        {t("unit.secondsSuffix")}
-      </strong>
-    </li>
   );
 }

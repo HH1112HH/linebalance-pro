@@ -514,12 +514,6 @@ const EN = {
   "bottleneck.overload": "Load above effective takt",
   "bottleneck.buffer": "Buffer to effective takt",
   "bottleneck.utilization": "Station utilization vs effective takt",
-  "bottleneck.priority": "Stations to review",
-  "bottleneck.showing": "{shown} of {total} stations",
-  "bottleneck.noPriority":
-    "No station is flagged for review by the current status rules.",
-  "bottleneck.reviewLimit":
-    "Priority list follows the model's station status; it does not diagnose root cause.",
   "station.status.bottleneck": "Bottleneck",
   "station.status.watch": "Watch",
   "station.status.normal": "Normal",
@@ -1456,12 +1450,6 @@ const VI: Record<MessageKey, string> = {
   "bottleneck.overload": "Tải vượt nhịp hiệu dụng",
   "bottleneck.buffer": "Khoảng dư đến nhịp hiệu dụng",
   "bottleneck.utilization": "Mức tải trạm so với nhịp hiệu dụng",
-  "bottleneck.priority": "Trạm cần xem xét",
-  "bottleneck.showing": "Hiển thị {shown}/{total} trạm",
-  "bottleneck.noPriority":
-    "Không có trạm nào bị đánh dấu cần xem xét theo quy tắc trạng thái hiện tại.",
-  "bottleneck.reviewLimit":
-    "Danh sách ưu tiên theo trạng thái của mô hình; không tự chẩn đoán nguyên nhân gốc.",
   "station.status.bottleneck": "Nút cổ chai",
   "station.status.watch": "Theo dõi",
   "station.status.normal": "Bình thường",

@@ -1433,23 +1433,58 @@ html[lang="vi"] .metric-value {
 
 /* Workload */
 .workload-panel.is-compact {
-  padding: 12px 18px;
+  padding: 12px 16px;
 }
 
 .workload-panel.is-compact .panel-head {
-  margin-bottom: 8px;
+  margin-bottom: 6px;
 }
 
 .workload-panel.is-compact .workload-summary {
-  padding-bottom: 6px;
+  gap: 4px;
+  padding-bottom: 5px;
+}
+
+.workload-panel.is-compact .workload-summary span {
+  padding: 3px 7px;
+  font-size: 9px;
+}
+
+.workload-panel.is-compact .workload-summary strong {
+  font-size: 9.5px;
 }
 
 .workload-panel.is-compact .workload-legend {
-  padding-bottom: 4px;
+  gap: 9px;
+  padding-bottom: 3px;
+  font-size: 9px;
+}
+
+.workload-panel.is-compact .workload-axis {
+  padding-bottom: 3px;
+}
+
+.workload-panel.is-compact .workload-axis-track {
+  height: 13px;
 }
 
 .workload-panel.is-compact .wl-row {
-  padding: 2px 5px;
+  gap: 7px;
+  padding: 1px 5px;
+}
+
+.workload-panel.is-compact .wl-id {
+  flex-direction: row;
+  align-items: baseline;
+  gap: 4px;
+}
+
+.workload-panel.is-compact .wl-id span {
+  font-size: 8.5px;
+}
+
+.workload-panel.is-compact .wl-track {
+  height: 14px;
 }
 
 .workload-summary {
@@ -3450,59 +3485,6 @@ summary:focus-visible {
   white-space: nowrap;
 }
 
-.bottleneck-review .subhead {
-  margin-top: 14px;
-}
-
-.bottleneck-review ul {
-  margin: 0;
-  padding: 0;
-  list-style: none;
-}
-
-.bottleneck-review li {
-  display: grid;
-  grid-template-columns: 8px minmax(0, 1fr) auto auto;
-  align-items: center;
-  gap: 7px;
-  padding: 7px 4px;
-  border-bottom: 1px solid var(--line-soft);
-}
-
-.bottleneck-review li:last-child {
-  border-bottom: 0;
-}
-
-.bottleneck-review-id {
-  display: flex;
-  flex-direction: column;
-  min-width: 0;
-  line-height: 1.2;
-}
-
-.bottleneck-review-id strong,
-.bottleneck-review-load {
-  color: var(--ink-soft);
-  font-family: var(--font-mono);
-  font-size: 9.5px;
-}
-
-.bottleneck-review-id small {
-  color: var(--muted);
-  font-size: 8.5px;
-}
-
-.bottleneck-review-status {
-  color: var(--muted);
-  font-size: 9px;
-  text-align: right;
-}
-
-.bottleneck-panel .panel-footnote {
-  margin-top: 8px;
-  font-size: 9px;
-}
-
 .station-table-controls {
   display: flex;
   align-items: center;
@@ -3798,14 +3780,6 @@ summary:focus-visible {
 
   .overview-summary-card {
     padding: 8px 9px;
-  }
-
-  .bottleneck-review li {
-    grid-template-columns: 8px minmax(0, 1fr) auto;
-  }
-
-  .bottleneck-review-status {
-    display: none;
   }
 
   .baseline-table-wrap {
