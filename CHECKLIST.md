@@ -947,3 +947,11 @@ Mỗi lần chạy phải có `RunMetadata`:
 - Kiểm chứng: `scripts/verify.ps1` pass — **141 passed, 3 skipped**, coverage **86.16%**, Ruff/format/mypy, ESLint, Prettier, `tsc --noEmit`, Vite build. Browser local 1440px và 390px: login page scroll được tới footer/form, workspace không còn nút Sign in, prompt server mở `/login`, viewer login + logout OK.
 - Deploy Netlify production `https://linebalance-pro.netlify.app` (deploy `6af19c8b4df1d1b60059061c`). Public `GET /login` 200 và scroll được trên viewport 390×844 (document scroll height ~1161px).
 - **Chưa bật auth/Neon trên Render public:** phiên Render Dashboard hiện yêu cầu đăng nhập và không có API key trong môi trường, nên public `/login` vẫn hiển thị “Demo login is not configured”. Cần set các env `SCENARIO_PERSISTENCE=postgres`, `DATABASE_URL`, `SCENARIO_API_TOKEN`, `AUTH_ADMIN_PASSWORD`, `AUTH_VIEWER_PASSWORD`, `AUTH_SESSION_SECRET`, `AUTH_ADMIN_USERS`, `AUTH_VIEWER_USERS` trên Render rồi smoke lại; không đưa secret vào repo.
+
+### 2026-11-09 — Auth gate: chặn workspace trước khi đăng nhập
+
+- `App.tsx` chờ `GET /api/auth/session` xong mới render; khi chưa kiểm tra xong hiển thị màn hình “Checking session…”, không render sample data.
+- Nếu `login_enabled=true` và chưa có phiên: tự `replaceState` sang `/login`, **không mount `.app-shell`** (data không có trong DOM), ẩn nút “Back to workspace”. Logout hoặc phiên hết hạn cũng đưa về `/login`.
+- Đăng nhập thành công: đóng login page, `replaceState` về `/`, mount workspace. Nếu auth bị tắt (`login_enabled=false`) thì workspace vẫn mở để demo local, đúng fallback của backend.
+- Kiểm chứng local bằng browser context sạch: `GET /` → `/login` (không có `.app-shell` trong DOM), viewer login → `/` + workspace, logout → `/login` + app unmounted; `scripts/verify.ps1` pass (141 passed, 3 skipped, coverage 86.16%).
+- Deploy Netlify production `6af19ed8588f38aa7b53bbf9`. **Lưu ý:** public root vẫn mở workspace vì Render đang trả `auth.enabled=false`; auth gate chỉ kích hoạt sau khi Render được set `AUTH_*` + persistence. Không thể bật từ repo nếu không có quyền Render.
