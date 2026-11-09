@@ -938,3 +938,12 @@ Mỗi lần chạy phải có `RunMetadata`:
   - **Mật khẩu:** tách `AUTH_ADMIN_PASSWORD` (private) và `AUTH_VIEWER_PASSWORD` (public demo), giữ `AUTH_DEMO_PASSWORD` làm fallback; fingerprint session token theo role để rotate độc lập.
   - **Neon:** bật `SCENARIO_PERSISTENCE=postgres` trên Render public; migration `001` đã apply trên private staging; rollback về `localStorage` nếu lỗi.
 - Đây là quyết định scope, **chưa phải kết quả triển khai**; docs/CV chỉ cập nhật sau khi smoke public pass.
+
+### 2026-11-09 — Luxury light theme + một bề mặt đăng nhập duy nhất + mobile login scroll
+
+- Đồng bộ theme luxury sáng (ivory/navy/gold) cho toàn workspace và `/login`: token `--bg/--surface/--ink/--primary/--action`, serif heading/KPI, panel/table/chart ấm; nav active, primary button và segmented control dùng navy, gold chỉ làm accent/status. Không còn blue accent cũ trong UI.
+- Bỏ sign-in trùng lặp trong app: xóa `AuthDialog`, bỏ nút Sign in ở topbar; `/login` là bề mặt đăng nhập duy nhất. Prompt **Server scenarios** điều hướng sang `/login`; chip user/role + logout vẫn giữ khi đã đăng nhập. Dọn CSS/i18n dead code của dialog.
+- Sửa lỗi mobile không lướt được trang login: bỏ `position: fixed` + `overflow-y: auto` của overlay, đưa `/login` về normal document flow (`min-height: 100svh`), ẩn `.app-shell` bằng `hidden` khi đang ở login, reset scroll khi mở/đóng, bỏ `autoFocus` và tăng input mobile lên 16px để tránh iOS zoom.
+- Kiểm chứng: `scripts/verify.ps1` pass — **141 passed, 3 skipped**, coverage **86.16%**, Ruff/format/mypy, ESLint, Prettier, `tsc --noEmit`, Vite build. Browser local 1440px và 390px: login page scroll được tới footer/form, workspace không còn nút Sign in, prompt server mở `/login`, viewer login + logout OK.
+- Deploy Netlify production `https://linebalance-pro.netlify.app` (deploy `6af19c8b4df1d1b60059061c`). Public `GET /login` 200 và scroll được trên viewport 390×844 (document scroll height ~1161px).
+- **Chưa bật auth/Neon trên Render public:** phiên Render Dashboard hiện yêu cầu đăng nhập và không có API key trong môi trường, nên public `/login` vẫn hiển thị “Demo login is not configured”. Cần set các env `SCENARIO_PERSISTENCE=postgres`, `DATABASE_URL`, `SCENARIO_API_TOKEN`, `AUTH_ADMIN_PASSWORD`, `AUTH_VIEWER_PASSWORD`, `AUTH_SESSION_SECRET`, `AUTH_ADMIN_USERS`, `AUTH_VIEWER_USERS` trên Render rồi smoke lại; không đưa secret vào repo.
