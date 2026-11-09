@@ -217,7 +217,7 @@ export default function WorkloadPanel({
                 style={{ left: `${(demandTakt / scale) * 100}%` }}
               />
             </div>
-            <div className="wl-load">
+            <div className={cx("wl-load", `status-${row.status}`)}>
               {formatNumber(row.load, 1)}
               {t("unit.secondsSuffix")}
             </div>

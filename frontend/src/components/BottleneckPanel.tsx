@@ -58,7 +58,9 @@ export default function BottleneckPanel({ result, compact = false }: Props) {
         <div className="bottleneck-metrics">
           <div>
             <span>{t("bottleneck.load")}</span>
-            <strong>
+            <strong
+              className={focusStation.overload_sec > 0 ? "value-bad" : "value-good"}
+            >
               {formatNumber(focusStation.standard_load_sec, 1)}
               {t("unit.secondsSuffix")}
             </strong>
@@ -90,7 +92,11 @@ export default function BottleneckPanel({ result, compact = false }: Props) {
           </div>
           <div>
             <span>{t("bottleneck.utilization")}</span>
-            <strong>{formatPct(focusStation.standard_utilization_pct, 1)}</strong>
+            <strong
+              className={focusStation.overload_sec > 0 ? "value-bad" : "value-good"}
+            >
+              {formatPct(focusStation.standard_utilization_pct, 1)}
+            </strong>
           </div>
         </div>
 

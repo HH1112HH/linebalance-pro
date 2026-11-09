@@ -59,7 +59,9 @@ export default function TargetHealthPanel({ result }: Props) {
           }}
         >
           <div className="target-donut-inner">
-            <strong>{formatPct(kpis.target_achievement_pct, 1)}</strong>
+            <strong className={kpis.meets_target ? "value-good" : "value-bad"}>
+              {formatPct(kpis.target_achievement_pct, 1)}
+            </strong>
             <span>{t("target.of")}</span>
           </div>
         </div>
@@ -72,7 +74,9 @@ export default function TargetHealthPanel({ result }: Props) {
           </div>
           <div>
             <span>{t("target.capacity")}</span>
-            <strong>{formatNumber(kpis.capacity_per_shift, 1)}</strong>
+            <strong className={gap > 0 ? "value-bad" : "value-good"}>
+              {formatNumber(kpis.capacity_per_shift, 1)}
+            </strong>
             <small>{t("target.bottleneckConstrained")}</small>
           </div>
           <div>

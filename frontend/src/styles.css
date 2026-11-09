@@ -1040,6 +1040,18 @@ html[lang="vi"] .panel-head h2 {
   --tone-soft: var(--red-soft);
 }
 
+.metric-card.tone-good .metric-value {
+  color: var(--emerald-dark);
+}
+
+.metric-card.tone-warn .metric-value {
+  color: var(--amber);
+}
+
+.metric-card.tone-bad .metric-value {
+  color: var(--red);
+}
+
 .metric-head {
   display: flex;
   align-items: center;
@@ -1070,7 +1082,7 @@ html[lang="vi"] .panel-head h2 {
   font-family: var(--font-display);
   font-size: clamp(2rem, 2.5vw, 2.45rem);
   font-variant-numeric: lining-nums tabular-nums;
-  font-weight: 600;
+  font-weight: 500;
   letter-spacing: -0.01em;
   line-height: 0.92;
 }
@@ -1078,7 +1090,7 @@ html[lang="vi"] .panel-head h2 {
 html[lang="vi"] .metric-value {
   font-family: var(--font-display);
   font-size: clamp(1.55rem, 2vw, 1.95rem);
-  font-weight: 800;
+  font-weight: 500;
   letter-spacing: -0.05em;
   line-height: 1;
 }
@@ -1107,6 +1119,8 @@ html[lang="vi"] .metric-value {
 
 /* Takt */
 .takt-panel.is-compact {
+  display: flex;
+  flex-direction: column;
   padding: 16px 18px;
 }
 
@@ -1115,7 +1129,8 @@ html[lang="vi"] .metric-value {
 }
 
 .takt-panel.is-compact .panel-footnote {
-  margin-top: 8px;
+  margin-top: auto;
+  padding-top: 8px;
 }
 
 .takt-track {
@@ -1212,7 +1227,7 @@ html[lang="vi"] .metric-value {
   overflow: hidden;
   font-family: var(--font-display);
   font-size: 1.05rem;
-  font-weight: 800;
+  font-weight: 500;
   letter-spacing: -0.04em;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -1257,7 +1272,7 @@ html[lang="vi"] .metric-value {
   margin: 4px 0 6px;
   font-family: var(--font-display);
   font-size: 1.55rem;
-  font-weight: 800;
+  font-weight: 500;
   letter-spacing: -0.05em;
   line-height: 1;
 }
@@ -1329,7 +1344,7 @@ html[lang="vi"] .metric-value {
 .target-donut-inner strong {
   font-family: var(--font-display);
   font-size: 1.2rem;
-  font-weight: 800;
+  font-weight: 500;
   letter-spacing: -0.05em;
   line-height: 1;
 }
@@ -1380,7 +1395,7 @@ html[lang="vi"] .metric-value {
   grid-column: 2;
   font-family: var(--font-display);
   font-size: 1.2rem;
-  font-weight: 800;
+  font-weight: 500;
   letter-spacing: -0.04em;
   line-height: 1;
 }
@@ -1427,64 +1442,87 @@ html[lang="vi"] .metric-value {
 }
 
 .target-panel .panel-footnote {
-  margin-top: 8px;
-  padding-top: 0;
+  margin-top: auto;
+  padding-top: 8px;
 }
 
 /* Workload */
 .workload-panel.is-compact {
-  padding: 12px 16px;
+  padding: 14px 18px;
 }
 
 .workload-panel.is-compact .panel-head {
-  margin-bottom: 6px;
+  margin-bottom: 8px;
 }
 
 .workload-panel.is-compact .workload-summary {
-  gap: 4px;
-  padding-bottom: 5px;
+  gap: 6px;
+  padding-bottom: 8px;
 }
 
 .workload-panel.is-compact .workload-summary span {
-  padding: 3px 7px;
-  font-size: 9px;
+  padding: 4px 9px;
+  font-size: 10px;
 }
 
 .workload-panel.is-compact .workload-summary strong {
-  font-size: 9.5px;
+  font-size: 10.5px;
 }
 
 .workload-panel.is-compact .workload-legend {
-  gap: 9px;
-  padding-bottom: 3px;
-  font-size: 9px;
+  gap: 12px;
+  padding-bottom: 6px;
+  font-size: 10px;
 }
 
 .workload-panel.is-compact .workload-axis {
-  padding-bottom: 3px;
+  grid-template-columns: 70px minmax(0, 1fr) 64px 150px;
+  gap: 10px;
+  padding-bottom: 5px;
+}
+
+.workload-panel.is-compact .workload-axis-title {
+  font-size: 10px;
 }
 
 .workload-panel.is-compact .workload-axis-track {
-  height: 13px;
+  height: 15px;
+}
+
+.workload-panel.is-compact .workload-axis-track span {
+  font-size: 9.5px;
 }
 
 .workload-panel.is-compact .wl-row {
-  gap: 7px;
-  padding: 1px 5px;
+  grid-template-columns: 70px minmax(0, 1fr) 64px 150px;
+  gap: 10px;
+  padding: 4px 6px;
 }
 
 .workload-panel.is-compact .wl-id {
-  flex-direction: row;
-  align-items: baseline;
-  gap: 4px;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0;
+}
+
+.workload-panel.is-compact .wl-id strong {
+  font-size: 11px;
 }
 
 .workload-panel.is-compact .wl-id span {
-  font-size: 8.5px;
+  font-size: 9.5px;
 }
 
 .workload-panel.is-compact .wl-track {
-  height: 14px;
+  height: 24px;
+}
+
+.workload-panel.is-compact .wl-load {
+  font-size: 11.5px;
+}
+
+.workload-panel.is-compact .wl-ops {
+  font-size: 10.5px;
 }
 
 .workload-summary {
@@ -1660,6 +1698,18 @@ html[lang="vi"] .metric-value {
   font-family: var(--font-mono);
   font-size: 10px;
   text-align: right;
+}
+
+.wl-load.status-bottleneck {
+  color: var(--red);
+}
+
+.wl-load.status-watch {
+  color: var(--amber);
+}
+
+.wl-load.status-underutilized {
+  color: var(--slate);
 }
 
 .wl-ops {
@@ -3303,7 +3353,7 @@ summary:focus-visible {
   margin-top: 3px;
   color: var(--ink);
   font-size: 1.13rem;
-  font-weight: 800;
+  font-weight: 500;
   letter-spacing: -0.04em;
   line-height: 1.1;
 }
@@ -3326,6 +3376,12 @@ summary:focus-visible {
 
 .overview-balance-grid {
   grid-template-columns: minmax(0, 1.72fr) minmax(275px, 0.8fr);
+  align-items: stretch;
+}
+
+.overview-balance-grid > .workload-panel,
+.overview-balance-grid > .bottleneck-panel {
+  height: 100%;
 }
 
 .workload-rows,
@@ -3384,6 +3440,8 @@ summary:focus-visible {
 }
 
 .bottleneck-panel {
+  display: flex;
+  flex-direction: column;
   padding: 17px;
 }
 
@@ -3397,6 +3455,7 @@ summary:focus-visible {
 }
 
 .bottleneck-focus {
+  flex: 1;
   overflow: hidden;
   background: var(--primary-soft);
   border: 1px solid var(--primary-line);
@@ -3464,7 +3523,7 @@ summary:focus-visible {
   color: var(--ink);
   font-family: var(--font-mono);
   font-size: 0.95rem;
-  font-weight: 700;
+  font-weight: 500;
 }
 
 .bottleneck-metrics strong.value-good {
