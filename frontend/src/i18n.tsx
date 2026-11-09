@@ -770,6 +770,7 @@ const EN = {
   "auth.password": "Password",
   "auth.submit": "Sign in",
   "auth.submitting": "Signing in…",
+  "auth.checking": "Checking session…",
   "auth.disabled":
     "Demo login is not configured on this server. Set AUTH_ADMIN_PASSWORD, AUTH_VIEWER_PASSWORD and AUTH_SESSION_SECRET before using accounts.",
   "auth.demoAccounts":
@@ -946,6 +947,7 @@ const VI: Record<MessageKey, string> = {
   "auth.password": "Mật khẩu",
   "auth.submit": "Đăng nhập",
   "auth.submitting": "Đang đăng nhập…",
+  "auth.checking": "Đang kiểm tra phiên đăng nhập…",
   "auth.disabled":
     "Máy chủ chưa bật đăng nhập demo. Cần đặt AUTH_ADMIN_PASSWORD, AUTH_VIEWER_PASSWORD và AUTH_SESSION_SECRET trước khi dùng tài khoản.",
   "auth.demoAccounts":

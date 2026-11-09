@@ -5055,6 +5055,22 @@ summary:focus-visible {
 }
 
 /* Full-screen sign-in page */
+.session-gate {
+  display: grid;
+  place-content: center;
+  justify-items: center;
+  gap: 16px;
+  min-height: 100svh;
+  padding: 32px;
+  background: var(--bg);
+  color: var(--muted);
+  font-family: var(--font-mono);
+  font-size: 9px;
+  letter-spacing: 0.18em;
+  text-align: center;
+  text-transform: uppercase;
+}
+
 .login-page {
   position: relative;
   z-index: 90;
@@ -5108,7 +5124,6 @@ summary:focus-visible {
   background: none;
   border: 0;
   color: inherit;
-  cursor: pointer;
   text-align: left;
 }
 

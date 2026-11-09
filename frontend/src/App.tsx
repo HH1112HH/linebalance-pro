@@ -105,9 +105,13 @@ export default function App() {
   const [activeSnapshot, setActiveSnapshot] = useState<Snapshot | null>(null);
   const [activeServerName, setActiveServerName] = useState<string | null>(null);
   const [authSession, setAuthSession] = useState<AuthSession | null>(null);
+  const [authChecked, setAuthChecked] = useState(false);
   const [loginPageOpen, setLoginPageOpen] = useState(isLoginPath);
   const [authBusy, setAuthBusy] = useState(false);
   const [authError, setAuthError] = useState<string | null>(null);
+  const requiresLogin =
+    authChecked && authSession?.login_enabled === true && !authSession.authenticated;
+  const loginVisible = loginPageOpen || requiresLogin;
 
   useEffect(() => {
     let cancelled = false;
@@ -127,10 +131,16 @@ export default function App() {
     let cancelled = false;
     getAuthSession()
       .then((session) => {
-        if (!cancelled) setAuthSession(session);
+        if (!cancelled) {
+          setAuthSession(session);
+          setAuthChecked(true);
+        }
       })
       .catch(() => {
-        if (!cancelled) setAuthSession(null);
+        if (!cancelled) {
+          setAuthSession(null);
+          setAuthChecked(true);
+        }
       });
     return () => {
       cancelled = true;
@@ -144,8 +154,15 @@ export default function App() {
   }, []);
 
   useEffect(() => {
+    if (!requiresLogin) return;
+    if (!isLoginPath()) {
+      window.history.replaceState({}, "", "/login");
+    }
+  }, [requiresLogin]);
+
+  useEffect(() => {
     window.scrollTo({ top: 0, behavior: "auto" });
-  }, [loginPageOpen]);
+  }, [loginVisible]);
 
   function openLoginPage() {
     setAuthError(null);
@@ -156,6 +173,7 @@ export default function App() {
   }
 
   function closeLoginPage() {
+    if (requiresLogin) return;
     setLoginPageOpen(false);
     if (isLoginPath()) {
       window.history.replaceState({}, "", "/");
@@ -184,7 +202,10 @@ export default function App() {
     try {
       const session = await login(username, password);
       setAuthSession(session);
-      if (loginPageOpen) closeLoginPage();
+      setLoginPageOpen(false);
+      if (isLoginPath()) {
+        window.history.replaceState({}, "", "/");
+      }
       setNotice(t("notice.login", { user: session.username ?? username }));
     } catch (caught) {
       setAuthError(
@@ -428,6 +449,34 @@ export default function App() {
         ? "status-watch"
         : "status-bottleneck";
   const formKey = `${view}-${activeSnapshot?.id ?? "working"}`;
+
+  const loginPage = (
+    <LoginPage
+      busy={authBusy}
+      error={authError}
+      loginEnabled={authSession?.login_enabled ?? false}
+      session={authSession}
+      canLeave={!requiresLogin}
+      onLogin={(username, password) => void handleLogin(username, password)}
+      onLogout={() => void handleLogout()}
+      onBack={closeLoginPage}
+    />
+  );
+
+  if (!authChecked) {
+    return (
+      <div className="session-gate" role="status" aria-live="polite">
+        <span className="login-brand-mark" aria-hidden="true">
+          LB
+        </span>
+        <span>{t("auth.checking")}</span>
+      </div>
+    );
+  }
+
+  if (requiresLogin) {
+    return loginPage;
+  }
 
   return (
     <>
@@ -694,17 +743,7 @@ export default function App() {
         </div>
       </div>
 
-      {loginPageOpen ? (
-        <LoginPage
-          busy={authBusy}
-          error={authError}
-          loginEnabled={authSession?.login_enabled ?? false}
-          session={authSession}
-          onLogin={(username, password) => void handleLogin(username, password)}
-          onLogout={() => void handleLogout()}
-          onBack={closeLoginPage}
-        />
-      ) : null}
+      {loginPageOpen ? loginPage : null}
     </>
   );
 }

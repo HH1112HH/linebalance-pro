@@ -8,6 +8,7 @@ interface Props {
   error: string | null;
   loginEnabled: boolean;
   session: AuthSession | null;
+  canLeave: boolean;
   onLogin: (username: string, password: string) => void;
   onLogout: () => void;
   onBack: () => void;
@@ -18,6 +19,7 @@ export default function LoginPage({
   error,
   loginEnabled,
   session,
+  canLeave,
   onLogin,
   onLogout,
   onBack,
@@ -31,7 +33,7 @@ export default function LoginPage({
       <div className="login-page-grid" aria-hidden="true" />
 
       <header className="login-page-bar">
-        <button type="button" className="login-brand" onClick={onBack}>
+        <div className="login-brand">
           <span className="login-brand-mark" aria-hidden="true">
             LB
           </span>
@@ -39,7 +41,7 @@ export default function LoginPage({
             <strong>LineBalance</strong>
             <small>IE Control Room</small>
           </span>
-        </button>
+        </div>
 
         <div className="login-page-bar-actions">
           <div
@@ -66,9 +68,11 @@ export default function LoginPage({
               VI
             </button>
           </div>
-          <button type="button" className="login-back" onClick={onBack}>
-            {t("auth.page.back")}
-          </button>
+          {canLeave ? (
+            <button type="button" className="login-back" onClick={onBack}>
+              {t("auth.page.back")}
+            </button>
+          ) : null}
         </div>
       </header>
 
