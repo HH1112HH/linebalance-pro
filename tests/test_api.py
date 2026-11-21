@@ -71,7 +71,7 @@ def test_health_reports_solver_and_public_limits():
     assert payload["limits"]["max_operations"] == 200
     assert payload["limits"]["max_workers"] == 100
     assert payload["limits"]["max_machines"] == 200
-    assert payload["limits"]["max_solver_time_sec"] == 60
+    assert payload["limits"]["max_solver_time_sec"] == main_module.MAX_SOLVER_TIME_SEC
 
 
 def test_sample_endpoints_expose_two_scenarios_and_baseline():
@@ -302,6 +302,17 @@ def test_optimize_endpoint_returns_solution_and_kpis():
     assert payload["kpis"] is not None
     assert payload["takt_time_sec"] == 450.0
     assert payload["effective_takt_time_sec"] == 382.5
+
+
+def test_optimize_endpoint_caps_solver_time_limit():
+    payload = _small_optimize_payload()
+    payload["config"]["solver_time_limit_sec"] = 60
+
+    response = client.post("/api/optimize", json=payload)
+
+    assert response.status_code == 200
+    codes = {warning["code"] for warning in response.json()["warnings"]}
+    assert "solver_time_capped" in codes
 
 
 def test_export_endpoint_returns_readable_workbook():

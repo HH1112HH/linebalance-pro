@@ -12,7 +12,7 @@
     "allowance_pct": 0.0,
     "planned_efficiency": 0.85,
     "max_workers": 24,
-    "solver_time_limit_sec": 60,
+    "solver_time_limit_sec": 20,
     "objective": "min_bottleneck"
   },
   "operations": [

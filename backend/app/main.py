@@ -55,6 +55,7 @@ from .models import (
     StyleReadiness,
     TimeStudyRecord,
     TimeStudyResult,
+    WarningItem,
 )
 from .optimizer import SOLVER_BACKEND, check_solver, solve_line_balancing
 from .persistence import (
@@ -86,6 +87,7 @@ MAX_BODY_BYTES = int(os.getenv("MAX_BODY_BYTES", "2000000"))
 RATE_LIMIT_WINDOW_SEC = int(os.getenv("RATE_LIMIT_WINDOW_SEC", "60"))
 RATE_LIMIT_MAX = int(os.getenv("RATE_LIMIT_MAX", "60"))
 MAX_CONCURRENT_SOLVES = int(os.getenv("MAX_CONCURRENT_SOLVES", "2"))
+MAX_SOLVER_TIME_SEC = int(os.getenv("MAX_SOLVER_TIME_SEC", "20"))
 LOGIN_RATE_LIMIT_WINDOW_SEC = int(os.getenv("AUTH_LOGIN_RATE_LIMIT_WINDOW_SEC", "300"))
 LOGIN_RATE_LIMIT_MAX = int(os.getenv("AUTH_LOGIN_RATE_LIMIT_MAX", "10"))
 NETLIFY_ORIGIN_REGEX = r"https://[A-Za-z0-9-]+\.netlify\.app"
@@ -481,7 +483,7 @@ def health() -> dict[str, object]:
             "max_operations": 200,
             "max_workers": 100,
             "max_machines": 200,
-            "max_solver_time_sec": 60,
+            "max_solver_time_sec": MAX_SOLVER_TIME_SEC,
             "scenario_max_payload_bytes": scenario_persistence.settings.max_payload_bytes,
             "scenario_save_rate_limit_max": (
                 scenario_persistence.settings.save_rate_limit_max
@@ -603,7 +605,28 @@ def optimize(request: OptimizeRequest) -> OptimizeResponse:
             ),
         )
     try:
-        return solve_line_balancing(request)
+        clamped = request.config.solver_time_limit_sec > MAX_SOLVER_TIME_SEC
+        if clamped:
+            request = request.model_copy(
+                update={
+                    "config": request.config.model_copy(
+                        update={"solver_time_limit_sec": MAX_SOLVER_TIME_SEC}
+                    )
+                }
+            )
+        result = solve_line_balancing(request)
+        if clamped:
+            result.warnings.append(
+                WarningItem(
+                    severity="info",
+                    code="solver_time_capped",
+                    message=(
+                        "Solver time limit was capped to "
+                        f"{MAX_SOLVER_TIME_SEC}s by the server."
+                    ),
+                )
+            )
+        return result
     finally:
         _solve_semaphore.release()
 
