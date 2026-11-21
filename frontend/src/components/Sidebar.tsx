@@ -155,6 +155,23 @@ function NavIcon({ name }: { name: SectionKey }) {
           <path d="M12 12v9" />
         </svg>
       );
+    case "quality":
+      return (
+        <svg {...common}>
+          <circle cx="10.5" cy="10.5" r="6.5" />
+          <path d="m15.4 15.4 4.6 4.6" />
+          <path d="m7.6 10.6 1.9 1.9 3.6-4.1" />
+        </svg>
+      );
+    case "layout":
+      return (
+        <svg {...common}>
+          <rect x="3" y="4" width="18" height="16" rx="2" />
+          <path d="M3 12h7V4" />
+          <path d="M14 20v-5h7" />
+          <path d="M17 12h1.5" />
+        </svg>
+      );
     case "solver":
       return (
         <svg {...common}>

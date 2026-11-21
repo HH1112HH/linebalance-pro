@@ -2,6 +2,7 @@ import type {
   ActualsAnalysis,
   AuthSession,
   HealthResponse,
+  LayoutCaseStudyResult,
   MaterialAnalysisRequest,
   MaterialAnalysisResult,
   MaterialImportPreview,
@@ -10,6 +11,7 @@ import type {
   OptimizeResult,
   ProcessFlowRequest,
   ProcessFlowResult,
+  QualityCaseStudyResult,
   ReadinessEvaluationRequest,
   SampleRequest,
   ScenarioCreateRequest,
@@ -160,6 +162,14 @@ export function buildProcessFlow(
 
 export function getMaterialSample(): Promise<MaterialSampleResult> {
   return requestJson<MaterialSampleResult>("/api/materials/sample");
+}
+
+export function getQualityCaseStudy(): Promise<QualityCaseStudyResult> {
+  return requestJson<QualityCaseStudyResult>("/api/case-studies/quality");
+}
+
+export function getLayoutCaseStudy(): Promise<LayoutCaseStudyResult> {
+  return requestJson<LayoutCaseStudyResult>("/api/case-studies/layout");
 }
 
 export function analyzeMaterials(

@@ -839,3 +839,162 @@ class AuthSessionResponse(BaseModel):
     username: str | None = None
     role: Literal["admin", "viewer"] | None = None
     expires_at: str | None = None
+
+
+class QualityInspectionRecord(BaseModel):
+    """One end-line inspection day for the T07 quality case study."""
+
+    phase: Literal["BEFORE", "AFTER"]
+    date: str = Field(min_length=1, max_length=20)
+    inspected_pcs: int = Field(gt=0, le=10_000_000)
+    defect_count: int = Field(ge=0, le=10_000_000)
+    rework_min_each: float = Field(gt=0, le=600)
+
+
+class QualityDefectRecord(BaseModel):
+    """Defect count per day and defect code; must reconcile with inspections."""
+
+    phase: Literal["BEFORE", "AFTER"]
+    date: str = Field(min_length=1, max_length=20)
+    defect_code: str = Field(min_length=1, max_length=40)
+    defect_type: str = Field(min_length=1, max_length=80)
+    defect_count: int = Field(ge=0, le=10_000_000)
+
+
+class LayoutRouteObservation(BaseModel):
+    """One measured round-trip trial for the layout case study."""
+
+    phase: Literal["BEFORE", "AFTER"]
+    trial: int = Field(ge=1, le=50)
+    date: str = Field(min_length=1, max_length=20)
+    from_point: str = Field(min_length=1, max_length=80)
+    to_point: str = Field(min_length=1, max_length=80)
+    distance_m: float = Field(gt=0, le=100_000)
+    time_min: float = Field(gt=0, le=1_440)
+    crossings: int = Field(ge=0, le=100)
+
+
+class QualityParetoRow(BaseModel):
+    defect_code: str
+    defect_type: str
+    count: int
+    share_pct: float
+    cumulative_pct: float
+
+
+class QualityPhaseSummary(BaseModel):
+    phase: Literal["BEFORE", "AFTER"]
+    start_date: str
+    end_date: str
+    days: int
+    inspected_pcs: int
+    defect_count: int
+    defect_rate_pct: float
+    first_pass_yield_pct: float
+    rework_min_total: float
+    top_defect_type: str | None = None
+    dpmo: int
+    z_benchmark: float | None = None
+    pareto: list[QualityParetoRow] = Field(default_factory=list)
+
+
+class QualityDefectComparison(BaseModel):
+    defect_code: str
+    defect_type: str
+    before_count: int
+    after_count: int
+    delta_count: int
+    delta_pct: float | None = None
+
+
+class QualityDailyPoint(BaseModel):
+    phase: Literal["BEFORE", "AFTER"]
+    date: str
+    inspected_pcs: int
+    defect_count: int
+    defect_rate_pct: float
+    out_of_control: bool
+
+
+class QualityPChartPhase(BaseModel):
+    phase: Literal["BEFORE", "AFTER"]
+    mean_rate_pct: float
+    ucl_pct: float
+    lcl_pct: float
+    out_of_control_points: int
+
+
+class QualitySetupAuditRow(BaseModel):
+    """Changeover audit used to verify the collar-guide root cause."""
+
+    phase: Literal["BEFORE", "AFTER"]
+    changeover_date: str = Field(min_length=1, max_length=20)
+    guide_present: bool
+    first_piece_check: bool
+    misalignment_next_2h: int = Field(ge=0, le=10_000)
+
+
+class QualitySetupAuditSummary(BaseModel):
+    before_changeovers: int
+    before_guide_present: int
+    before_first_piece_check: int
+    before_misalignment_after_changeover: int
+    before_total_misalignment: int
+    before_misalignment_share_pct: float
+    after_changeovers: int
+    after_guide_present: int
+    after_first_piece_check: int
+    after_misalignment_after_changeover: int
+
+
+class TwoProportionTest(BaseModel):
+    p1_pct: float
+    p2_pct: float
+    pooled_pct: float
+    z_stat: float
+    p_value: float
+    ci_low_pct: float
+    ci_high_pct: float
+
+
+class QualityCaseStudyResponse(BaseModel):
+    """T07 synthetic quality RCA, analysis only (not a quality module)."""
+
+    line_id: str
+    style_code: str
+    operation_id: str
+    operation_name: str
+    phases: list[QualityPhaseSummary] = Field(default_factory=list)
+    defect_types: list[QualityDefectComparison] = Field(default_factory=list)
+    daily: list[QualityDailyPoint] = Field(default_factory=list)
+    p_chart: list[QualityPChartPhase] = Field(default_factory=list)
+    setup_audit: list[QualitySetupAuditRow] = Field(default_factory=list)
+    setup_audit_summary: QualitySetupAuditSummary
+    two_proportion_test: TwoProportionTest
+    data_policy: str = "synthetic-demo-only"
+
+
+class LayoutPhaseSummary(BaseModel):
+    phase: Literal["BEFORE", "AFTER"]
+    trial_count: int
+    mean_distance_m: float
+    mean_time_min: float
+    mean_crossings: float
+    trips_per_shift: int
+    distance_per_shift_m: float
+    time_per_shift_min: float
+
+
+class LayoutCaseStudyResponse(BaseModel):
+    """T10 synthetic layout/ergonomics case study at ST01 (not a CAD module)."""
+
+    line_id: str
+    station_id: str
+    trips_per_shift: int
+    trials: list[LayoutRouteObservation] = Field(default_factory=list)
+    phases: list[LayoutPhaseSummary] = Field(default_factory=list)
+    distance_reduction_pct: float
+    time_reduction_pct: float
+    crossings_per_shift_before: float
+    crossings_per_shift_after: float
+    data_policy: str = "synthetic-demo-only"

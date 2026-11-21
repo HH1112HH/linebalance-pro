@@ -35,6 +35,7 @@ from .models import (
     ActualsAnalysis,
     AuthSessionResponse,
     ExportPayload,
+    LayoutCaseStudyResponse,
     LoginRequest,
     MaterialAnalysisRequest,
     MaterialAnalysisResult,
@@ -44,6 +45,7 @@ from .models import (
     OptimizeResponse,
     ProcessFlowRequest,
     ProcessFlowResponse,
+    QualityCaseStudyResponse,
     ReadinessEvaluationRequest,
     ScenarioCreateRequest,
     ScenarioDetail,
@@ -60,6 +62,10 @@ from .persistence import (
     ScenarioSettings,
     ScenarioUnavailableError,
     build_scenario_settings,
+)
+from .sample_case_studies import (
+    build_layout_case_study,
+    build_quality_case_study,
 )
 from .sample_data import SAMPLE_FEASIBLE_REQUEST, SAMPLE_REQUEST
 from .sample_materials import build_sample_material_response
@@ -645,6 +651,16 @@ def process_flow(request: ProcessFlowRequest) -> ProcessFlowResponse:
 @app.get("/api/materials/sample", response_model=MaterialSampleResponse)
 def material_sample() -> MaterialSampleResponse:
     return build_sample_material_response()
+
+
+@app.get("/api/case-studies/quality", response_model=QualityCaseStudyResponse)
+def quality_case_study() -> QualityCaseStudyResponse:
+    return build_quality_case_study()
+
+
+@app.get("/api/case-studies/layout", response_model=LayoutCaseStudyResponse)
+def layout_case_study() -> LayoutCaseStudyResponse:
+    return build_layout_case_study()
 
 
 @app.post("/api/materials/analyze", response_model=MaterialAnalysisResult)

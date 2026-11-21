@@ -8,6 +8,8 @@ export type SectionKey =
   | "time-study"
   | "style-setup"
   | "materials"
+  | "quality"
+  | "layout"
   | "solver";
 
 export type SamBasis = "INCLUDES_ALLOWANCE" | "EXCLUDES_ALLOWANCE";
@@ -606,4 +608,137 @@ export interface Snapshot {
   scenario: ScenarioKey;
   request: SampleRequest;
   result: OptimizeResult;
+}
+
+export type CaseStudyPhase = "BEFORE" | "AFTER";
+
+export interface QualityParetoRow {
+  defect_code: string;
+  defect_type: string;
+  count: number;
+  share_pct: number;
+  cumulative_pct: number;
+}
+
+export interface QualityPhaseSummary {
+  phase: CaseStudyPhase;
+  start_date: string;
+  end_date: string;
+  days: number;
+  inspected_pcs: number;
+  defect_count: number;
+  defect_rate_pct: number;
+  first_pass_yield_pct: number;
+  rework_min_total: number;
+  top_defect_type: string | null;
+  dpmo: number;
+  z_benchmark: number | null;
+  pareto: QualityParetoRow[];
+}
+
+export interface QualityDefectComparison {
+  defect_code: string;
+  defect_type: string;
+  before_count: number;
+  after_count: number;
+  delta_count: number;
+  delta_pct: number | null;
+}
+
+export interface QualityDailyPoint {
+  phase: CaseStudyPhase;
+  date: string;
+  inspected_pcs: number;
+  defect_count: number;
+  defect_rate_pct: number;
+  out_of_control: boolean;
+}
+
+export interface QualityPChartPhase {
+  phase: CaseStudyPhase;
+  mean_rate_pct: number;
+  ucl_pct: number;
+  lcl_pct: number;
+  out_of_control_points: number;
+}
+
+export interface QualitySetupAuditRow {
+  phase: CaseStudyPhase;
+  changeover_date: string;
+  guide_present: boolean;
+  first_piece_check: boolean;
+  misalignment_next_2h: number;
+}
+
+export interface QualitySetupAuditSummary {
+  before_changeovers: number;
+  before_guide_present: number;
+  before_first_piece_check: number;
+  before_misalignment_after_changeover: number;
+  before_total_misalignment: number;
+  before_misalignment_share_pct: number;
+  after_changeovers: number;
+  after_guide_present: number;
+  after_first_piece_check: number;
+  after_misalignment_after_changeover: number;
+}
+
+export interface TwoProportionTest {
+  p1_pct: number;
+  p2_pct: number;
+  pooled_pct: number;
+  z_stat: number;
+  p_value: number;
+  ci_low_pct: number;
+  ci_high_pct: number;
+}
+
+export interface QualityCaseStudyResult {
+  line_id: string;
+  style_code: string;
+  operation_id: string;
+  operation_name: string;
+  phases: QualityPhaseSummary[];
+  defect_types: QualityDefectComparison[];
+  daily: QualityDailyPoint[];
+  p_chart: QualityPChartPhase[];
+  setup_audit: QualitySetupAuditRow[];
+  setup_audit_summary: QualitySetupAuditSummary;
+  two_proportion_test: TwoProportionTest;
+  data_policy: string;
+}
+
+export interface LayoutRouteTrial {
+  phase: CaseStudyPhase;
+  trial: number;
+  date: string;
+  from_point: string;
+  to_point: string;
+  distance_m: number;
+  time_min: number;
+  crossings: number;
+}
+
+export interface LayoutPhaseSummary {
+  phase: CaseStudyPhase;
+  trial_count: number;
+  mean_distance_m: number;
+  mean_time_min: number;
+  mean_crossings: number;
+  trips_per_shift: number;
+  distance_per_shift_m: number;
+  time_per_shift_min: number;
+}
+
+export interface LayoutCaseStudyResult {
+  line_id: string;
+  station_id: string;
+  trips_per_shift: number;
+  trials: LayoutRouteTrial[];
+  phases: LayoutPhaseSummary[];
+  distance_reduction_pct: number;
+  time_reduction_pct: number;
+  crossings_per_shift_before: number;
+  crossings_per_shift_after: number;
+  data_policy: string;
 }

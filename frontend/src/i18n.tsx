@@ -34,6 +34,12 @@ const EN = {
   "nav.materials.label": "Material norms",
   "nav.materials.short": "Materials",
   "nav.materials.hint": "Usage & variance",
+  "nav.quality.label": "Quality RCA",
+  "nav.quality.short": "Quality",
+  "nav.quality.hint": "Pareto · 4M · 5 Why",
+  "nav.layout.label": "Layout & ergonomics",
+  "nav.layout.short": "Layout",
+  "nav.layout.hint": "POU & route",
   "nav.solver.label": "Solver & data",
   "nav.solver.short": "Solver",
   "nav.solver.hint": "Provenance",
@@ -862,11 +868,235 @@ const EN = {
   "summary.objective.minBottleneck": "Min bottleneck",
   "summary.objective.minWorkers": "Min workers",
 
+  "page.quality.eyebrow": "T07 · Quality RCA",
+  "page.quality.title": "Collar attachment quality RCA",
+  "page.quality.description":
+    "Synthetic DMAIC case study at OP060: 1,820 inspected pcs per phase, Pareto, 4M fishbone, 5 Why, setup audit and Control Plan. Analysis only — not a quality module.",
+  "page.layout.eyebrow": "T10 · Layout & ergonomics",
+  "page.layout.title": "Point-of-use material at ST01",
+  "page.layout.description":
+    "Synthetic route study: 5 trials per phase, operator walking only. Material-handler replenishment is not measured and no cash saving is claimed.",
+
+  "caseStudy.synthetic": "100% synthetic case study",
+  "caseStudy.loading": "Loading case study…",
+  "caseStudy.error": "Could not load the case study.",
+  "caseStudy.retry": "Retry",
+  "caseStudy.before": "Before",
+  "caseStudy.after": "After pilot",
+  "caseStudy.delta": "Delta",
+  "caseStudy.days": "{days} days",
+  "caseStudy.topDefect": "Top defect: {defect}",
+  "caseStudy.empty": "The case study returned no rows to display.",
+  "caseStudy.pp": "pp",
+  "caseStudy.phase": "Phase",
+
+  "quality.kpi.aria": "Quality KPIs before and after",
+  "quality.kpi.defectRate": "Defect rate",
+  "quality.kpi.fpy": "First pass yield",
+  "quality.kpi.fpyHint": "Before rework",
+  "quality.kpi.rework": "Rework time",
+  "quality.kpi.reworkHint": "At 3 min per defect",
+  "quality.kpi.misalignment": "Collar misalignment",
+  "quality.kpi.misalignmentHint": "Pieces per phase",
+  "quality.kpi.perPhase": "over 5 days",
+
+  "quality.defect.MISALIGNMENT": "Collar misalignment",
+  "quality.defect.UNEVEN_WIDTH": "Uneven collar width",
+  "quality.defect.PUCKERING": "Seam puckering",
+  "quality.defect.SKIPPED_STITCH": "Skipped stitch",
+  "quality.defectShort.MISALIGNMENT": "Align",
+  "quality.defectShort.UNEVEN_WIDTH": "Width",
+  "quality.defectShort.PUCKERING": "Pucker",
+  "quality.defectShort.SKIPPED_STITCH": "Skip",
+
+  "quality.pareto.title": "Defect Pareto",
+  "quality.pareto.hint": "Bars: defect count. Line: cumulative share.",
+  "quality.pareto.cumulative": "Cumulative",
+  "quality.pareto.count": "Count",
+  "quality.pareto.defects": "{count} defects",
+  "quality.pareto.top2": "Top 2 defects = {pct}% of all defects.",
+  "quality.pareto.followUp":
+    "After the pilot the top defect changed to {defect} — the Pareto must be re-read, not frozen.",
+
+  "quality.breakdown.title": "Defect type change",
+  "quality.breakdown.type": "Defect type",
+  "quality.breakdown.delta": "Δ count",
+  "quality.breakdown.deltaPct": "Δ %",
+
+  "quality.fishbone.title": "4M fishbone",
+  "quality.fishbone.hint":
+    "Hypothesis → evidence → conclusion. Only Method is confirmed as the main root cause.",
+  "quality.fishbone.man": "Man",
+  "quality.fishbone.machine": "Machine",
+  "quality.fishbone.method": "Method",
+  "quality.fishbone.material": "Material",
+  "quality.fishbone.rootCause": "Main root cause",
+  "quality.fishbone.notConfirmed": "Not confirmed",
+  "quality.fishbone.effect": "Effect: collar misalignment at OP060",
+  "quality.fishbone.hypothesisLabel": "Hypothesis",
+  "quality.fishbone.evidenceLabel": "Evidence",
+  "quality.fishbone.conclusionLabel": "Conclusion",
+  "quality.fishbone.man.hypothesis": "New operators not familiar with the guide",
+  "quality.fishbone.man.evidence":
+    "3 operators shared the defect; 2 of 6 were not trained on the new guide",
+  "quality.fishbone.man.conclusion": "Not strong enough to be the root cause",
+  "quality.fishbone.machine.hypothesis": "Overlock tension or needle problem",
+  "quality.fishbone.machine.evidence":
+    "Maintenance log normal; defects persisted after machine adjustment",
+  "quality.fishbone.machine.conclusion": "Not the main cause",
+  "quality.fishbone.method.hypothesis":
+    "No standard guide; collar aligned by eye; no first-piece check",
+  "quality.fishbone.method.evidence":
+    "Guide missing in 4/5 changeovers; first-piece check only 2/5",
+  "quality.fishbone.method.conclusion": "Confirmed main root cause",
+  "quality.fishbone.material.hypothesis": "Collar interlining thickness varies",
+  "quality.fishbone.material.evidence":
+    "2 material lots; incoming check showed no clear difference",
+  "quality.fishbone.material.conclusion": "Unconfirmed; needs more monitoring",
+
+  "quality.fiveWhy.title": "5 Why",
+  "quality.fiveWhy.1":
+    "Why is the collar misaligned? Operators align the edge by eye because there is no fixed guide.",
+  "quality.fiveWhy.2":
+    "Why is there no guide? The guide was removed during a previous changeover and never reinstalled.",
+  "quality.fiveWhy.3":
+    "Why was it not reinstalled? The changeover checklist has no collar-guide check.",
+  "quality.fiveWhy.4":
+    "Why is the check missing? The setup standard was never updated after the guide was introduced.",
+  "quality.fiveWhy.5":
+    "Why was it not updated? No owner or audit exists for the setup standard; setup relies on operator memory.",
+
+  "quality.audit.title": "Root-cause verification — setup audit",
+  "quality.audit.hint":
+    "Misalignment {count}/{total} ({pct}%) occurs within 2 hours after changeover; the guide was present only {guide}/{changeovers} times before the pilot.",
+  "quality.audit.changeover": "Changeover",
+  "quality.audit.guide": "Guide",
+  "quality.audit.firstPiece": "First-piece",
+  "quality.audit.misalignment": "Misalignment (2h)",
+  "quality.audit.yes": "Yes",
+  "quality.audit.no": "No",
+  "quality.audit.afterNote":
+    "After the pilot: guide {guide}/{changeovers}, first-piece {firstPiece}/{changeovers}.",
+
+  "quality.counter.title": "Countermeasures",
+  "quality.counter.1":
+    "Restore and standardize the collar guide; mark its position — Line Engineer, Day 1.",
+  "quality.counter.2":
+    "Add guide check + first-piece check to the changeover checklist — Supervisor, Day 1.",
+  "quality.counter.3":
+    "Update SOP with photos and collar alignment steps — Trainer, Day 2.",
+  "quality.counter.4":
+    "QC first-piece approval after every changeover; hold until pass — QC, Day 2.",
+  "quality.counter.5":
+    "Daily Pareto at OP060; stop and check the guide if misalignment > 2 pcs/day — Line Engineer, daily.",
+
+  "quality.control.title": "Control plan",
+  "quality.control.1":
+    "Defect rate ≤ 1.50% — daily — QC; above 1.50% for 2 days reopens 5 Why.",
+  "quality.control.2":
+    "FPY ≥ 98.50% — daily — Production; below 98.50% for 2 days escalates to Line Manager.",
+  "quality.control.3":
+    "Guide presence 100% — every changeover — Supervisor; missing guide stops setup.",
+  "quality.control.4":
+    "First-piece approval 100% — every changeover — QC; no sign-off, no production.",
+  "quality.control.5":
+    "Rework minutes ≤ 15/day — daily — IE; investigate by defect type if exceeded.",
+
+  "quality.sigma.title": "Six Sigma metrics (illustrative)",
+  "quality.sigma.hint":
+    "1 opportunity per garment; Z is short-term without the 1.5σ shift. Synthetic illustration, not a Six Sigma certification.",
+  "quality.sigma.dpmo": "DPMO",
+  "quality.sigma.z": "Z-benchmark",
+  "quality.sigma.zTest": "Two-proportion z-test",
+  "quality.sigma.zTestBody":
+    "z = {z}, p ≈ {p} (two-sided), 95% CI {low}–{high} pp. Assumes independent defects; not causal proof.",
+  "quality.sigma.pChart":
+    "p-chart: UCL {beforeUcl} before / {afterUcl} after; {outBefore} and {outAfter} points outside limits ({daysBefore}/{daysAfter} points, provisional).",
+
+  "quality.caveats.title": "What this case does not claim",
+  "quality.caveats.1":
+    "No statistical-significance claim for production: {days} days, 2 inspectors, no GR&R.",
+  "quality.caveats.2": "No zero-defect claim: {count} defects remain after the pilot.",
+  "quality.caveats.3": "No money conversion: cost of quality was not collected.",
+  "quality.caveats.4":
+    "Synthetic data; not HBI data and not a production-verified result.",
+
+  "layout.kpi.aria": "Layout KPIs before and after",
+  "layout.kpi.distance": "Round-trip distance",
+  "layout.kpi.time": "Operator trip time",
+  "layout.kpi.timePerShift": "Operator time / shift",
+  "layout.kpi.crossings": "Aisle crossings",
+  "layout.kpi.perTrip": "per trip",
+  "layout.kpi.perShift": "per shift · {trips} trips",
+
+  "layout.trials.title": "Route trials",
+  "layout.trials.hint":
+    "5 measured round trips per phase; distance follows the allowed walking path, not a straight line through machines.",
+  "layout.trials.trial": "Trial",
+  "layout.trials.distance": "Distance (m)",
+  "layout.trials.time": "Time (min)",
+  "layout.trials.crossings": "Crossings",
+  "layout.trials.mean": "Mean",
+
+  "layout.diagram.title": "Before / after route",
+  "layout.diagram.hint":
+    "Schematic, not to scale. Operator route is measured; handler replenishment is excluded.",
+  "layout.diagram.before": "Before — bulk supermarket",
+  "layout.diagram.after": "After — line-side POU",
+  "layout.diagram.supermarket": "Bulk supermarket",
+  "layout.diagram.supermarketShort": "BULK",
+  "layout.diagram.pou": "2-bin point of use",
+  "layout.diagram.aisle": "Shared aisle",
+  "layout.diagram.handler": "Material Handler milk run",
+  "layout.diagram.fetch": "fetch + return · 2 crossings",
+  "layout.diagram.shortTrip": "short line-side trip",
+  "layout.diagram.station": "ST01",
+
+  "layout.ergo.title": "Ergonomics screen",
+  "layout.ergo.hint":
+    "EHS must approve before the rack is installed. No RULA/REBA/NIOSH score is claimed from synthetic data.",
+  "layout.ergo.reach":
+    "Reach — frequent material inside the comfortable zone, no twisting or reaching across the machine.",
+  "layout.ergo.lift":
+    "Lift/carry — measure tote mass and frequency; EHS reviews and adds a cart if needed.",
+  "layout.ergo.push":
+    "Push/pull — check force, wheels, slopes and narrow turns on the handler route.",
+  "layout.ergo.posture":
+    "Repetition/posture — adjust rack height and position if picking causes bending or static holds.",
+  "layout.ergo.lighting":
+    "Visibility/lighting — labels and lot must be readable without glare or shadow.",
+  "layout.ergo.aisle":
+    "Aisle/egress — rack, totes and carts must not block the aisle, exits or fire equipment.",
+  "layout.ergo.safety":
+    "Machine/safety — no contact with moving parts, guards or cables; Maintenance/EHS approve the position.",
+
+  "layout.control.title": "Control plan",
+  "layout.control.1":
+    "Trip distance ≤ 21.8 m/trip — first 5 trials, then weekly sample — IE; remap the route if exceeded.",
+  "layout.control.2":
+    "Trip time ≤ 3.0 min/trip — first 5 trials, then weekly sample — Line leader; check shortage, waiting and route.",
+  "layout.control.3":
+    "Shared-aisle crossing = 0 for ST01–POU — every audit — EHS + Supervisor; fix the route, no shortcuts.",
+  "layout.control.4":
+    "No material starvation from POU/milk run — every shift — Material Handler; refill/escalate and log downtime separately.",
+  "layout.control.5":
+    "Handler time measured separately; no target before baseline — pilot — IE + Warehouse; without a log, no net-labor-saving claim.",
+  "layout.control.reaction":
+    "Reaction rule: if operator time drops but starvation, handler overtime, WIP or aisle/ergonomics get worse, the pilot is not accepted.",
+  "layout.caveats.title": "What this case does not claim",
+  "layout.caveats.1":
+    "{minutes} operator-min/shift is avoided walking at ST01 — not cash and not net labor saving.",
+  "layout.caveats.2":
+    "Material Handler replenishment, tote mass, push/pull force and line output were not measured.",
+  "layout.caveats.3": "The diagram is schematic, not a construction drawing.",
+  "layout.caveats.4":
+    "Synthetic data; EHS approval and a real-shift pilot are still required.",
+
   "policy.aria": "Data and status policy",
   "policy.data.eyebrow": "Data policy",
   "policy.data.title": "Synthetic only",
   "policy.data.body":
-    "No HBI production data. The sample baseline is a current-state input, not an optimizer output.",
+    "No real production data is used. The sample baseline is a current-state input, not an optimizer output.",
   "policy.status.eyebrow": "Status contract",
   "policy.status.title": "Proof before OPTIMAL",
   "policy.status.body":
@@ -876,8 +1106,7 @@ const EN = {
   "policy.snapshot.body":
     "Local snapshots stay in this browser. Signed-in admin accounts can save synthetic scenarios to the Neon-backed demo workspace; read-only accounts cannot write.",
   "footer.authorLabel": "Built by",
-  "footer.left":
-    "LineBalance Pro · synthetic garment IE demo · not HBI production data",
+  "footer.left": "LineBalance Pro · line balancing & capacity demo · synthetic data",
   "footer.right":
     "React + FastAPI + PuLP/HiGHS · {operations} operations · {workers} workers available",
 } as const;
@@ -906,6 +1135,12 @@ const VI: Record<MessageKey, string> = {
   "nav.materials.label": "Định mức vật tư",
   "nav.materials.short": "Vật tư",
   "nav.materials.hint": "Tiêu hao & chênh lệch",
+  "nav.quality.label": "Chất lượng (RCA)",
+  "nav.quality.short": "Chất lượng",
+  "nav.quality.hint": "Pareto · 4M · 5 Why",
+  "nav.layout.label": "Bố trí mặt bằng",
+  "nav.layout.short": "Bố trí",
+  "nav.layout.hint": "POU & tuyến đi",
   "nav.solver.label": "Tối ưu hóa & dữ liệu",
   "nav.solver.short": "Tối ưu hóa",
   "nav.solver.hint": "Nguồn kết quả",
@@ -1735,11 +1970,233 @@ const VI: Record<MessageKey, string> = {
   "summary.objective.minBottleneck": "Tối thiểu hóa tải nút cổ chai",
   "summary.objective.minWorkers": "Tối thiểu hóa số công nhân",
 
+  "page.quality.eyebrow": "T07 · RCA chất lượng",
+  "page.quality.title": "RCA chất lượng cụm cổ",
+  "page.quality.description":
+    "Case study DMAIC synthetic tại OP060: 1.820 pcs kiểm tra mỗi giai đoạn, Pareto, fishbone 4M, 5 Why, setup audit và Control Plan. Chỉ là phân tích — không phải module quản lý chất lượng.",
+  "page.layout.eyebrow": "T10 · Bố trí & ergonomics",
+  "page.layout.title": "Cấp vật tư tại chỗ cho ST01",
+  "page.layout.description":
+    "Nghiên cứu tuyến đi synthetic: 5 trial mỗi giai đoạn, chỉ đo operator đi bộ. Chưa đo thời gian Material Handler và không claim tiết kiệm tiền.",
+
+  "caseStudy.synthetic": "Case study 100% synthetic",
+  "caseStudy.loading": "Đang tải case study…",
+  "caseStudy.error": "Không tải được case study.",
+  "caseStudy.retry": "Thử lại",
+  "caseStudy.before": "Trước",
+  "caseStudy.after": "Sau pilot",
+  "caseStudy.delta": "Thay đổi",
+  "caseStudy.days": "{days} ngày",
+  "caseStudy.topDefect": "Lỗi đứng đầu: {defect}",
+  "caseStudy.empty": "Case study không trả về dòng dữ liệu nào để hiển thị.",
+  "caseStudy.pp": "điểm %",
+  "caseStudy.phase": "Giai đoạn",
+
+  "quality.kpi.aria": "KPI chất lượng trước và sau",
+  "quality.kpi.defectRate": "Tỷ lệ lỗi",
+  "quality.kpi.fpy": "FPY (đạt ngay lần đầu)",
+  "quality.kpi.fpyHint": "Trước rework",
+  "quality.kpi.rework": "Thời gian rework",
+  "quality.kpi.reworkHint": "3 phút mỗi lỗi",
+  "quality.kpi.misalignment": "Lệch cổ",
+  "quality.kpi.misalignmentHint": "Số pcs mỗi giai đoạn",
+  "quality.kpi.perPhase": "trong 5 ngày",
+
+  "quality.defect.MISALIGNMENT": "Lệch cổ",
+  "quality.defect.UNEVEN_WIDTH": "Cổ không đều",
+  "quality.defect.PUCKERING": "Nhăn đường may cổ",
+  "quality.defect.SKIPPED_STITCH": "Bỏ mũi",
+  "quality.defectShort.MISALIGNMENT": "Lệch",
+  "quality.defectShort.UNEVEN_WIDTH": "Không đều",
+  "quality.defectShort.PUCKERING": "Nhăn",
+  "quality.defectShort.SKIPPED_STITCH": "Bỏ mũi",
+
+  "quality.pareto.title": "Pareto lỗi",
+  "quality.pareto.hint": "Cột: số lỗi. Đường: % tích lũy.",
+  "quality.pareto.cumulative": "Tích lũy",
+  "quality.pareto.count": "Số lỗi",
+  "quality.pareto.defects": "{count} lỗi",
+  "quality.pareto.top2": "2 lỗi đầu = {pct}% tổng lỗi.",
+  "quality.pareto.followUp":
+    "Sau pilot lỗi đứng đầu đã đổi thành {defect} — phải đọc lại Pareto, không đóng băng kết quả.",
+
+  "quality.breakdown.title": "Thay đổi theo loại lỗi",
+  "quality.breakdown.type": "Loại lỗi",
+  "quality.breakdown.delta": "Δ số lỗi",
+  "quality.breakdown.deltaPct": "Δ %",
+
+  "quality.fishbone.title": "Fishbone 4M",
+  "quality.fishbone.hint":
+    "Giả thuyết → bằng chứng → kết luận. Chỉ Method được xác nhận là nguyên nhân gốc chính.",
+  "quality.fishbone.man": "Con người",
+  "quality.fishbone.machine": "Máy",
+  "quality.fishbone.method": "Phương pháp",
+  "quality.fishbone.material": "Nguyên liệu",
+  "quality.fishbone.rootCause": "Nguyên nhân gốc chính",
+  "quality.fishbone.notConfirmed": "Chưa xác nhận",
+  "quality.fishbone.effect": "Ảnh hưởng: lệch cổ tại OP060",
+  "quality.fishbone.hypothesisLabel": "Giả thuyết",
+  "quality.fishbone.evidenceLabel": "Bằng chứng",
+  "quality.fishbone.conclusionLabel": "Kết luận",
+  "quality.fishbone.man.hypothesis": "Operator mới chưa quen guide",
+  "quality.fishbone.man.evidence":
+    "3 operator cùng có lỗi; 2/6 chưa được train guide mới",
+  "quality.fishbone.man.conclusion": "Chưa đủ mạnh để là nguyên nhân gốc",
+  "quality.fishbone.machine.hypothesis": "Sai tension hoặc kim máy overlock",
+  "quality.fishbone.machine.evidence":
+    "Log bảo trì bình thường; lỗi vẫn còn sau khi chỉnh máy",
+  "quality.fishbone.machine.conclusion": "Không phải nguyên nhân chính",
+  "quality.fishbone.method.hypothesis":
+    "Không có guide chuẩn; canh cổ bằng mắt; không có first-piece check",
+  "quality.fishbone.method.evidence":
+    "Guide thiếu 4/5 changeover; first-piece check chỉ 2/5",
+  "quality.fishbone.method.conclusion": "Nguyên nhân gốc chính đã xác nhận",
+  "quality.fishbone.material.hypothesis": "Độ dày interlining cổ không đều",
+  "quality.fishbone.material.evidence":
+    "2 lô nguyên liệu; incoming check không khác biệt rõ",
+  "quality.fishbone.material.conclusion": "Chưa xác nhận; cần theo dõi thêm",
+
+  "quality.fiveWhy.title": "5 Why",
+  "quality.fiveWhy.1":
+    "Vì sao cổ bị lệch? Operator canh mép bằng mắt vì không có guide cố định.",
+  "quality.fiveWhy.2":
+    "Vì sao không có guide? Guide bị tháo khi changeover style trước và không được lắp lại.",
+  "quality.fiveWhy.3":
+    "Vì sao không được lắp lại? Checklist changeover không có bước kiểm tra collar guide.",
+  "quality.fiveWhy.4":
+    "Vì sao checklist không có? Setup standard chưa được cập nhật sau khi đưa guide vào dùng.",
+  "quality.fiveWhy.5":
+    "Vì sao chưa cập nhật? Không có owner/audit cho setup standard; setup dựa vào trí nhớ operator.",
+
+  "quality.audit.title": "Xác minh nguyên nhân — setup audit",
+  "quality.audit.hint":
+    "Lệch cổ {count}/{total} ({pct}%) xảy ra trong 2 giờ sau changeover; guide chỉ có {guide}/{changeovers} lần trước pilot.",
+  "quality.audit.changeover": "Changeover",
+  "quality.audit.guide": "Guide",
+  "quality.audit.firstPiece": "First-piece",
+  "quality.audit.misalignment": "Lệch cổ (2h)",
+  "quality.audit.yes": "Có",
+  "quality.audit.no": "Không",
+  "quality.audit.afterNote":
+    "Sau pilot: guide {guide}/{changeovers}, first-piece {firstPiece}/{changeovers}.",
+
+  "quality.counter.title": "Hành động khắc phục",
+  "quality.counter.1":
+    "Lắp lại và chuẩn hóa collar guide; đánh dấu vị trí — Kỹ sư chuyền, Ngày 1.",
+  "quality.counter.2":
+    "Thêm kiểm tra guide + first-piece vào checklist changeover — Giám sát, Ngày 1.",
+  "quality.counter.3": "Cập nhật SOP có ảnh và cách canh cổ — Trainer, Ngày 2.",
+  "quality.counter.4":
+    "QC duyệt first-piece sau mỗi changeover; hold đến khi đạt — QC, Ngày 2.",
+  "quality.counter.5":
+    "Pareto hằng ngày tại OP060; dừng kiểm tra guide nếu lệch cổ > 2 pcs/ngày — Kỹ sư chuyền, hằng ngày.",
+
+  "quality.control.title": "Control Plan",
+  "quality.control.1":
+    "Tỷ lệ lỗi ≤ 1,50% — hằng ngày — QC; trên 1,50% trong 2 ngày thì mở lại 5 Why.",
+  "quality.control.2":
+    "FPY ≥ 98,50% — hằng ngày — Sản xuất; dưới 98,50% trong 2 ngày thì escalate Line Manager.",
+  "quality.control.3":
+    "Guide hiện diện 100% — mỗi changeover — Giám sát; thiếu guide thì dừng setup.",
+  "quality.control.4":
+    "Duyệt first-piece 100% — mỗi changeover — QC; không sign-off thì không sản xuất.",
+  "quality.control.5":
+    "Phút rework ≤ 15/ngày — hằng ngày — IE; vượt thì điều tra theo loại lỗi.",
+
+  "quality.sigma.title": "Chỉ số Six Sigma (minh họa)",
+  "quality.sigma.hint":
+    "1 cơ hội lỗi mỗi áo; Z là short-term, chưa cộng 1,5σ. Minh họa synthetic, không phải chứng nhận Six Sigma.",
+  "quality.sigma.dpmo": "DPMO",
+  "quality.sigma.z": "Z-benchmark",
+  "quality.sigma.zTest": "Z-test hai tỷ lệ",
+  "quality.sigma.zTestBody":
+    "z = {z}, p ≈ {p} (2 phía), CI 95% {low}–{high} điểm %. Giả định defect độc lập; không chứng minh nhân quả.",
+  "quality.sigma.pChart":
+    "p-chart: UCL trước {beforeUcl} / sau {afterUcl}; {outBefore} và {outAfter} điểm ngoài giới hạn ({daysBefore}/{daysAfter} điểm, tạm thời).",
+
+  "quality.caveats.title": "Điều case study không claim",
+  "quality.caveats.1":
+    "Không claim ý nghĩa thống kê cho sản xuất thật: {days} ngày, 2 inspector, chưa có GR&R.",
+  "quality.caveats.2": "Không claim zero defect: còn {count} lỗi sau pilot.",
+  "quality.caveats.3": "Không quy đổi tiền: chưa thu thập cost of quality.",
+  "quality.caveats.4":
+    "Dữ liệu synthetic; không phải dữ liệu HBI và chưa được xác minh trong sản xuất thật.",
+
+  "layout.kpi.aria": "KPI bố trí trước và sau",
+  "layout.kpi.distance": "Quãng đường khứ hồi",
+  "layout.kpi.time": "Thời gian đi của operator",
+  "layout.kpi.timePerShift": "Thời gian operator / ca",
+  "layout.kpi.crossings": "Lần cắt aisle",
+  "layout.kpi.perTrip": "mỗi lượt",
+  "layout.kpi.perShift": "mỗi ca · {trips} lượt",
+
+  "layout.trials.title": "Các lượt đo tuyến",
+  "layout.trials.hint":
+    "5 lượt khứ hồi mỗi giai đoạn; đo theo lối đi được phép, không đo đường thẳng xuyên máy.",
+  "layout.trials.trial": "Lượt",
+  "layout.trials.distance": "Quãng đường (m)",
+  "layout.trials.time": "Thời gian (phút)",
+  "layout.trials.crossings": "Cắt aisle",
+  "layout.trials.mean": "Trung bình",
+
+  "layout.diagram.title": "Tuyến trước / sau",
+  "layout.diagram.hint":
+    "Sơ đồ minh họa, không theo tỷ lệ. Chỉ đo tuyến operator; chưa tính replenishment của handler.",
+  "layout.diagram.before": "Trước — kho bulk",
+  "layout.diagram.after": "Sau — POU cạnh chuyền",
+  "layout.diagram.supermarket": "Kho bulk",
+  "layout.diagram.supermarketShort": "KHO",
+  "layout.diagram.pou": "POU 2 bin",
+  "layout.diagram.aisle": "Aisle chung",
+  "layout.diagram.handler": "Milk run của Material Handler",
+  "layout.diagram.fetch": "đi lấy + quay về · 2 lần cắt",
+  "layout.diagram.shortTrip": "đi ngắn cạnh chuyền",
+  "layout.diagram.station": "ST01",
+
+  "layout.ergo.title": "Sàng lọc ergonomics",
+  "layout.ergo.hint":
+    "EHS phải duyệt trước khi lắp rack. Không chấm RULA/REBA/NIOSH từ dữ liệu synthetic.",
+  "layout.ergo.reach":
+    "Reach — vật tư thường dùng nằm trong vùng thoải mái, không vặn người hay với qua máy.",
+  "layout.ergo.lift":
+    "Nâng/mang — đo khối lượng tote và tần suất; EHS đánh giá, thêm xe đẩy nếu cần.",
+  "layout.ergo.push":
+    "Đẩy/kéo — kiểm tra lực, bánh xe, dốc và cua hẹp trên tuyến handler.",
+  "layout.ergo.posture":
+    "Lặp lại/tư thế — chỉnh độ cao và vị trí rack nếu thao tác gây cúi hoặc giữ tĩnh.",
+  "layout.ergo.lighting":
+    "Tầm nhìn/ánh sáng — nhãn và lot phải đọc được, không lóa hoặc bóng đổ.",
+  "layout.ergo.aisle":
+    "Aisle/lối thoát — rack, tote và xe không được chắn aisle, exit hay thiết bị PCCC.",
+  "layout.ergo.safety":
+    "Máy/an toàn — không chạm bộ phận chuyển động, guard hay dây điện; Bảo trì/EHS duyệt vị trí.",
+
+  "layout.control.title": "Control Plan",
+  "layout.control.1":
+    "Quãng đường ≤ 21,8 m/lượt — 5 lượt đầu, sau đó lấy mẫu hằng tuần — IE; vượt thì map lại tuyến.",
+  "layout.control.2":
+    "Thời gian ≤ 3,0 phút/lượt — 5 lượt đầu, sau đó lấy mẫu hằng tuần — Line leader; kiểm tra thiếu liệu, chờ và tuyến.",
+  "layout.control.3":
+    "Cắt aisle chung = 0 cho ST01–POU — mỗi lần audit — EHS + Giám sát; sửa tuyến, không đi tắt.",
+  "layout.control.4":
+    "Không thiếu liệu do POU/milk run — mỗi ca — Material Handler; refill/escalate và ghi downtime riêng.",
+  "layout.control.5":
+    "Thời gian handler đo riêng; chưa có target trước baseline — pilot — IE + Kho; không có log thì không claim tiết kiệm lao động ròng.",
+  "layout.control.reaction":
+    "Quy tắc phản ứng: nếu thời gian operator giảm nhưng thiếu liệu, handler overtime, WIP tăng hoặc aisle/ergonomics xấu đi thì pilot không đạt.",
+  "layout.caveats.title": "Điều case study không claim",
+  "layout.caveats.1":
+    "{minutes} operator-phút/ca là thời gian đi bộ tránh được tại ST01 — không phải tiền và không phải tiết kiệm lao động ròng.",
+  "layout.caveats.2":
+    "Chưa đo replenishment của Material Handler, khối lượng tote, lực đẩy/kéo và sản lượng.",
+  "layout.caveats.3": "Sơ đồ chỉ minh họa, không phải bản vẽ thi công.",
+  "layout.caveats.4": "Dữ liệu synthetic; vẫn cần EHS duyệt và pilot trên ca thật.",
+
   "policy.aria": "Chính sách dữ liệu và trạng thái",
   "policy.data.eyebrow": "Chính sách dữ liệu",
   "policy.data.title": "Chỉ dữ liệu tổng hợp",
   "policy.data.body":
-    "Không dùng dữ liệu sản xuất HBI. Hiện trạng mẫu là dữ liệu đầu vào, không phải kết quả của bộ tối ưu hóa.",
+    "Không sử dụng dữ liệu sản xuất thật. Hiện trạng mẫu là dữ liệu đầu vào, không phải kết quả của bộ tối ưu hóa.",
   "policy.status.eyebrow": "Cam kết trạng thái",
   "policy.status.title": "Chỉ báo tối ưu khi đã chứng minh",
   "policy.status.body":
@@ -1749,8 +2206,7 @@ const VI: Record<MessageKey, string> = {
   "policy.snapshot.body":
     "Bản lưu nội bộ nằm trong trình duyệt này. Tài khoản quản trị đã đăng nhập có thể lưu kịch bản tổng hợp lên không gian demo trên Neon; tài khoản chỉ đọc không thể ghi.",
   "footer.authorLabel": "Người làm",
-  "footer.left":
-    "LineBalance Pro · phần mềm minh họa kỹ thuật công nghiệp ngành may · không phải dữ liệu sản xuất HBI",
+  "footer.left": "LineBalance Pro · demo cân bằng chuyền & năng lực · dữ liệu mô phỏng",
   "footer.right":
     "React · FastAPI · PuLP/HiGHS · {operations} công đoạn · {workers} công nhân sẵn có",
 };

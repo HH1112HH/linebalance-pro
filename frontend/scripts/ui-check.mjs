@@ -1,8 +1,14 @@
 import { chromium } from "playwright";
 import path from "node:path";
 
-const out = process.env.SHOT_DIR || "C:/Users/AN NGOC/AppData/Local/Temp/opencode/linebalance-ui";
-const base = "http://127.0.0.1:5173";
+// Focused UI smoke test for the current workspace: overview, the two
+// case-study tabs, and XLSX export. Requires Playwright:
+//   npm i -D playwright && npx playwright install chromium
+const out =
+  process.env.SHOT_DIR || "C:/Users/AN NGOC/AppData/Local/Temp/opencode/linebalance-ui";
+const base = "http://localhost:5173";
+const username = process.env.UI_CHECK_USERNAME || "admin";
+const password = process.env.UI_CHECK_PASSWORD || "";
 const errors = [];
 
 const browser = await chromium.launch();
@@ -12,79 +18,80 @@ page.on("console", (message) => {
 });
 page.on("pageerror", (error) => errors.push(`pageerror: ${error.message}`));
 
+async function signInIfNeeded() {
+  if (!page.url().includes("/login")) return;
+  if (!password) {
+    throw new Error(
+      "Login is enabled. Set UI_CHECK_PASSWORD (and optionally UI_CHECK_USERNAME) before running ui-check.mjs.",
+    );
+  }
+  await page.locator(".auth-account").filter({ hasText: username }).first().click();
+  await page
+    .locator('.auth-form input[autocomplete="current-password"]')
+    .fill(password);
+  await page.locator(".auth-submit").click();
+  await page.waitForURL((url) => !url.pathname.startsWith("/login"), {
+    timeout: 20000,
+  });
+}
+
 await page.goto(base, { waitUntil: "networkidle" });
-await page.screenshot({ path: path.join(out, "01-scenario-a.png"), fullPage: true });
-console.log("A title:", await page.locator(".summary-copy h1").innerText());
-console.log("A kpi cards:", await page.locator(".kpi-card").count());
-console.log("A api badge:", await page.locator(".api-badge").innerText());
+await signInIfNeeded();
+await page.waitForSelector(".page-header h1", { timeout: 90000 });
+console.log("overview title:", await page.locator(".page-header h1").innerText());
+console.log("overview metric cards:", await page.locator(".metric-card").count());
+console.log("api chip:", await page.locator(".api-chip").innerText());
+await page.screenshot({ path: path.join(out, "01-overview.png"), fullPage: true });
 
-await page.getByRole("button", { name: /Feasible/ }).click();
-await page.waitForTimeout(300);
-console.log("B title:", await page.locator(".summary-copy h1").innerText());
-console.log("B target card:", await page.locator(".kpi-card").nth(4).innerText());
-await page.screenshot({ path: path.join(out, "02-scenario-b.png"), fullPage: true });
+const feasible = page.getByRole("button", { name: /Feasible/ });
+await feasible.click();
+await page.waitForTimeout(400);
+console.log("scenario B pressed:", await feasible.getAttribute("aria-pressed"));
 
-await page.getByRole("button", { name: "Baseline", exact: true }).click();
-await page.waitForTimeout(250);
-console.log("baseline rows:", await page.locator(".wl-row").count());
-console.log("baseline first row:", await page.locator(".wl-row").first().innerText());
-await page.screenshot({ path: path.join(out, "03-baseline.png"), fullPage: true });
-
-await page.getByRole("button", { name: /Stretch/ }).click();
-await page.waitForTimeout(300);
-
-await page.getByRole("button", { name: "Re-run optimizer" }).click();
-await page.waitForFunction(
-  () => document.querySelector(".notice")?.textContent?.includes("Re-ran"),
-  { timeout: 90000 },
-);
-console.log("rerun notice:", await page.locator(".notice").innerText());
-console.log("rerun status:", await page.locator(".status-large").innerText());
-
-const actualForm = page.locator(".form-card").nth(0);
-await actualForm.locator("input").nth(1).fill("390");
-await actualForm.getByRole("button", { name: "Apply actuals" }).click();
-await page.waitForSelector(".actuals-mini");
-await page.waitForTimeout(300);
-console.log("actuals mini:", await actualForm.locator(".actuals-mini").innerText());
+await page.getByRole("button", { name: /Quality/i }).click();
+await page.waitForSelector(".quality-pareto .pareto-svg", { timeout: 30000 });
 console.log(
-  "dashboard actuals contains 390:",
-  (await page.locator(".actuals-panel").innerText()).includes("390"),
+  "quality kpi cards:",
+  await page.locator(".quality-overview .case-kpi-card").count(),
 );
-await page.screenshot({ path: path.join(out, "04-actuals-applied.png"), fullPage: true });
-
-const downtimeForm = page.locator(".form-card").nth(1);
-await downtimeForm.locator('input[type="time"]').nth(0).fill("09:00");
-await downtimeForm.locator('input[type="time"]').nth(1).fill("09:45");
-await downtimeForm.getByRole("button", { name: "Add downtime" }).click();
-await page.waitForTimeout(1200);
-console.log("event rows:", await downtimeForm.locator(".event-row").count());
+console.log("quality pareto charts:", await page.locator(".pareto-svg").count());
 console.log(
-  "downtime panel contains 105 min:",
-  (await page.locator(".actuals-panel").innerText()).includes("105"),
+  "quality defect rows:",
+  await page.locator(".quality-defect-table tbody tr").count(),
 );
-await page.screenshot({ path: path.join(out, "05-downtime-applied.png"), fullPage: true });
+console.log(
+  "quality audit rows:",
+  await page.locator(".quality-audit-table tbody tr").count(),
+);
+console.log(
+  "quality overflow px:",
+  await page.evaluate(
+    () => document.documentElement.scrollWidth - document.documentElement.clientWidth,
+  ),
+);
+await page.screenshot({ path: path.join(out, "02-quality-rca.png"), fullPage: true });
 
-const timeStudyForm = page.locator(".form-card").nth(2);
-await timeStudyForm.locator('input[type="number"]').nth(0).fill("30");
-await timeStudyForm.getByRole("button", { name: "Calculate time study" }).click();
-await page.waitForSelector(".time-study-result");
-console.log("time study:", await timeStudyForm.locator(".time-study-result").innerText());
-await page.screenshot({ path: path.join(out, "06-time-study.png"), fullPage: true });
-
-const snapshots = page.locator(".snapshots-panel");
-await snapshots.locator("input").fill("UI smoke snapshot");
-await snapshots.getByRole("button", { name: "Save snapshot" }).click();
-await page.waitForTimeout(300);
-console.log("snapshot count:", await snapshots.locator(".snapshot-list li").count());
-await page.screenshot({ path: path.join(out, "07-snapshot-saved.png"), fullPage: true });
-
-await page.reload({ waitUntil: "networkidle" });
-await page.locator(".snapshots-panel").getByRole("button", { name: "Load" }).first().click();
-await page.waitForTimeout(300);
-console.log("loaded snapshot:", await page.locator(".scenario-custom").innerText());
-console.log("loaded actuals:", await page.locator(".actuals-panel").innerText());
-await page.screenshot({ path: path.join(out, "08-snapshot-loaded.png"), fullPage: true });
+await page.getByRole("button", { name: /Layout/i }).click();
+await page.waitForSelector(".layout-trials-table", { timeout: 30000 });
+console.log(
+  "layout kpi cards:",
+  await page.locator(".layout-overview .case-kpi-card").count(),
+);
+console.log(
+  "layout trial rows:",
+  await page.locator(".layout-trials-table tbody tr").count(),
+);
+console.log("layout diagrams:", await page.locator(".diagram-svg").count());
+console.log(
+  "layout overflow px:",
+  await page.evaluate(
+    () => document.documentElement.scrollWidth - document.documentElement.clientWidth,
+  ),
+);
+await page.screenshot({
+  path: path.join(out, "03-layout-ergonomics.png"),
+  fullPage: true,
+});
 
 const downloadPromise = page
   .waitForEvent("download", { timeout: 30000 })

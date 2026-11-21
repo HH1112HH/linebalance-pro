@@ -3,12 +3,14 @@ import ActualsPanel from "./components/ActualsPanel";
 import LoginPage from "./components/LoginPage";
 import BalanceSection from "./components/BalanceSection";
 import FormsPanel from "./components/FormsPanel";
+import LayoutErgoPanel from "./components/LayoutErgoPanel";
 import MetadataPanel from "./components/MetadataPanel";
 import MaterialsPanel from "./components/MaterialsPanel";
 import OverviewMetrics from "./components/OverviewMetrics";
 import BottleneckPanel from "./components/BottleneckPanel";
 import PageHeader from "./components/PageHeader";
 import PlanningPanel from "./components/PlanningPanel";
+import QualityRcaPanel from "./components/QualityRcaPanel";
 import RunInputSummary from "./components/RunInputSummary";
 import ScenarioImportPanel from "./components/ScenarioImportPanel";
 import ServerSnapshotsPanel from "./components/ServerSnapshotsPanel";
@@ -678,6 +680,28 @@ export default function App() {
                   description={t("page.materials.description")}
                 />
                 <MaterialsPanel />
+              </div>
+            ) : null}
+
+            {section === "quality" ? (
+              <div className="section-stack">
+                <PageHeader
+                  eyebrow={t("page.quality.eyebrow")}
+                  title={t("page.quality.title")}
+                  description={t("page.quality.description")}
+                />
+                <QualityRcaPanel />
+              </div>
+            ) : null}
+
+            {section === "layout" ? (
+              <div className="section-stack">
+                <PageHeader
+                  eyebrow={t("page.layout.eyebrow")}
+                  title={t("page.layout.title")}
+                  description={t("page.layout.description")}
+                />
+                <LayoutErgoPanel />
               </div>
             ) : null}
 
